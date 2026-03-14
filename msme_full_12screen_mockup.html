@@ -1,0 +1,534 @@
+
+<style>
+:root{--br:#E8500A;--brl:#FFF0E8;--gr:#1A6B3A;--grl:#E8F5EE;--gd:#D4A017;--bl:#1565C0;--bll:#E3F2FD;--pu:#6A1B9A;--pul:#F3E5F5;}
+*{box-sizing:border-box;margin:0;padding:0;}
+.outer{display:flex;gap:24px;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;flex-wrap:wrap;}
+.device{width:288px;flex-shrink:0;}
+.shell{background:#1C1C1C;border-radius:24px;border:2px solid #333;overflow:hidden;}
+.ptop{background:#111;height:24px;display:flex;align-items:center;justify-content:center;border-bottom:2px solid var(--br);}
+.pslot{width:110px;height:5px;background:#0a0a0a;border-radius:3px;}
+.cbar{background:#161616;height:18px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.cam{width:7px;height:7px;border-radius:50%;background:#222;border:1px solid #333;}
+.sarea{height:530px;overflow:hidden;position:relative;}
+.bbar{background:#1C1C1C;height:28px;display:flex;align-items:center;justify-content:center;gap:20px;border-top:1px solid #333;}
+.bc{width:10px;height:10px;border-radius:50%;background:#2a2a2a;border:1px solid #444;}
+.bsq{width:9px;height:9px;background:#2a2a2a;border:1px solid #444;border-radius:2px;}
+.obar{height:5px;background:var(--br);}
+.screen{display:none;flex-direction:column;height:100%;background:#F2F4F6;}
+.screen.on{display:flex;}
+.sb{background:var(--gr);color:white;font-size:10px;padding:4px 10px;display:flex;justify-content:space-between;}
+.lbar{background:#1e4d30;display:flex;gap:4px;padding:4px 8px;align-items:center;}
+.lb{font-size:10px;padding:3px 8px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;background:rgba(255,255,255,0.15);color:white;}
+.lb.s{background:var(--gd);color:#1a1a00;font-weight:500;}
+.hdr{padding:10px 12px;color:white;}
+.hdr .t{font-size:14px;font-weight:500;}
+.hdr .st{font-size:10px;opacity:0.8;}
+.cnt{flex:1;overflow-y:auto;padding:10px;}
+/* bottom nav */
+.bnav{background:white;border-top:0.5px solid #ddd;display:flex;height:62px;flex-shrink:0;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:transparent;cursor:pointer;font-family:inherit;padding:0;}
+.ni svg{width:24px;height:24px;stroke:#bbb;}
+.ni span{font-size:9px;color:#bbb;}
+.ni.on svg{stroke:var(--br);}
+.ni.on span{color:var(--br);}
+/* voice fab */
+.vfab{position:absolute;bottom:70px;right:9px;z-index:10;width:42px;height:42px;border-radius:50%;background:var(--bl);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.vfab svg{width:19px;height:19px;}
+/* voice overlay */
+.vo{display:none;position:absolute;inset:0;background:rgba(21,101,192,0.93);z-index:30;flex-direction:column;align-items:center;justify-content:center;color:white;gap:10px;}
+.vo.show{display:flex;}
+.pr{width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;animation:pu 1.2s infinite;}
+@keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+/* more overlay */
+.more-ov{display:none;position:absolute;inset:0;background:rgba(0,0,0,0.5);z-index:20;align-items:flex-end;}
+.more-ov.show{display:flex;}
+.more-sheet{width:100%;background:white;border-radius:16px 16px 0 0;padding:12px;}
+.more-title{font-size:11px;color:#888;margin-bottom:10px;text-align:center;}
+.more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.more-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:12px;background:#F5F5F5;cursor:pointer;border:none;font-family:inherit;}
+.more-item .mi{font-size:22px;}
+.more-item span{font-size:9px;color:#444;text-align:center;font-weight:500;line-height:1.3;}
+/* cards & components */
+.card{background:white;border-radius:12px;border:0.5px solid #e5e5e5;padding:11px 12px;margin-bottom:7px;}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;}
+.kpi{background:white;border-radius:10px;border:0.5px solid #e5e5e5;padding:10px;}
+.kpi .lbl{font-size:9px;color:#888;margin-bottom:3px;}
+.kpi .val{font-size:17px;font-weight:500;}
+.kpi .sub{font-size:9px;color:#aaa;margin-top:2px;}
+.grn{color:var(--gr);}
+.orn{color:var(--br);}
+.row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid #f0f0f0;}
+.row:last-child{border-bottom:none;}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.nm{font-size:11px;font-weight:500;color:var(--color-text-primary,#111);}
+.sm{font-size:9px;color:#aaa;}
+.pill{font-size:9px;padding:3px 8px;border-radius:10px;font-weight:500;margin-left:auto;flex-shrink:0;}
+.g-pill{background:#E8F5EE;color:var(--gr);}
+.o-pill{background:#FFF0E8;color:var(--br);}
+.r-pill{background:#FEECEC;color:#C62828;}
+.b-pill{background:var(--bll);color:var(--bl);}
+.p-pill{background:var(--pul);color:var(--pu);}
+.bigbtn{width:100%;padding:13px;border-radius:12px;color:white;font-size:13px;font-weight:500;border:none;cursor:pointer;font-family:inherit;margin-top:6px;}
+.secbtn{width:100%;padding:11px;border-radius:10px;background:white;border:1px solid #ddd;color:#444;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:5px;}
+.divlbl{font-size:10px;font-weight:500;color:#666;margin:9px 0 6px;}
+.inp{width:100%;padding:11px 12px;border-radius:10px;border:1px solid #ddd;font-size:12px;font-family:inherit;background:white;color:var(--color-text-primary,#111);margin-bottom:7px;}
+.inp::placeholder{color:#bbb;}
+/* receipt */
+.rcpt{background:white;border-radius:12px;border:0.5px solid #e5e5e5;padding:14px;margin-bottom:6px;}
+.rcpt-head{text-align:center;margin-bottom:10px;}
+.rcpt-logo{font-size:22px;margin-bottom:3px;}
+.rcpt-biz{font-size:13px;font-weight:500;color:#111;}
+.rcpt-sub{font-size:9px;color:#888;}
+.rcpt-line{border-top:1px dashed #ddd;margin:8px 0;}
+.rcpt-row{display:flex;justify-content:space-between;font-size:11px;color:#444;padding:3px 0;}
+.rcpt-tax{display:flex;justify-content:space-between;font-size:10px;color:var(--gr);padding:2px 0;}
+.rcpt-total{display:flex;justify-content:space-between;font-size:14px;font-weight:500;padding:5px 0;}
+.rcpt-qr{width:52px;height:52px;border-radius:6px;background:#111;margin:8px auto 4px;display:flex;align-items:center;justify-content:center;}
+.qr-inner{width:36px;height:36px;background:white;border-radius:3px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:3px;}
+.qp{background:#111;border-radius:1px;}
+.rcpt-gra{font-size:8px;text-align:center;color:#aaa;margin-top:4px;}
+/* onboarding */
+.ob-steps{display:flex;gap:4px;margin-bottom:12px;justify-content:center;}
+.ob-step{width:28px;height:5px;border-radius:3px;background:#ddd;}
+.ob-step.done{background:var(--gr);}
+.ob-step.cur{background:var(--br);}
+.biz-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.biz-card{background:white;border-radius:12px;border:2px solid #e5e5e5;padding:12px 8px;text-align:center;cursor:pointer;font-family:inherit;}
+.biz-card.sel{border-color:var(--br);background:var(--brl);}
+.biz-card .be{font-size:26px;margin-bottom:5px;}
+.biz-card .bl2{font-size:11px;font-weight:500;color:#333;}
+.biz-card .bs{font-size:9px;color:#888;}
+/* help */
+.help-cat{background:white;border-radius:12px;border:0.5px solid #eee;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.help-ico{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.help-t{font-size:12px;font-weight:500;color:var(--color-text-primary,#111);}
+.help-s{font-size:10px;color:#aaa;}
+.help-chev{margin-left:auto;color:#ccc;font-size:16px;}
+.vid-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:8px;}
+.vid-card{flex-shrink:0;width:100px;background:white;border-radius:10px;overflow:hidden;border:0.5px solid #eee;}
+.vid-thumb{height:58px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.vid-t{font-size:9px;padding:5px 6px;color:#444;line-height:1.4;}
+/* susu */
+.susu-hero{background:var(--pu);border-radius:14px;padding:13px;color:white;margin-bottom:8px;}
+.susu-amt{font-size:26px;font-weight:500;}
+.susu-sub{font-size:10px;opacity:0.75;}
+.susu-pills{display:flex;gap:6px;margin-top:8px;}
+.susu-pill{flex:1;background:rgba(255,255,255,0.15);border-radius:9px;padding:7px 4px;text-align:center;}
+.susu-pill .sl{font-size:9px;opacity:0.8;}
+.susu-pill .sv{font-size:12px;font-weight:500;}
+/* payroll */
+.pay-hero{background:#1565C0;border-radius:14px;padding:13px;color:white;margin-bottom:8px;}
+.pay-amt{font-size:24px;font-weight:500;}
+.pay-sub{font-size:10px;opacity:0.75;margin-top:2px;}
+.staff-row{background:white;border-radius:10px;border:0.5px solid #eee;padding:9px 11px;margin-bottom:5px;display:flex;align-items:center;gap:9px;}
+.staff-av{width:32px;height:32px;border-radius:50%;background:var(--bll);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--bl);flex-shrink:0;}
+.staff-nm{font-size:11px;font-weight:500;color:var(--color-text-primary,#111);}
+.staff-role{font-size:9px;color:#aaa;}
+.staff-sal{font-size:12px;font-weight:500;margin-left:auto;}
+.paid-badge{font-size:8px;padding:2px 6px;border-radius:8px;}
+/* credit */
+.cred-row{background:white;border-radius:10px;border:0.5px solid #eee;padding:10px 12px;margin-bottom:6px;}
+.cred-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.cred-nm{font-size:12px;font-weight:500;color:var(--color-text-primary,#111);}
+.cred-ph{font-size:9px;color:#aaa;}
+.cred-bar-bg{height:5px;background:#F0F0F0;border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.cred-bar-fill{height:100%;border-radius:3px;background:var(--br);}
+.cred-meta{display:flex;justify-content:space-between;font-size:9px;color:#888;}
+/* invoice */
+.inv-hdr{text-align:center;margin-bottom:10px;}
+.inv-no{font-size:11px;color:#888;margin-bottom:4px;}
+.inv-amt-big{font-size:26px;font-weight:500;color:var(--gr);}
+.inv-row{display:flex;justify-content:space-between;font-size:11px;color:#555;padding:3px 0;}
+.inv-total{display:flex;justify-content:space-between;font-size:13px;font-weight:500;border-top:1px solid #eee;padding-top:6px;margin-top:4px;}
+.status-chip{display:inline-block;font-size:9px;padding:3px 9px;border-radius:10px;margin:4px auto 0;}
+/* bars */
+.bars{display:flex;align-items:flex-end;gap:4px;height:52px;margin:7px 0 3px;}
+.b{flex:1;border-radius:3px 3px 0 0;}
+.blbls{display:flex;gap:4px;}
+.bll2{flex:1;font-size:8px;color:#bbb;text-align:center;}
+/* action row */
+.act-row{background:white;border-radius:10px;border:0.5px solid #eee;padding:11px 13px;margin-bottom:6px;display:flex;align-items:center;gap:9px;cursor:pointer;}
+.act-ico{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.act-ico svg{width:18px;height:18px;}
+.act-t{font-size:12px;font-weight:500;color:var(--color-text-primary,#111);}
+.act-s{font-size:10px;color:#aaa;}
+.act-chev{margin-left:auto;color:#ccc;font-size:16px;}
+</style>
+
+<div class="outer">
+<div class="device">
+<div class="shell">
+<div class="obar"></div>
+<div class="ptop"><div class="pslot"></div></div>
+<div class="cbar"><div class="cam"></div><div style="width:16px;height:3px;background:#222;border-radius:2px"></div><div class="cam"></div></div>
+<div class="sarea">
+
+<!-- VOICE OVERLAY -->
+<div class="vo" id="vo">
+  <div class="pr"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="30" height="30"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+  <div style="font-size:14px;font-weight:500">Tie... / Listening...</div>
+  <div style="font-size:11px;background:rgba(255,255,255,0.2);padding:3px 12px;border-radius:10px" id="vlang">Twi</div>
+  <div style="font-size:10px;opacity:0.75">Ka asɛm / Speak your command</div>
+  <button onclick="closeVO()" style="margin-top:6px;padding:7px 18px;border-radius:20px;background:rgba(255,255,255,0.2);border:none;color:white;font-family:inherit;font-size:11px;cursor:pointer">Tua — Close</button>
+</div>
+
+<!-- MORE OVERLAY -->
+<div class="more-ov" id="more-ov" onclick="closeMore(event)">
+  <div class="more-sheet" onclick="event.stopPropagation()">
+    <div class="more-title">Nea Ɛkeka Ho — More Modules</div>
+    <div class="more-grid">
+      <button class="more-item" onclick="goTo('onboard');closeMore()"><div class="mi">📋</div><span>Rego<br>Register</span></button>
+      <button class="more-item" onclick="goTo('receipt');closeMore()"><div class="mi">🧾</div><span>Risit<br>Receipt</span></button>
+      <button class="more-item" onclick="goTo('credit');closeMore()"><div class="mi">🤝</div><span>Kadi<br>Credit</span></button>
+      <button class="more-item" onclick="goTo('invoice');closeMore()"><div class="mi">📄</div><span>Bil<br>Invoice</span></button>
+      <button class="more-item" onclick="goTo('payroll');closeMore()"><div class="mi">👥</div><span>Pagrol<br>Payroll</span></button>
+      <button class="more-item" onclick="goTo('susu');closeMore()"><div class="mi">🪙</div><span>Susu<br>Savings</span></button>
+      <button class="more-item" onclick="goTo('help');closeMore()"><div class="mi">❓</div><span>Mmoa<br>Help</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- LANG BAR TEMPLATE (reused inline per screen) -->
+
+<!-- ===== HOME ===== -->
+<div class="screen on" id="s-home">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="lbar"><span style="font-size:9px;color:rgba(255,255,255,.6);margin-right:2px">Lang:</span><button class="lb s" onclick="setLang('Twi')">Twi</button><button class="lb" onclick="setLang('English')">English</button><button class="lb" onclick="setLang('Ewe')">Ewe</button><button class="lb" onclick="setLang('Hausa')">Hausa</button></div>
+  <div class="cnt">
+    <div style="background:var(--gr);border-radius:13px;padding:13px;color:white;margin-bottom:8px">
+      <div style="font-size:15px;font-weight:500" id="h-greet">Maakye, Ama! 👋</div>
+      <div style="font-size:10px;opacity:.75;margin-bottom:9px" id="h-sub">Wɔ da yi, wode GH₵ 1,240 ayɛ dwuma</div>
+      <div style="display:flex;gap:7px">
+        <div style="background:rgba(255,255,255,.15);border-radius:9px;flex:1;padding:8px"><div style="font-size:9px;opacity:.8">Da yi atɔn</div><div style="font-size:16px;font-weight:500">GH₵ 1,240</div></div>
+        <div style="background:rgba(255,255,255,.15);border-radius:9px;flex:1;padding:8px"><div style="font-size:9px;opacity:.8">Asɛde</div><div style="font-size:16px;font-weight:500">GH₵ 186</div></div>
+      </div>
+    </div>
+    <div style="background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:9px 11px;font-size:11px;color:#6D4C00;display:flex;align-items:center;gap:7px;margin-bottom:8px">
+      <div style="width:26px;height:26px;border-radius:8px;background:#FFD54F;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">⚠️</div>
+      <div><div style="font-weight:500" id="h-alert">VAT fa bɛn 3 nna mu</div><div style="font-size:9px;color:#9E7300">Mar 17, 2026</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px">
+      <button onclick="goTo('pos')" style="background:var(--br);color:white;border-radius:13px;padding:13px 10px;border:none;cursor:pointer;font-family:inherit;text-align:left"><div style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:7px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg></div><div style="font-size:12px;font-weight:500">Tɔn Nneɛma</div><div style="font-size:9px;opacity:.75">Sell Items</div></button>
+      <button onclick="goTo('stock')" style="background:var(--gr);color:white;border-radius:13px;padding:13px 10px;border:none;cursor:pointer;font-family:inherit;text-align:left"><div style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:7px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div style="font-size:12px;font-weight:500">Stok</div><div style="font-size:9px;opacity:.75">Inventory</div></button>
+      <button onclick="goTo('tax')" style="background:var(--gd);color:#2a1a00;border-radius:13px;padding:13px 10px;border:none;cursor:pointer;font-family:inherit;text-align:left"><div style="width:34px;height:34px;border-radius:10px;background:rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;margin-bottom:7px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2a1a00" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div style="font-size:12px;font-weight:500">Asɛde</div><div style="font-size:9px;opacity:.7">Tax</div></button>
+      <button onclick="openMore()" style="background:var(--bl);color:white;border-radius:13px;padding:13px 10px;border:none;cursor:pointer;font-family:inherit;text-align:left"><div style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:7px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="5" r="1" fill="white"/><circle cx="12" cy="12" r="1" fill="white"/><circle cx="12" cy="19" r="1" fill="white"/></svg></div><div style="font-size:12px;font-weight:500">Nea Ɛkeka Ho</div><div style="font-size:9px;opacity:.75">More Modules</div></button>
+    </div>
+    <div class="card"><div class="divlbl">Adwumadie a Atwam — Recent</div>
+      <div class="row"><div class="av" style="background:var(--grl)">🧑</div><div><div class="nm">Kofi Asante</div><div class="sm">09:24am</div></div><div style="font-size:12px;font-weight:500;color:var(--gr);margin-left:auto">GH₵ 145</div></div>
+      <div class="row"><div class="av" style="background:var(--grl)">👩</div><div><div class="nm">Abena Owusu</div><div class="sm">08:10am</div></div><div style="font-size:12px;font-weight:500;color:var(--gr);margin-left:auto">GH₵ 90</div></div>
+    </div>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni on" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== POS ===== -->
+<div class="screen" id="s-pos">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="lbar"><button class="lb s">Twi</button><button class="lb" onclick="setLang('English')">English</button><button class="lb">Ewe</button><button class="lb">Hausa</button></div>
+  <div class="hdr" style="background:var(--br)"><div class="t">Tɔn Nneɛma — Sell Items</div><div class="st">Keka nneɛma a wopɛ / Tap to add</div></div>
+  <div style="background:white;display:flex;gap:5px;padding:7px 9px;border-bottom:0.5px solid #eee;overflow-x:auto"><button style="white-space:nowrap;font-size:10px;padding:4px 11px;border-radius:16px;border:none;cursor:pointer;background:var(--br);color:white;font-family:inherit">Aduan</button><button style="white-space:nowrap;font-size:10px;padding:4px 11px;border-radius:16px;border:none;cursor:pointer;background:#F0F0F0;color:#555;font-family:inherit">Nsa</button><button style="white-space:nowrap;font-size:10px;padding:4px 11px;border-radius:16px;border:none;cursor:pointer;background:#F0F0F0;color:#555;font-family:inherit">Biribiara</button></div>
+  <div class="cnt" style="padding-bottom:0">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px">
+      <div style="background:white;border-radius:11px;border:2px solid #eee;padding:11px 7px;text-align:center"><div style="font-size:26px;margin-bottom:5px">🌾</div><div style="font-size:10px;color:#444;font-weight:500">Rice 5kg</div><div style="font-size:13px;font-weight:500;color:var(--br)">GH₵ 65</div><div style="font-size:8px;color:#aaa">Wɔ 142 ho</div></div>
+      <div style="background:white;border-radius:11px;border:2px solid #eee;padding:11px 7px;text-align:center"><div style="font-size:26px;margin-bottom:5px">🛢️</div><div style="font-size:10px;color:#444;font-weight:500">Ngo 2L</div><div style="font-size:13px;font-weight:500;color:var(--br)">GH₵ 45</div><div style="font-size:8px;color:var(--br)">Wɔ 4 ho ⚠️</div></div>
+      <div style="background:white;border-radius:11px;border:2px solid #eee;padding:11px 7px;text-align:center"><div style="font-size:26px;margin-bottom:5px">🍬</div><div style="font-size:10px;color:#444;font-weight:500">Suga 2kg</div><div style="font-size:13px;font-weight:500;color:var(--br)">GH₵ 22</div><div style="font-size:8px;color:#aaa">Wɔ 67 ho</div></div>
+      <div style="background:white;border-radius:11px;border:2px solid var(--br);padding:11px 7px;text-align:center;background:var(--brl)"><div style="font-size:26px;margin-bottom:5px">🥤</div><div style="font-size:10px;color:#444;font-weight:500">Nsa dua x6</div><div style="font-size:13px;font-weight:500;color:var(--br)">GH₵ 30</div><div style="font-size:8px;color:var(--br)">✓ Yɛ adi</div></div>
+    </div>
+  </div>
+  <div style="background:white;border-top:0.5px solid #eee;padding:9px 10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><div><div style="font-size:10px;color:#777">2 nneɛma · VAT+NHIL yɛ sika mu</div><div style="font-size:9px;color:var(--gr)">Auto-calculated by GRA MTS</div></div><div style="font-size:19px;font-weight:500;color:var(--color-text-primary,#111)">GH₵ 182</div></div>
+    <button onclick="goTo('receipt')" class="bigbtn" style="background:var(--gr);display:flex;align-items:center;justify-content:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Fa GH₵ 182 — Charge & Print</button>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni on" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== STOCK ===== -->
+<div class="screen" id="s-stock">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="lbar"><button class="lb s">Twi</button><button class="lb">English</button><button class="lb">Ewe</button><button class="lb">Hausa</button></div>
+  <div class="hdr" style="background:var(--gr)"><div class="t">Stok — Inventory</div><div class="st">48 nneɛma · 3 bɛwie ntɛm</div></div>
+  <div class="cnt">
+    <div style="background:white;border-radius:10px;border:0.5px solid #ddd;display:flex;align-items:center;gap:6px;padding:9px 12px;margin-bottom:8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span style="font-size:11px;color:#bbb">Hwehwɛ / Search...</span></div>
+    <div style="background:white;border-radius:10px;border:0.5px solid #eee;padding:9px 11px;margin-bottom:6px;display:flex;align-items:center;gap:9px"><div style="width:38px;height:38px;border-radius:11px;background:var(--brl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">🌾</div><div><div style="font-size:11px;font-weight:500">Rice 5kg</div><div style="font-size:9px;color:#aaa">142 bags</div></div><div class="pill g-pill">Yɛ</div></div>
+    <div style="background:white;border-radius:10px;border:0.5px solid #eee;padding:9px 11px;margin-bottom:6px;display:flex;align-items:center;gap:9px"><div style="width:38px;height:38px;border-radius:11px;background:var(--brl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">🛢️</div><div><div style="font-size:11px;font-weight:500">Ngo 2L</div><div style="font-size:9px;color:var(--br)">4 bɛwie ⚠️</div></div><div class="pill o-pill">Hwɛ!</div></div>
+    <div style="background:white;border-radius:10px;border:0.5px solid #eee;padding:9px 11px;margin-bottom:6px;display:flex;align-items:center;gap:9px"><div style="width:38px;height:38px;border-radius:11px;background:var(--brl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">🍬</div><div><div style="font-size:11px;font-weight:500">Suga 2kg</div><div style="font-size:9px;color:#aaa">67 bags</div></div><div class="pill g-pill">Yɛ</div></div>
+    <div style="background:white;border-radius:10px;border:0.5px solid #eee;padding:9px 11px;margin-bottom:6px;display:flex;align-items:center;gap:9px"><div style="width:38px;height:38px;border-radius:11px;background:var(--brl);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0">🌽</div><div><div style="font-size:11px;font-weight:500">Aburo 10kg</div><div style="font-size:9px;color:#aaa">28 bags</div></div><div class="pill g-pill">Yɛ</div></div>
+    <button class="bigbtn" style="background:var(--br)">+ Fa Nneɛma Foforɔ — Add New Item</button>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni on" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== TAX ===== -->
+<div class="screen" id="s-tax">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="lbar"><button class="lb s">Twi</button><button class="lb">English</button><button class="lb">Ewe</button><button class="lb">Hausa</button></div>
+  <div class="cnt">
+    <div style="background:var(--gr);border-radius:13px;padding:13px;color:white;margin-bottom:9px;text-align:center">
+      <div style="font-size:10px;opacity:.8;margin-bottom:3px">Asɛde a Wohia a Tua — Tax Due</div>
+      <div style="font-size:26px;font-weight:500">GH₵ 2,847</div>
+      <div style="font-size:9px;opacity:.7">Mar 1–14, 2026</div>
+      <div style="display:flex;gap:5px;margin-top:9px">
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px 3px;text-align:center"><div style="font-size:9px;opacity:.8">VAT</div><div style="font-size:12px;font-weight:500">GH₵ 1,890</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px 3px;text-align:center"><div style="font-size:9px;opacity:.8">Income</div><div style="font-size:12px;font-weight:500">GH₵ 680</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px 3px;text-align:center"><div style="font-size:9px;opacity:.8">NHIL</div><div style="font-size:12px;font-weight:500">GH₵ 277</div></div>
+      </div>
+    </div>
+    <div class="act-row"><div class="act-ico" style="background:var(--grl)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gr)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="act-t">Fa VAT — File VAT Return</div><div class="act-s">Due Mar 17</div></div><div class="act-chev">›</div></div>
+    <div class="act-row"><div class="act-ico" style="background:var(--brl)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--br)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div><div class="act-t">Tua Asɛde — Pay Tax</div><div class="act-s">GRA e-Payments</div></div><div class="act-chev">›</div></div>
+    <div class="act-row"><div class="act-ico" style="background:var(--bll)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--bl)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="act-t">Asɛde History</div><div class="act-s">Nea woatua dedaw</div></div><div class="act-chev">›</div></div>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni on" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== ONBOARDING ===== -->
+<div class="screen" id="s-onboard">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="hdr" style="background:var(--gr)"><div class="t">Rego — Register Your Business</div><div class="st">Kɔ ɛfam 2 mu / Step 2 of 4</div></div>
+  <div class="cnt">
+    <div style="display:flex;gap:4px;margin-bottom:12px;justify-content:center">
+      <div style="width:30px;height:5px;border-radius:3px;background:var(--gr)"></div>
+      <div style="width:30px;height:5px;border-radius:3px;background:var(--br)"></div>
+      <div style="width:30px;height:5px;border-radius:3px;background:#ddd"></div>
+      <div style="width:30px;height:5px;border-radius:3px;background:#ddd"></div>
+    </div>
+    <div style="font-size:12px;font-weight:500;color:#444;margin-bottom:8px">Wo adwuma bɛn? — What is your business type?</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:11px">
+      <button style="background:var(--brl);border-radius:12px;border:2px solid var(--br);padding:12px 8px;text-align:center;cursor:pointer;font-family:inherit"><div style="font-size:24px;margin-bottom:5px">🛒</div><div style="font-size:11px;font-weight:500;color:#333">Adetɔn</div><div style="font-size:9px;color:#888">Retail Shop</div></button>
+      <button style="background:white;border-radius:12px;border:2px solid #e5e5e5;padding:12px 8px;text-align:center;cursor:pointer;font-family:inherit"><div style="font-size:24px;margin-bottom:5px">🍲</div><div style="font-size:11px;font-weight:500;color:#333">Aduan</div><div style="font-size:9px;color:#888">Food Vendor</div></button>
+      <button style="background:white;border-radius:12px;border:2px solid #e5e5e5;padding:12px 8px;text-align:center;cursor:pointer;font-family:inherit"><div style="font-size:24px;margin-bottom:5px">✂️</div><div style="font-size:11px;font-weight:500;color:#333">Nnwuma</div><div style="font-size:9px;color:#888">Services</div></button>
+      <button style="background:white;border-radius:12px;border:2px solid #e5e5e5;padding:12px 8px;text-align:center;cursor:pointer;font-family:inherit"><div style="font-size:24px;margin-bottom:5px">🏭</div><div style="font-size:11px;font-weight:500;color:#333">Yɛde</div><div style="font-size:9px;color:#888">Manufacturing</div></button>
+    </div>
+    <div style="font-size:12px;font-weight:500;color:#444;margin-bottom:6px">Wo TIN Nɔma — GRA TIN Number</div>
+    <input class="inp" placeholder="C0012345678 (Optional)">
+    <div style="font-size:10px;color:var(--bl);margin-bottom:10px">Wontumi TIN no, GRA bɛboa wo — GRA will help you get one</div>
+    <button class="bigbtn" style="background:var(--gr)">Kɔ Ɛfam A Edi Hɔ — Next Step →</button>
+    <button class="secbtn">← San Kɔ — Back</button>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni on" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== RECEIPT ===== -->
+<div class="screen" id="s-receipt">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="hdr" style="background:var(--gr)"><div class="t">Risit — VAT Receipt</div><div class="st">GRA-compliant · Ready to print</div></div>
+  <div class="cnt">
+    <div style="background:white;border-radius:12px;border:0.5px solid #e5e5e5;padding:14px;margin-bottom:7px">
+      <div style="text-align:center;margin-bottom:10px">
+        <div style="font-size:20px;margin-bottom:3px">🏪</div>
+        <div style="font-size:13px;font-weight:500;color:#111">Ama's General Store</div>
+        <div style="font-size:9px;color:#888">TIN: C0012345678 · VAT Reg: V0045321</div>
+        <div style="font-size:9px;color:#888">Kumasi Central Market · 0244-123-456</div>
+      </div>
+      <div style="border-top:1px dashed #ddd;margin:8px 0"></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#888;padding:2px 0"><span>Risit No:</span><span style="font-weight:500;color:#111">#INV-2026-0847</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#888;padding:2px 0"><span>Ɛda:</span><span>14 Mar 2026, 09:24am</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#888;padding:2px 0 6px"><span>Obi a otɔɔ:</span><span>Kofi Asante</span></div>
+      <div style="border-top:1px dashed #ddd;margin:4px 0 7px"></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#444;padding:3px 0"><span>Rice 5kg x1</span><span>GH₵ 65.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:#444;padding:3px 0"><span>Ngo 2L x2</span><span>GH₵ 90.00</span></div>
+      <div style="border-top:1px dashed #ddd;margin:7px 0 5px"></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#888;padding:2px 0"><span>Subtotal</span><span>GH₵ 155.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gr);padding:2px 0"><span>VAT (15%)</span><span>GH₵ 23.25</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gr);padding:2px 0"><span>NHIL (2.5%)</span><span>GH₵ 3.88</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;padding:6px 0 0;border-top:1px solid #eee;margin-top:4px"><span>Total</span><span style="color:var(--gr)">GH₵ 182.13</span></div>
+      <div style="text-align:center;margin:10px 0 4px">
+        <div style="width:50px;height:50px;background:#111;border-radius:6px;margin:0 auto 4px;display:flex;align-items:center;justify-content:center">
+          <div style="width:34px;height:34px;background:white;border-radius:2px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:3px">
+            <div style="background:#111;border-radius:1px"></div><div style="background:#111;border-radius:1px"></div><div></div><div style="background:#111;border-radius:1px"></div><div></div>
+            <div></div><div style="background:#111;border-radius:1px"></div><div></div><div></div><div style="background:#111;border-radius:1px"></div>
+            <div style="background:#111;border-radius:1px"></div><div></div><div style="background:#111;border-radius:1px"></div><div style="background:#111;border-radius:1px"></div><div></div>
+            <div></div><div style="background:#111;border-radius:1px"></div><div></div><div style="background:#111;border-radius:1px"></div><div></div>
+            <div style="background:#111;border-radius:1px"></div><div></div><div></div><div style="background:#111;border-radius:1px"></div><div style="background:#111;border-radius:1px"></div>
+          </div>
+        </div>
+        <div style="font-size:8px;color:#aaa">GRA verified · Scan to validate</div>
+      </div>
+    </div>
+    <button class="bigbtn" style="background:var(--br)">🖨️ Tprint — Print Receipt</button>
+    <button class="secbtn">📱 SMS Risit — Send via SMS</button>
+  </div>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni on" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== CREDIT ===== -->
+<div class="screen" id="s-credit">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="hdr" style="background:#7B1FA2"><div class="t">Kadi — Customer Credit</div><div class="st">GH₵ 1,840 outstanding · 6 customers</div></div>
+  <div class="cnt">
+    <div class="kpi-row">
+      <div class="kpi"><div class="lbl">Total Owed</div><div class="val orn">GH₵ 1,840</div><div class="sub">6 customers</div></div>
+      <div class="kpi"><div class="lbl">Overdue</div><div class="val" style="color:#C62828">GH₵ 520</div><div class="sub">2 overdue</div></div>
+    </div>
+    <div class="cred-row">
+      <div class="cred-top"><div class="av" style="background:#F3E5F5;font-size:13px">👩</div><div><div class="nm" style="font-size:12px">Akosua Boateng</div><div style="font-size:9px;color:#aaa">0244-567-890 · Due Mar 10</div></div><div class="pill r-pill" style="margin-left:auto">Overdue</div></div>
+      <div style="height:5px;background:#F0F0F0;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:70%;border-radius:3px;background:var(--br)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#888"><span>Paid: GH₵ 120</span><span style="color:var(--br);font-weight:500">Owes: GH₵ 280</span></div>
+    </div>
+    <div class="cred-row">
+      <div class="cred-top"><div class="av" style="background:var(--grl);font-size:13px">🧑</div><div><div class="nm" style="font-size:12px">Kwame Mensah</div><div style="font-size:9px;color:#aaa">0207-234-567 · Due Mar 20</div></div><div class="pill g-pill" style="margin-left:auto">On track</div></div>
+      <div style="height:5px;background:#F0F0F0;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:45%;border-radius:3px;background:var(--gr)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#888"><span>Paid: GH₵ 100</span><span style="color:var(--gr);font-weight:500">Owes: GH₵ 350</span></div>
+    </div>
+    <div class="cred-row">
+      <div class="cred-top"><div class="av" style="background:var(--bll);font-size:13px">👨</div><div><div class="nm" style="font-size:12px">Yaw Darko</div><div style="font-size:9px;color:#aaa">0553-890-123 · Due Apr 1</div></div><div class="pill b-pill" style="margin-left:auto">New</div></div>
+      <div style="height:5px;background:#F0F0F0;border-radius:3px;overflow:hidden;margin-bottom:4px"><div style="height:100%;width:10%;border-radius:3px;background:var(--bl)"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#888"><span>Paid: GH₵ 0</span><span style="color:var(--bl);font-weight:500">Owes: GH₵ 210</span></div>
+    </div>
+    <button class="bigbtn" style="background:#7B1FA2">+ Fa Onipa Foforɔ — Add Credit Customer</button>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni on" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== INVOICE ===== -->
+<div class="screen" id="s-invoice">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="hdr" style="background:var(--br)"><div class="t">Bil — Invoice Generator</div><div class="st">Yɛ adekorɔ / Create new invoice</div></div>
+  <div class="cnt">
+    <div style="background:white;border-radius:12px;border:0.5px solid #eee;padding:13px;margin-bottom:7px">
+      <div style="text-align:center;margin-bottom:9px">
+        <div style="font-size:10px;color:#888;margin-bottom:2px">#INV-2026-0848</div>
+        <div style="font-size:24px;font-weight:500;color:var(--gr)">GH₵ 450.00</div>
+        <div style="display:inline-block;font-size:9px;padding:3px 9px;border-radius:10px;background:var(--bll);color:var(--bl);margin-top:4px">Due: Mar 28, 2026</div>
+      </div>
+      <div style="border-top:0.5px solid #eee;padding-top:9px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#888;padding:3px 0"><span>To:</span><span style="color:#111;font-weight:500">Mensah Enterprises</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#888;padding:3px 0"><span>Phone:</span><span>0244-789-012</span></div>
+      </div>
+      <div style="border-top:0.5px solid #eee;margin:8px 0 7px;padding-top:7px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#444;padding:3px 0"><span>Rice 5kg x 4</span><span>GH₵ 260.00</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#444;padding:3px 0"><span>Suga 2kg x 5</span><span>GH₵ 110.00</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--gr);padding:2px 0"><span>VAT (15%)</span><span>GH₵ 55.50</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:500;border-top:1px solid #eee;padding-top:6px;margin-top:5px"><span>Total</span><span style="color:var(--gr)">GH₵ 450.00</span></div>
+      </div>
+    </div>
+    <button class="bigbtn" style="background:var(--br)">🖨️ Print Invoice — Tprint Bil</button>
+    <button class="secbtn">📱 WhatsApp / SMS</button>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni on" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== PAYROLL ===== -->
+<div class="screen" id="s-payroll">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="hdr" style="background:var(--bl)"><div class="t">Pagrol — Payroll</div><div class="st">March 2026 · 4 staff</div></div>
+  <div class="cnt">
+    <div style="background:var(--bl);border-radius:13px;padding:13px;color:white;margin-bottom:9px">
+      <div style="font-size:10px;opacity:.8;margin-bottom:3px">Total Sika Adwumayɛfo — Total Payroll</div>
+      <div style="font-size:24px;font-weight:500">GH₵ 4,200</div>
+      <div style="font-size:9px;opacity:.75;margin-top:2px">Mar 31, 2026 · PAYE deducted auto</div>
+      <div style="display:flex;gap:6px;margin-top:9px">
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px;text-align:center"><div style="font-size:9px;opacity:.8">Net Pay</div><div style="font-size:13px;font-weight:500">GH₵ 3,710</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px;text-align:center"><div style="font-size:9px;opacity:.8">PAYE Tax</div><div style="font-size:13px;font-weight:500">GH₵ 490</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px;text-align:center"><div style="font-size:9px;opacity:.8">SSNIT</div><div style="font-size:13px;font-weight:500">GH₵ 0</div></div>
+      </div>
+    </div>
+    <div class="staff-row"><div class="staff-av">KA</div><div><div class="staff-nm">Kwame Acheampong</div><div class="staff-role">Shop Assistant</div></div><div style="margin-left:auto;text-align:right"><div class="staff-sal">GH₵ 1,200</div><div style="font-size:9px;background:#E8F5EE;color:var(--gr);padding:2px 6px;border-radius:8px;margin-top:2px">Paid ✓</div></div></div>
+    <div class="staff-row"><div class="staff-av">AB</div><div><div class="staff-nm">Adwoa Bonsu</div><div class="staff-role">Cashier</div></div><div style="margin-left:auto;text-align:right"><div class="staff-sal">GH₵ 950</div><div style="font-size:9px;background:#E8F5EE;color:var(--gr);padding:2px 6px;border-radius:8px;margin-top:2px">Paid ✓</div></div></div>
+    <div class="staff-row"><div class="staff-av" style="background:#FFF0E8;color:var(--br)">EO</div><div><div class="staff-nm">Ebo Osei</div><div class="staff-role">Delivery</div></div><div style="margin-left:auto;text-align:right"><div class="staff-sal">GH₵ 800</div><div style="font-size:9px;background:#FFF0E8;color:var(--br);padding:2px 6px;border-radius:8px;margin-top:2px">Pending</div></div></div>
+    <div class="staff-row"><div class="staff-av" style="background:#F3E5F5;color:var(--pu)">FD</div><div><div class="staff-nm">Faustina Darko</div><div class="staff-role">Stock Manager</div></div><div style="margin-left:auto;text-align:right"><div class="staff-sal">GH₵ 1,250</div><div style="font-size:9px;background:#E8F5EE;color:var(--gr);padding:2px 6px;border-radius:8px;margin-top:2px">Paid ✓</div></div></div>
+    <button class="bigbtn" style="background:var(--bl)">Tua Pagrol — Run Payroll</button>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni on" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== SUSU ===== -->
+<div class="screen" id="s-susu">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="hdr" style="background:var(--pu)"><div class="t">Susu — Savings Tracker</div><div class="st">Wo susu kuo / Your savings group</div></div>
+  <div class="cnt">
+    <div style="background:var(--pu);border-radius:13px;padding:13px;color:white;margin-bottom:9px">
+      <div style="font-size:10px;opacity:.8;margin-bottom:3px">Susu Pot — Total Collected</div>
+      <div style="font-size:26px;font-weight:500">GH₵ 3,600</div>
+      <div style="font-size:9px;opacity:.75">Kumasi Market Women Group · 12 members</div>
+      <div style="display:flex;gap:6px;margin-top:9px">
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px;text-align:center"><div style="font-size:9px;opacity:.8">Da a Rebɛba</div><div style="font-size:12px;font-weight:500">Apr 1</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px;text-align:center"><div style="font-size:9px;opacity:.8">Next Payout</div><div style="font-size:12px;font-weight:500">Akosua</div></div>
+        <div style="flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px;text-align:center"><div style="font-size:9px;opacity:.8">Monthly</div><div style="font-size:12px;font-weight:500">GH₵ 300</div></div>
+      </div>
+    </div>
+    <div class="divlbl">Contributions This Month</div>
+    <div class="card" style="padding:9px 11px">
+      <div class="row"><div class="av" style="background:var(--pul);font-size:12px">👩</div><div><div class="nm">Ama Mensah (You)</div><div class="sm">Paid Mar 5</div></div><div class="pill g-pill">GH₵ 300 ✓</div></div>
+      <div class="row"><div class="av" style="background:var(--pul);font-size:12px">👩</div><div><div class="nm">Akosua Boateng</div><div class="sm">Paid Mar 3</div></div><div class="pill g-pill">GH₵ 300 ✓</div></div>
+      <div class="row"><div class="av" style="background:#FFF0E8;font-size:12px">👩</div><div><div class="nm">Yaa Amponsah</div><div class="sm">Due Mar 15</div></div><div class="pill o-pill">GH₵ 300 ⏳</div></div>
+      <div class="row"><div class="av" style="background:#FEECEC;font-size:12px">👩</div><div><div class="nm">Efua Asante</div><div class="sm">Overdue!</div></div><div class="pill r-pill">GH₵ 300 ❌</div></div>
+    </div>
+    <button class="bigbtn" style="background:var(--pu)">+ Kora Sika — Record Contribution</button>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni on" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+<!-- ===== HELP ===== -->
+<div class="screen" id="s-help">
+  <div class="sb"><span>9:41</span><span>GRA MTS · 4G</span></div>
+  <div class="hdr" style="background:#00695C"><div class="t">Mmoa — Help & Tutorials</div><div class="st">Ka nsɛm / Speak for help anytime</div></div>
+  <div class="cnt">
+    <div style="background:#E0F2F1;border-radius:11px;padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:9px">
+      <div style="font-size:22px">🎙️</div>
+      <div><div style="font-size:11px;font-weight:500;color:#004D40">Ka "Mmoa" bɛn sɛ wo pɛ</div><div style="font-size:9px;color:#00695C">Say "Help" anytime for voice assistance</div></div>
+    </div>
+    <div class="divlbl">Video Tutorials — Nhwehwɛmu</div>
+    <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:5px;margin-bottom:9px">
+      <div style="flex-shrink:0;width:95px;background:white;border-radius:10px;overflow:hidden;border:0.5px solid #eee"><div style="height:54px;background:var(--brl);display:flex;align-items:center;justify-content:center;font-size:20px">🛒</div><div style="font-size:9px;padding:5px 6px;color:#444;line-height:1.4">Yɛ atɔn<br>How to sell</div></div>
+      <div style="flex-shrink:0;width:95px;background:white;border-radius:10px;overflow:hidden;border:0.5px solid #eee"><div style="height:54px;background:var(--grl);display:flex;align-items:center;justify-content:center;font-size:20px">📋</div><div style="font-size:9px;padding:5px 6px;color:#444;line-height:1.4">Rego<br>How to register</div></div>
+      <div style="flex-shrink:0;width:95px;background:white;border-radius:10px;overflow:hidden;border:0.5px solid #eee"><div style="height:54px;background:#FFF8E1;display:flex;align-items:center;justify-content:center;font-size:20px">🧾</div><div style="font-size:9px;padding:5px 6px;color:#444;line-height:1.4">Asɛde<br>Pay your tax</div></div>
+    </div>
+    <div class="divlbl">Quick Help — Mmoa Ntem</div>
+    <div class="help-cat"><div class="help-ico" style="background:var(--brl);font-size:18px">🛒</div><div><div class="help-t">How to make a sale</div><div class="help-s">Twi · English · Ewe · Hausa</div></div><div class="help-chev">›</div></div>
+    <div class="help-cat"><div class="help-ico" style="background:var(--grl);font-size:18px">📦</div><div><div class="help-t">Add items to inventory</div><div class="help-s">With photos + voice</div></div><div class="help-chev">›</div></div>
+    <div class="help-cat"><div class="help-ico" style="background:#FFF8E1;font-size:18px">📞</div><div><div class="help-t">Call GRA Support</div><div class="help-s">0800-900-111 · Free</div></div><div class="help-chev">›</div></div>
+  </div>
+  <button class="vfab" onclick="openVO()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="19" height="19"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+  <div class="bnav"><button class="ni" onclick="goTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Fie</span></button><button class="ni" onclick="goTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>Tɔn</span></button><button class="ni" onclick="goTo('stock')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Stok</span></button><button class="ni" onclick="goTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Asɛde</span></button><button class="ni on" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span>Biara</span></button></div>
+</div>
+
+</div><!-- end sarea -->
+<div class="bbar"><div class="bc"></div><div class="bsq"></div><div class="bc"></div></div>
+<div class="obar"></div>
+</div><!-- shell -->
+</div><!-- device -->
+
+<!-- SCREEN INDEX -->
+<div style="max-width:310px;flex:1">
+  <h3 style="font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:10px">All 12 Screens</h3>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin-bottom:12px;line-height:1.6">Tap any screen below to navigate the device. The "Biara / More" button on the nav bar opens the full module menu.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+    <button onclick="goTo('home')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">🏠</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Home</div><div style="font-size:9px;color:var(--color-text-secondary)">Fie — Dashboard</div></button>
+    <button onclick="goTo('pos')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">🛒</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">POS</div><div style="font-size:9px;color:var(--color-text-secondary)">Tɔn — Sell Items</div></button>
+    <button onclick="goTo('stock')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">📦</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Inventory</div><div style="font-size:9px;color:var(--color-text-secondary)">Stok — Stock</div></button>
+    <button onclick="goTo('tax')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">📑</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Tax</div><div style="font-size:9px;color:var(--color-text-secondary)">Asɛde — GRA MTS</div></button>
+    <button onclick="goTo('onboard')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">📋</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Register</div><div style="font-size:9px;color:var(--color-text-secondary)">Rego — Onboarding</div></button>
+    <button onclick="goTo('receipt')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">🧾</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">VAT Receipt</div><div style="font-size:9px;color:var(--color-text-secondary)">Risit — GRA verified</div></button>
+    <button onclick="goTo('credit')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">🤝</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Credit</div><div style="font-size:9px;color:var(--color-text-secondary)">Kadi — Debt tracking</div></button>
+    <button onclick="goTo('invoice')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">📄</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Invoice</div><div style="font-size:9px;color:var(--color-text-secondary)">Bil — Generator</div></button>
+    <button onclick="goTo('payroll')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">👥</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Payroll</div><div style="font-size:9px;color:var(--color-text-secondary)">Pagrol — Staff pay</div></button>
+    <button onclick="goTo('susu')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left"><div style="font-size:14px;margin-bottom:3px">🪙</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Susu</div><div style="font-size:9px;color:var(--color-text-secondary)">Savings group</div></button>
+    <button onclick="goTo('help')" style="background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#eee);border-radius:10px;padding:9px 10px;font-family:inherit;cursor:pointer;text-align:left;grid-column:1/-1"><div style="font-size:14px;margin-bottom:3px">❓</div><div style="font-size:11px;font-weight:500;color:var(--color-text-primary)">Help & Tutorials</div><div style="font-size:9px;color:var(--color-text-secondary)">Mmoa — Videos + voice + GRA call</div></button>
+  </div>
+  <div style="margin-top:12px;background:var(--bll,#E3F2FD);border-radius:10px;padding:10px 12px;border:0.5px solid #BBDEFB">
+    <div style="font-size:11px;font-weight:500;color:#0D47A1;margin-bottom:4px">Ready for Figma export?</div>
+    <div style="font-size:11px;color:#1565C0;line-height:1.7">All 12 screens are now ready. Say the word and I'll generate the complete Figma prompt with components, colour tokens, spacing rules, and accessibility annotations.</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var all=['home','pos','stock','tax','onboard','receipt','credit','invoice','payroll','susu','help'];
+function goTo(id){all.forEach(function(s){var el=document.getElementById('s-'+s);if(el)el.classList.toggle('on',s===id);});}
+function openMore(){document.getElementById('more-ov').classList.add('show');}
+function closeMore(e){document.getElementById('more-ov').classList.remove('show');}
+function openVO(){document.getElementById('vo').classList.add('show');}
+function closeVO(){document.getElementById('vo').classList.remove('show');}
+var langs={Twi:{greet:'Maakye, Ama! 👋',sub:'Wɔ da yi, wode GH₵ 1,240 ayɛ dwuma',alert:'VAT fa bɛn 3 nna mu'},English:{greet:'Good morning, Ama! 👋',sub:"Today's sales: GH₵ 1,240",alert:'VAT filing due in 3 days'},Ewe:{greet:'Ŋdi na Ama! 👋',sub:'Egbɔgbɔwo: GH₵ 1,240',alert:'VAT xa ɖe ɣleti 3 me'},Hausa:{greet:'Barka da safiya, Ama! 👋',sub:'Yau ka yi GH₵ 1,240',alert:'VAT yana kusa kwana 3'}};
+function setLang(l){var d=langs[l];if(!d)return;document.querySelectorAll('.lb').forEach(function(b){b.classList.toggle('s',b.textContent===l);});if(document.getElementById('h-greet'))document.getElementById('h-greet').textContent=d.greet;if(document.getElementById('h-sub'))document.getElementById('h-sub').textContent=d.sub;if(document.getElementById('h-alert'))document.getElementById('h-alert').textContent=d.alert;document.getElementById('vlang').textContent=l;}
+</script>
