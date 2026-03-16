@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRA BizTrack — Multi-Role Demo</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --brand:#E8500A;--brand-l:#FFF0E8;
+  --gr:#1A6B3A;--gr-l:#E8F5EE;--gr-d:#155a30;
+  --gd:#D4A017;--gd-l:#FFF8E1;
+  --bl:#1565C0;--bl-l:#E3F2FD;
+  --pu:#6A1B9A;--pu-l:#F3E5F5;
+  --er:#C62828;--er-l:#FEECEC;
+  --teal:#00695C;--teal-l:#E0F2F1;
+  --navy:#0D1B2A;--navy2:#1a2d42;--navy3:#243852;
+  --bg:#F0F2F5;--white:#fff;
+  --t1:#1A1A1A;--t2:#555;--t3:#999;
+  --bdr:#E0E0E0;
+  --sidebar:240px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;}
+
+/* ═══════════ PAGES ═══════════ */
+.page{display:none;min-height:100vh;}
+.page.active{display:flex;flex-direction:column;}
+
+/* ═══════════ LOGIN ═══════════ */
+#page-login{background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 50%,var(--gr-d) 100%);align-items:center;justify-content:center;flex-direction:column;padding:24px;}
+.login-header{text-align:center;margin-bottom:40px;}
+.login-logo{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:16px;}
+.login-logo-box{width:52px;height:52px;border-radius:14px;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:24px;}
+.login-title{font-size:32px;font-weight:800;color:#fff;}
+.login-sub{font-size:15px;color:rgba(255,255,255,.6);margin-top:4px;}
+.login-gra{font-size:12px;color:rgba(255,255,255,.4);margin-top:8px;letter-spacing:.5px;}
+.role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:720px;width:100%;}
+.role-card{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:20px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:left;position:relative;overflow:hidden;}
+.role-card:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);transform:translateY(-2px);}
+.role-card:active{transform:translateY(0);}
+.role-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:20px 20px 0 0;}
+.role-card[data-role="national"]::before{background:var(--gd);}
+.role-card[data-role="district"]::before{background:var(--brand);}
+.role-card[data-role="nsp"]::before{background:var(--bl);}
+.role-card[data-role="msme"]::before{background:var(--gr);}
+.role-ico{font-size:32px;margin-bottom:12px;}
+.role-name{font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;}
+.role-title{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:10px;}
+.role-desc{font-size:12px;color:rgba(255,255,255,.7);line-height:1.6;}
+.role-arrow{position:absolute;bottom:20px;right:20px;font-size:20px;color:rgba(255,255,255,.3);}
+.role-card:hover .role-arrow{color:rgba(255,255,255,.7);}
+@media(max-width:600px){.role-grid{grid-template-columns:1fr;}.login-title{font-size:24px;}}
+
+/* ═══════════ DASHBOARD SHELL ═══════════ */
+.dash-shell{display:flex;min-height:100vh;width:100%;}
+
+/* ── Sidebar ── */
+.sidebar{width:var(--sidebar);background:var(--navy);flex-shrink:0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto;}
+.sb-logo{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px;}
+.sb-logo-ico{width:36px;height:36px;border-radius:10px;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sb-logo-t{font-size:14px;font-weight:700;color:#fff;}
+.sb-logo-s{font-size:10px;color:rgba(255,255,255,.4);}
+.sb-role{padding:12px 16px;margin:8px;border-radius:10px;background:rgba(255,255,255,.06);}
+.sb-role-lbl{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:3px;}
+.sb-role-name{font-size:12px;font-weight:600;color:#fff;}
+.sb-role-sub{font-size:10px;color:rgba(255,255,255,.5);}
+.sb-nav{padding:8px 0;flex:1;}
+.sb-section{font-size:9px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.8px;padding:12px 16px 4px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:background .15s;border:none;background:transparent;width:100%;font-family:inherit;color:rgba(255,255,255,.65);font-size:13px;}
+.sb-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+.sb-item.active{background:rgba(255,255,255,.1);color:#fff;border-left:3px solid var(--brand);}
+.sb-item svg{width:17px;height:17px;flex-shrink:0;opacity:.7;}
+.sb-item.active svg{opacity:1;}
+.sb-bottom{padding:12px;border-top:1px solid rgba(255,255,255,.08);}
+.sb-user{display:flex;align-items:center;gap:9px;}
+.sb-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;color:#fff;}
+.sb-user-role{font-size:10px;color:rgba(255,255,255,.4);}
+.sb-logout{margin-top:8px;width:100%;padding:8px;border-radius:8px;background:rgba(255,255,255,.06);border:none;color:rgba(255,255,255,.5);font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s;}
+.sb-logout:hover{background:rgba(255,0,0,.15);color:#ff8080;}
+
+/* ── Main ── */
+.dash-main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.dash-topbar{background:#fff;border-bottom:1px solid var(--bdr);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-title{font-size:17px;font-weight:700;color:var(--t1);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;}
+.topbar-notif{width:36px;height:36px;border-radius:50%;background:var(--bg);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative;}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--er);border:2px solid #fff;}
+.dash-body{padding:24px;flex:1;}
+
+/* ── Sub pages ── */
+.subpage{display:none;}
+.subpage.active{display:block;}
+
+/* ═══════════ COMPONENTS ═══════════ */
+/* KPI Cards */
+.kpi-row{display:grid;gap:16px;margin-bottom:24px;}
+.kpi-row-4{grid-template-columns:repeat(4,1fr);}
+.kpi-row-3{grid-template-columns:repeat(3,1fr);}
+.kpi-row-2{grid-template-columns:repeat(2,1fr);}
+.kpi-card{background:#fff;border-radius:14px;border:1px solid var(--bdr);padding:20px;position:relative;overflow:hidden;}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.kpi-card.green::before{background:var(--gr);}
+.kpi-card.orange::before{background:var(--brand);}
+.kpi-card.blue::before{background:var(--bl);}
+.kpi-card.gold::before{background:var(--gd);}
+.kpi-card.red::before{background:var(--er);}
+.kpi-card.purple::before{background:var(--pu);}
+.kpi-label{font-size:11px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.kpi-value{font-size:28px;font-weight:800;color:var(--t1);line-height:1;}
+.kpi-value.sm{font-size:22px;}
+.kpi-sub{font-size:12px;color:var(--t3);margin-top:6px;display:flex;align-items:center;gap:5px;}
+.kpi-sub .up{color:var(--gr);font-weight:600;}
+.kpi-sub .down{color:var(--er);font-weight:600;}
+.kpi-ico{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+
+/* Section header */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-title{font-size:15px;font-weight:700;color:var(--t1);}
+.sec-action{font-size:12px;color:var(--bl);cursor:pointer;font-weight:500;}
+
+/* Grid layouts */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;}
+.grid-7-5{display:grid;grid-template-columns:7fr 5fr;gap:20px;margin-bottom:20px;}
+.grid-6-4{display:grid;grid-template-columns:6fr 4fr;gap:20px;margin-bottom:20px;}
+
+/* Cards */
+.card{background:#fff;border-radius:14px;border:1px solid var(--bdr);padding:20px;}
+.card-sm{padding:16px;}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{font-size:11px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;text-align:left;border-bottom:1px solid var(--bdr);background:#fafafa;}
+.data-table td{padding:12px;font-size:13px;color:var(--t1);border-bottom:1px solid #f5f5f5;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:#fafbfc;}
+.data-table tr{cursor:pointer;}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;gap:4px;}
+.badge-g{background:var(--gr-l);color:var(--gr);}
+.badge-o{background:var(--brand-l);color:var(--brand);}
+.badge-r{background:var(--er-l);color:var(--er);}
+.badge-b{background:var(--bl-l);color:var(--bl);}
+.badge-gd{background:var(--gd-l);color:#7B5000;}
+.badge-p{background:var(--pu-l);color:var(--pu);}
+.badge-gray{background:#f0f0f0;color:#666;}
+
+/* Progress bar */
+.prog-wrap{display:flex;align-items:center;gap:10px;}
+.prog-bg{flex:1;height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;transition:width .6s ease;}
+.prog-pct{font-size:12px;font-weight:700;min-width:36px;text-align:right;}
+
+/* Buttons */
+.btn{padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--gr);color:#fff;}
+.btn-primary:hover{background:var(--gr-d);}
+.btn-secondary{background:#fff;color:var(--t1);border:1px solid var(--bdr);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-danger{background:var(--er);color:#fff;}
+.btn-sm{padding:6px 12px;font-size:11px;border-radius:7px;}
+
+/* Risk flag */
+.risk-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid #f5f5f5;}
+.risk-row:last-child{border-bottom:none;}
+.risk-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.risk-title{font-size:13px;font-weight:600;margin-bottom:2px;}
+.risk-sub{font-size:11px;color:var(--t3);}
+.risk-badge{margin-left:auto;flex-shrink:0;}
+
+/* Chart container */
+.chart-wrap{position:relative;height:220px;}
+.chart-wrap.sm{height:160px;}
+.chart-wrap.lg{height:280px;}
+
+/* ── Sector bars ── */
+.sector-row{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.sector-label{font-size:12px;color:var(--t2);width:100px;flex-shrink:0;}
+.sector-bar-bg{flex:1;height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;}
+.sector-bar{height:100%;border-radius:4px;}
+.sector-val{font-size:12px;font-weight:700;min-width:48px;text-align:right;color:var(--t1);}
+
+/* ── Map Ghana ── */
+.ghana-map{width:100%;position:relative;}
+.ghana-map svg{width:100%;height:auto;}
+.region-tooltip{display:none;position:absolute;background:#1a1a1a;color:#fff;font-size:11px;padding:6px 10px;border-radius:7px;pointer-events:none;z-index:10;white-space:nowrap;}
+
+/* ── Filing table ── */
+.filing-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f5f5f5;}
+.filing-row:last-child{border-bottom:none;}
+.filing-days{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.filing-name{font-size:13px;font-weight:600;flex:1;}
+.filing-sub{font-size:11px;color:var(--t3);}
+
+/* ── MSME list ── */
+.msme-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f5f5f5;cursor:pointer;}
+.msme-row:last-child{border-bottom:none;}
+.msme-row:hover{background:#fafbfc;margin:0 -8px;padding:11px 8px;}
+.msme-av{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.msme-name{font-size:13px;font-weight:600;color:var(--t1);}
+.msme-meta{font-size:11px;color:var(--t3);}
+.msme-right{margin-left:auto;text-align:right;}
+.msme-amt{font-size:13px;font-weight:700;color:var(--t1);}
+.msme-date{font-size:10px;color:var(--t3);}
+
+/* ── Visit tracker ── */
+.visit-card{background:#fff;border-radius:12px;border:1px solid var(--bdr);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.visit-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.visit-nm{font-size:13px;font-weight:600;color:var(--t1);}
+.visit-meta{font-size:11px;color:var(--t3);}
+.visit-right{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+
+/* ── MSME POS shell ── */
+.msme-shell{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start;}
+.device-wrap{position:sticky;top:84px;}
+.device{width:300px;margin:0 auto;}
+.shell-d{background:#1C1C1C;border-radius:26px;border:2.5px solid #2a2a2a;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.d-printer{background:#111;height:24px;display:flex;align-items:center;justify-content:center;border-bottom:2px solid var(--brand);}
+.d-slot{width:110px;height:5px;background:#050505;border-radius:3px;}
+.d-cam{background:#161616;height:18px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.d-dot{width:6px;height:6px;border-radius:50%;background:#222;border:1px solid #333;}
+.d-mic{width:16px;height:3px;background:#222;border-radius:2px;}
+.d-screen{height:520px;overflow:hidden;background:var(--bg);position:relative;}
+.d-bottom{background:#1C1C1C;height:26px;display:flex;align-items:center;justify-content:center;gap:18px;}
+.d-bc{width:9px;height:9px;border-radius:50%;background:#252525;border:1px solid #333;}
+.d-bsq{width:8px;height:8px;background:#252525;border:1px solid #333;border-radius:2px;}
+.d-stripe{height:4px;background:var(--brand);}
+
+/* ── POS screens (inner) ── */
+.pos-screen{display:none;flex-direction:column;height:100%;background:#F2F4F6;position:absolute;inset:0;}
+.pos-screen.on{display:flex;}
+.psbar{background:var(--gr);color:#fff;font-size:10px;padding:4px 10px;display:flex;justify-content:space-between;flex-shrink:0;}
+.plbar{background:var(--gr-d);display:flex;gap:4px;padding:4px 8px;flex-shrink:0;}
+.plb{font-size:9px;padding:3px 8px;border-radius:20px;border:none;cursor:pointer;font-family:inherit;background:rgba(255,255,255,.15);color:#fff;}
+.plb.on{background:var(--gd);color:#1a1000;font-weight:600;}
+.phdr{padding:9px 11px;color:#fff;flex-shrink:0;}
+.phdr-t{font-size:13px;font-weight:700;}
+.phdr-s{font-size:9px;opacity:.8;}
+.pcnt{flex:1;overflow-y:auto;padding:9px;scrollbar-width:none;}
+.pcnt::-webkit-scrollbar{display:none;}
+.pbnav{background:#fff;border-top:.5px solid #ddd;display:flex;height:58px;flex-shrink:0;}
+.pni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:none;background:transparent;cursor:pointer;font-family:inherit;}
+.pni svg{width:22px;height:22px;stroke:#bbb;}
+.pni .pnl{font-size:8px;color:#bbb;}
+.pni.on svg{stroke:var(--brand);}
+.pni.on .pnl{color:var(--brand);}
+.pvfab{position:absolute;bottom:66px;right:9px;z-index:15;width:40px;height:40px;border-radius:50%;background:var(--bl);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(21,101,192,.5);}
+.pvfab svg{width:18px;height:18px;}
+/* POS mini components */
+.phero{border-radius:14px;padding:13px;color:#fff;margin-bottom:8px;}
+.phero-amt{font-size:24px;font-weight:800;}
+.phero-lbl{font-size:9px;opacity:.8;margin-bottom:3px;}
+.ppills{display:flex;gap:5px;margin-top:8px;}
+.ppill{flex:1;background:rgba(255,255,255,.15);border-radius:9px;padding:7px 4px;text-align:center;}
+.ppill-l{font-size:8px;opacity:.8;}
+.ppill-v{font-size:12px;font-weight:700;}
+.pkpi-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.pkpi{background:#fff;border-radius:10px;border:.5px solid #e5e5e5;padding:9px;}
+.pkpi-l{font-size:8px;color:#888;margin-bottom:2px;}
+.pkpi-v{font-size:16px;font-weight:700;}
+.pkpi-s{font-size:8px;color:#aaa;}
+.ptile-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;}
+.ptile{background:#fff;border-radius:11px;border:2px solid #e5e5e5;padding:11px 7px;text-align:center;cursor:pointer;transition:all .15s;position:relative;}
+.ptile:active,.ptile.sel{border-color:var(--brand);background:var(--brand-l);}
+.ptile .pe{font-size:24px;margin-bottom:4px;}
+.ptile .pn{font-size:9px;color:#444;font-weight:600;margin-bottom:2px;}
+.ptile .pp{font-size:12px;font-weight:700;color:var(--brand);}
+.ptile .pcb{position:absolute;top:5px;right:5px;width:16px;height:16px;border-radius:50%;background:var(--brand);color:#fff;font-size:8px;font-weight:700;display:none;align-items:center;justify-content:center;}
+.ptile.sel .pcb{display:flex;}
+.pcart-bar{background:#fff;border-top:.5px solid #eee;padding:8px 9px;flex-shrink:0;}
+.pcart-total{font-size:18px;font-weight:800;color:var(--t1);}
+.pcharge-btn{width:100%;padding:12px;border-radius:11px;background:var(--gr);color:#fff;font-size:12px;font-weight:700;border:none;cursor:pointer;font-family:inherit;margin-top:7px;}
+.ptx-row{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:.5px solid #f0f0f0;}
+.ptx-row:last-child{border:none;}
+.ptx-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.ptx-nm{font-size:10px;font-weight:600;color:var(--t1);}
+.ptx-dt{font-size:8px;color:#aaa;}
+.ptx-amt{font-size:11px;font-weight:700;margin-left:auto;color:var(--gr);}
+.palert{background:#FFF8E1;border:1px solid #FFD54F;border-radius:9px;padding:8px 10px;display:flex;align-items:center;gap:7px;margin-bottom:8px;}
+.pact-row{background:#fff;border-radius:10px;border:.5px solid #e5e5e5;padding:10px 11px;margin-bottom:6px;display:flex;align-items:center;gap:8px;cursor:pointer;}
+.pact-ico{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pact-ico svg{width:16px;height:16px;}
+.pact-t{font-size:11px;font-weight:600;}
+.pact-s{font-size:9px;color:#aaa;}
+.pcard{background:#fff;border-radius:11px;border:.5px solid #e5e5e5;padding:10px 11px;margin-bottom:7px;}
+.pcard-t{font-size:10px;font-weight:600;color:var(--t2);margin-bottom:6px;}
+
+/* ── Analytics ── */
+.stat-chip{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;background:var(--bg);margin-bottom:8px;}
+.stat-chip-ico{font-size:18px;}
+.stat-chip-t{font-size:12px;font-weight:600;}
+.stat-chip-v{font-size:13px;font-weight:800;margin-left:auto;}
+
+/* ── Misc ── */
+.divider{border:none;border-top:1px solid var(--bdr);margin:16px 0;}
+.empty{text-align:center;padding:32px;color:var(--t3);font-size:13px;}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:5px;background:#f0f0f0;color:#555;font-weight:500;}
+
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .dash-main{margin-left:0;}
+  .kpi-row-4{grid-template-columns:repeat(2,1fr);}
+  .grid-7-5,.grid-6-4,.grid-2{grid-template-columns:1fr;}
+  .msme-shell{grid-template-columns:1fr;}
+  .device-wrap{position:static;}
+}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;font-size:13px;padding:11px 18px;border-radius:10px;z-index:9999;opacity:0;transition:opacity .25s;pointer-events:none;}
+.toast.show{opacity:1;}
+
+/* ── Modal overlay ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;}
+.modal-bg.show{display:flex;}
+.modal{background:#fff;border-radius:18px;padding:28px;max-width:440px;width:90%;}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--t3);margin-bottom:20px;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════════════ -->
+<div id="page-login" class="page active">
+  <div class="login-header">
+    <div class="login-logo">
+      <div class="login-logo-box">🇬🇭</div>
+      <div>
+        <div class="login-title">GRA BizTrack</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5)">Tax & Business Management System</div>
+      </div>
+    </div>
+    <div class="login-sub">Ghana Revenue Authority · Modified Tax System for MSMEs</div>
+    <div class="login-gra">SELECT YOUR ROLE TO CONTINUE</div>
+  </div>
+  <div class="role-grid">
+    <div class="role-card" data-role="national" onclick="login('national')">
+      <div class="role-ico">🏛️</div>
+      <div class="role-name">GRA National Office</div>
+      <div class="role-title">Commissioner / Senior Officer</div>
+      <div class="role-desc">Full national analytics, revenue dashboards, compliance monitoring across all 16 regions, audit management and policy reporting.</div>
+      <div class="role-arrow">→</div>
+    </div>
+    <div class="role-card" data-role="district" onclick="login('district')">
+      <div class="role-ico">🗺️</div>
+      <div class="role-name">GRA District Officer</div>
+      <div class="role-title">District Revenue Officer</div>
+      <div class="role-desc">Regional MSME oversight, local compliance rates, assigned business list, filing status and enforcement actions.</div>
+      <div class="role-arrow">→</div>
+    </div>
+    <div class="role-card" data-role="nsp" onclick="login('nsp')">
+      <div class="role-ico">👨‍💼</div>
+      <div class="role-name">NSP Advisor</div>
+      <div class="role-title">National Service Personnel</div>
+      <div class="role-desc">Manage your 15 assigned MSME clients, track business visits, record onboarding progress and submit weekly reports to GRA.</div>
+      <div class="role-arrow">→</div>
+    </div>
+    <div class="role-card" data-role="msme" onclick="login('msme')">
+      <div class="role-ico">🏪</div>
+      <div class="role-name">MSME Business Owner</div>
+      <div class="role-title">Ama's General Store · Kumasi</div>
+      <div class="role-desc">Record sales, manage inventory, track taxes, generate GRA-compliant VAT receipts and access business reports.</div>
+      <div class="role-arrow">→</div>
+    </div>
+  </div>
+  <div style="margin-top:28px;font-size:11px;color:rgba(255,255,255,.3);text-align:center">Demo version · All data is simulated · GRA MTS Programme March 2026</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     GRA NATIONAL DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="page-national" class="page">
+  <div class="dash-shell">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sb-logo">
+        <div class="sb-logo-ico">🇬🇭</div>
+        <div><div class="sb-logo-t">GRA BizTrack</div><div class="sb-logo-s">National Office</div></div>
+      </div>
+      <div class="sb-role">
+        <div class="sb-role-lbl">Signed in as</div>
+        <div class="sb-role-name">Commissioner Agyeman</div>
+        <div class="sb-role-sub">GRA National Revenue Office</div>
+      </div>
+      <div class="sb-nav">
+        <div class="sb-section">Analytics</div>
+        <button class="sb-item active" onclick="showSubpage('national','overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          National Overview
+        </button>
+        <button class="sb-item" onclick="showSubpage('national','compliance')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Compliance Map
+        </button>
+        <button class="sb-item" onclick="showSubpage('national','sectors')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Sector Analytics
+        </button>
+        <div class="sb-section">Operations</div>
+        <button class="sb-item" onclick="showSubpage('national','audit')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Audit & Risk
+        </button>
+        <button class="sb-item" onclick="showSubpage('national','deadlines')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Filing Deadlines
+        </button>
+        <button class="sb-item" onclick="showSubpage('national','msmes')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          All MSMEs
+        </button>
+      </div>
+      <div class="sb-bottom">
+        <div class="sb-user">
+          <div class="sb-avatar" style="background:#D4A017;color:#1a1000">CA</div>
+          <div><div class="sb-user-name">Comm. Agyeman</div><div class="sb-user-role">National Office · GRA</div></div>
+        </div>
+        <button class="sb-logout" onclick="logout()">← Switch Role / Logout</button>
+      </div>
+    </div>
+    <!-- Main -->
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="topbar-title" id="nat-page-title">National Revenue Overview</div>
+        <div class="topbar-right">
+          <span class="topbar-badge badge-g badge">● LIVE</span>
+          <span style="font-size:12px;color:var(--t3)">March 16, 2026 · 09:41 AM</span>
+          <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+        </div>
+      </div>
+      <div class="dash-body">
+
+        <!-- ── OVERVIEW ── -->
+        <div class="subpage active" id="nat-overview">
+          <div class="kpi-row kpi-row-4">
+            <div class="kpi-card green">
+              <div class="kpi-label">Total Revenue Collected</div>
+              <div class="kpi-value">GH₵ 2.84B</div>
+              <div class="kpi-sub"><span class="up">↑ 18.3%</span> vs same period 2025</div>
+              <div class="kpi-ico" style="background:var(--gr-l)">💰</div>
+            </div>
+            <div class="kpi-card orange">
+              <div class="kpi-label">MSMEs Registered</div>
+              <div class="kpi-value">47,291</div>
+              <div class="kpi-sub"><span class="up">↑ 12,840</span> new this quarter</div>
+              <div class="kpi-ico" style="background:var(--brand-l)">🏪</div>
+            </div>
+            <div class="kpi-card blue">
+              <div class="kpi-label">VAT Compliance Rate</div>
+              <div class="kpi-value">68.4%</div>
+              <div class="kpi-sub"><span class="up">↑ 14.2pp</span> from pilot baseline</div>
+              <div class="kpi-ico" style="background:var(--bl-l)">📊</div>
+            </div>
+            <div class="kpi-card gold">
+              <div class="kpi-label">Estimated Tax Gap</div>
+              <div class="kpi-value">GH₵ 1.31B</div>
+              <div class="kpi-sub"><span class="down">↓ 22%</span> reduction from 2025</div>
+              <div class="kpi-ico" style="background:var(--gd-l)">📉</div>
+            </div>
+          </div>
+
+          <div class="grid-7-5">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Monthly Revenue Collection (GH₵ M)</div><span class="badge badge-g">2026 YTD</span></div>
+              <div class="chart-wrap lg"><canvas id="revenueChart"></canvas></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Compliance by Region</div><span class="sec-action" onclick="showSubpage('national','compliance')">View map →</span></div>
+              <div id="region-list"></div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Tax Revenue by Type</div></div>
+              <div class="chart-wrap"><canvas id="taxTypeChart"></canvas></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Programme Impact vs Targets</div></div>
+              <div style="margin-top:8px">
+                <div style="margin-bottom:16px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>MSME Registrations</span><span style="font-weight:700">47,291 / 60,000</span></div>
+                  <div class="prog-bg"><div class="prog-fill" style="width:78.8%;background:var(--gr)"></div></div>
+                </div>
+                <div style="margin-bottom:16px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>Compliance Rate Target</span><span style="font-weight:700">68.4% / 75%</span></div>
+                  <div class="prog-bg"><div class="prog-fill" style="width:91.2%;background:var(--bl)"></div></div>
+                </div>
+                <div style="margin-bottom:16px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>Revenue Collection</span><span style="font-weight:700">GH₵ 2.84B / 3.2B</span></div>
+                  <div class="prog-bg"><div class="prog-fill" style="width:88.8%;background:var(--brand)"></div></div>
+                </div>
+                <div style="margin-bottom:16px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>NSP Advisors Deployed</span><span style="font-weight:700">2,847 / 3,000</span></div>
+                  <div class="prog-bg"><div class="prog-fill" style="width:94.9%;background:var(--pu)"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span>GDP/Tax Ratio Progress</span><span style="font-weight:700">17.8% / 31.4% (2032)</span></div>
+                  <div class="prog-bg"><div class="prog-fill" style="width:56.7%;background:var(--gd)"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── COMPLIANCE MAP ── -->
+        <div class="subpage" id="nat-compliance">
+          <div class="kpi-row kpi-row-3">
+            <div class="kpi-card green"><div class="kpi-label">Compliant MSMEs</div><div class="kpi-value">32,327</div><div class="kpi-sub"><span class="up">68.4%</span> of all registered</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Non-Compliant</div><div class="kpi-value">14,964</div><div class="kpi-sub"><span class="down">31.6%</span> require follow-up</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">Average Filing Rate</div><div class="kpi-value sm">On Time: 61% · Late: 24%</div><div class="kpi-sub">Never filed: 15%</div></div>
+          </div>
+          <div class="grid-6-4">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Ghana — Compliance Rate by Region</div><div style="display:flex;gap:8px;font-size:11px"><span style="color:var(--gr)">■ High (>70%)</span><span style="color:var(--gd)">■ Mid (50–70%)</span><span style="color:var(--er)">■ Low (<50%)</span></div></div>
+              <div class="ghana-map">
+                <div class="region-tooltip" id="map-tooltip"></div>
+                <svg viewBox="0 0 340 400" id="ghana-svg" style="cursor:pointer"></svg>
+              </div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">All 16 Regions</div></div>
+              <div id="all-regions-list" style="max-height:420px;overflow-y:auto"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SECTORS ── -->
+        <div class="subpage" id="nat-sectors">
+          <div class="kpi-row kpi-row-4">
+            <div class="kpi-card green"><div class="kpi-label">Top Sector Revenue</div><div class="kpi-value sm">Trading</div><div class="kpi-sub">GH₵ 847M · 29.8% share</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Fastest Growing</div><div class="kpi-value sm">Food &amp; Beverage</div><div class="kpi-sub"><span class="up">↑ 34%</span> YoY growth</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">Lowest Compliance</div><div class="kpi-value sm">Transport</div><div class="kpi-sub">42.1% filing rate</div></div>
+            <div class="kpi-card gold"><div class="kpi-label">Most MSMEs</div><div class="kpi-value sm">Retail Trade</div><div class="kpi-sub">18,420 businesses</div></div>
+          </div>
+          <div class="grid-6-4">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Revenue by Sector (GH₵ M)</div></div>
+              <div class="chart-wrap lg"><canvas id="sectorChart"></canvas></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Sector Compliance Rates</div></div>
+              <div id="sector-compliance-list" style="margin-top:8px"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">Sector Breakdown — All Industries</div></div>
+            <table class="data-table">
+              <thead><tr><th>Sector</th><th>MSMEs</th><th>Revenue (GH₵M)</th><th>Compliance</th><th>Avg Tax/Business</th><th>Trend</th></tr></thead>
+              <tbody id="sector-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ── AUDIT ── -->
+        <div class="subpage" id="nat-audit">
+          <div class="kpi-row kpi-row-4">
+            <div class="kpi-card red"><div class="kpi-label">High Risk Flagged</div><div class="kpi-value">847</div><div class="kpi-sub">Require immediate audit</div></div>
+            <div class="kpi-card gold"><div class="kpi-label">Under Review</div><div class="kpi-value">2,341</div><div class="kpi-sub">Investigation ongoing</div></div>
+            <div class="kpi-card green"><div class="kpi-label">Audits Completed</div><div class="kpi-value">1,204</div><div class="kpi-sub"><span class="up">GH₵ 18.4M</span> recovered</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">False Declarations</div><div class="kpi-value">312</div><div class="kpi-sub">Detected by MTS AI</div></div>
+          </div>
+          <div class="grid-6-4">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Active Risk Flags</div><button class="btn btn-sm btn-secondary">Export Report</button></div>
+              <div id="risk-flags-list"></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Risk Score Distribution</div></div>
+              <div class="chart-wrap"><canvas id="riskChart"></canvas></div>
+              <div style="margin-top:16px">
+                <div class="stat-chip"><span class="stat-chip-ico">🔴</span><div><div class="stat-chip-t">Critical (Score 80–100)</div><div style="font-size:11px;color:var(--t3)">Immediate audit required</div></div><div class="stat-chip-v" style="color:var(--er)">847</div></div>
+                <div class="stat-chip"><span class="stat-chip-ico">🟠</span><div><div class="stat-chip-t">High (Score 60–79)</div><div style="font-size:11px;color:var(--t3)">Priority review</div></div><div class="stat-chip-v" style="color:var(--brand)">2,341</div></div>
+                <div class="stat-chip"><span class="stat-chip-ico">🟡</span><div><div class="stat-chip-t">Medium (Score 40–59)</div><div style="font-size:11px;color:var(--t3)">Monitor closely</div></div><div class="stat-chip-v" style="color:var(--gd)">8,920</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── DEADLINES ── -->
+        <div class="subpage" id="nat-deadlines">
+          <div class="kpi-row kpi-row-3">
+            <div class="kpi-card red"><div class="kpi-label">Due This Week</div><div class="kpi-value">3</div><div class="kpi-sub">Filing deadlines</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">MSMEs Not Yet Filed</div><div class="kpi-value">14,964</div><div class="kpi-sub">For March period</div></div>
+            <div class="kpi-card green"><div class="kpi-label">Auto-Reminders Sent</div><div class="kpi-value">38,420</div><div class="kpi-sub">via SMS + app notification</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Upcoming Filing Deadlines</div></div>
+              <div id="filing-list"></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Filing Completion Rate — March 2026</div></div>
+              <div class="chart-wrap"><canvas id="filingChart"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ALL MSMEs ── -->
+        <div class="subpage" id="nat-msmes">
+          <div class="kpi-row kpi-row-4">
+            <div class="kpi-card green"><div class="kpi-label">Total Registered</div><div class="kpi-value">47,291</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Active (filed this period)</div><div class="kpi-value">32,327</div></div>
+            <div class="kpi-card red"><div class="kpi-label">Inactive / Non-filing</div><div class="kpi-value">14,964</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">New This Month</div><div class="kpi-value">1,840</div></div>
+          </div>
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">MSME Directory — National</div><button class="btn btn-sm btn-secondary">Export CSV</button></div>
+            <table class="data-table">
+              <thead><tr><th>Business</th><th>Region</th><th>Sector</th><th>TIN</th><th>Last Filed</th><th>Tax Paid (YTD)</th><th>Status</th></tr></thead>
+              <tbody id="nat-msme-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     GRA DISTRICT OFFICER
+══════════════════════════════════════════════ -->
+<div id="page-district" class="page">
+  <div class="dash-shell">
+    <div class="sidebar">
+      <div class="sb-logo"><div class="sb-logo-ico">🗺️</div><div><div class="sb-logo-t">GRA BizTrack</div><div class="sb-logo-s">Ashanti Region Office</div></div></div>
+      <div class="sb-role"><div class="sb-role-lbl">District Officer</div><div class="sb-role-name">Kwabena Ofori</div><div class="sb-role-sub">Kumasi Central District</div></div>
+      <div class="sb-nav">
+        <div class="sb-section">My District</div>
+        <button class="sb-item active" onclick="showSubpage('district','overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>District Overview</button>
+        <button class="sb-item" onclick="showSubpage('district','businesses')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>MSME List</button>
+        <button class="sb-item" onclick="showSubpage('district','nsp')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>NSP Advisors</button>
+        <button class="sb-item" onclick="showSubpage('district','enforcement')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Enforcement</button>
+      </div>
+      <div class="sb-bottom">
+        <div class="sb-user"><div class="sb-avatar" style="background:var(--brand);color:#fff">KO</div><div><div class="sb-user-name">Kwabena Ofori</div><div class="sb-user-role">Kumasi Central · GRA</div></div></div>
+        <button class="sb-logout" onclick="logout()">← Switch Role / Logout</button>
+      </div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="topbar-title" id="dist-page-title">Kumasi Central District — Overview</div>
+        <div class="topbar-right">
+          <span class="badge badge-o">Ashanti Region</span>
+          <span style="font-size:12px;color:var(--t3)">March 16, 2026</span>
+          <div class="topbar-notif">🔔<div class="notif-dot"></div></div>
+        </div>
+      </div>
+      <div class="dash-body">
+        <!-- District Overview -->
+        <div class="subpage active" id="dist-overview">
+          <div class="kpi-row kpi-row-4">
+            <div class="kpi-card green"><div class="kpi-label">District Revenue</div><div class="kpi-value">GH₵ 84.2M</div><div class="kpi-sub"><span class="up">↑ 22%</span> vs Q1 2025</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">MSMEs in District</div><div class="kpi-value">3,847</div><div class="kpi-sub">1,204 new this year</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">Compliance Rate</div><div class="kpi-value">71.3%</div><div class="kpi-sub"><span class="up">↑ Best in Ashanti</span></div></div>
+            <div class="kpi-card red"><div class="kpi-label">Overdue Filers</div><div class="kpi-value">1,108</div><div class="kpi-sub">Reminder SMS sent</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">District Revenue Trend</div></div>
+              <div class="chart-wrap"><canvas id="distRevenueChart"></canvas></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">MSME Status Breakdown</div></div>
+              <div class="chart-wrap"><canvas id="distStatusChart"></canvas></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">Recently Active MSMEs</div><button class="btn btn-sm btn-primary" onclick="showSubpage('district','businesses')">View All →</button></div>
+            <table class="data-table">
+              <thead><tr><th>Business</th><th>Sector</th><th>Last Sale</th><th>Tax Paid (Mar)</th><th>Status</th><th>NSP Advisor</th></tr></thead>
+              <tbody id="dist-recent-table"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- MSME List -->
+        <div class="subpage" id="dist-businesses">
+          <div class="card" style="margin-bottom:16px">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <input type="text" placeholder="🔍  Search businesses..." style="padding:9px 14px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit;flex:1;min-width:200px;">
+              <select style="padding:9px 14px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit"><option>All Sectors</option><option>Retail</option><option>Food</option><option>Services</option></select>
+              <select style="padding:9px 14px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit"><option>All Status</option><option>Compliant</option><option>Overdue</option><option>New</option></select>
+              <button class="btn btn-secondary btn-sm">Export</button>
+            </div>
+          </div>
+          <div class="card">
+            <table class="data-table">
+              <thead><tr><th>Business</th><th>Sector</th><th>TIN</th><th>Mar Revenue</th><th>Tax Paid</th><th>Filed</th><th>Status</th><th>Action</th></tr></thead>
+              <tbody id="dist-all-msme-table"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- NSP Advisors -->
+        <div class="subpage" id="dist-nsp">
+          <div class="kpi-row kpi-row-3">
+            <div class="kpi-card blue"><div class="kpi-label">NSP Advisors Assigned</div><div class="kpi-value">24</div><div class="kpi-sub">3 positions vacant</div></div>
+            <div class="kpi-card green"><div class="kpi-label">Visits Completed</div><div class="kpi-value">847</div><div class="kpi-sub">This month</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">MSMEs per Advisor</div><div class="kpi-value">~16</div><div class="kpi-sub">Avg caseload</div></div>
+          </div>
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">NSP Advisor Performance — Kumasi Central</div></div>
+            <table class="data-table">
+              <thead><tr><th>Advisor</th><th>MSMEs Assigned</th><th>Visits This Month</th><th>Compliance Rate</th><th>Reports Submitted</th><th>Performance</th></tr></thead>
+              <tbody id="nsp-table-dist"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Enforcement -->
+        <div class="subpage" id="dist-enforcement">
+          <div class="kpi-row kpi-row-3">
+            <div class="kpi-card red"><div class="kpi-label">Enforcement Actions</div><div class="kpi-value">47</div><div class="kpi-sub">This quarter</div></div>
+            <div class="kpi-card green"><div class="kpi-label">Penalties Collected</div><div class="kpi-value">GH₵ 1.2M</div><div class="kpi-sub">From 31 cases resolved</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Pending Cases</div><div class="kpi-value">16</div><div class="kpi-sub">Awaiting resolution</div></div>
+          </div>
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">Active Enforcement Cases</div></div>
+            <table class="data-table">
+              <thead><tr><th>Business</th><th>Violation</th><th>Penalty (GH₵)</th><th>Days Overdue</th><th>Stage</th><th>Officer</th></tr></thead>
+              <tbody id="enforcement-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     NSP ADVISOR
+══════════════════════════════════════════════ -->
+<div id="page-nsp" class="page">
+  <div class="dash-shell">
+    <div class="sidebar">
+      <div class="sb-logo"><div class="sb-logo-ico">👨‍💼</div><div><div class="sb-logo-t">GRA BizTrack</div><div class="sb-logo-s">NSP Advisor Portal</div></div></div>
+      <div class="sb-role"><div class="sb-role-lbl">NSP Advisor</div><div class="sb-role-name">Kofi Amponsah</div><div class="sb-role-sub">Kumasi Central · Batch 2026A</div></div>
+      <div class="sb-nav">
+        <div class="sb-section">My Work</div>
+        <button class="sb-item active" onclick="showSubpage('nsp','overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>My Dashboard</button>
+        <button class="sb-item" onclick="showSubpage('nsp','clients')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>My 15 Clients</button>
+        <button class="sb-item" onclick="showSubpage('nsp','visits')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Visit Tracker</button>
+        <button class="sb-item" onclick="showSubpage('nsp','reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Submit Report</button>
+      </div>
+      <div class="sb-bottom">
+        <div class="sb-user"><div class="sb-avatar" style="background:var(--bl);color:#fff">KA</div><div><div class="sb-user-name">Kofi Amponsah</div><div class="sb-user-role">NSP Advisor · GRA Programme</div></div></div>
+        <button class="sb-logout" onclick="logout()">← Switch Role / Logout</button>
+      </div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="topbar-title" id="nsp-page-title">NSP Advisor Dashboard</div>
+        <div class="topbar-right">
+          <span class="badge badge-b">15 clients assigned</span>
+          <div class="topbar-notif">🔔</div>
+        </div>
+      </div>
+      <div class="dash-body">
+        <!-- NSP Overview -->
+        <div class="subpage active" id="nsp-overview">
+          <div class="kpi-row kpi-row-4">
+            <div class="kpi-card blue"><div class="kpi-label">Clients Assigned</div><div class="kpi-value">15</div><div class="kpi-sub">Kumasi Central zone</div></div>
+            <div class="kpi-card green"><div class="kpi-label">Fully Onboarded</div><div class="kpi-value">11</div><div class="kpi-sub"><span class="up">73%</span> completion rate</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Visits This Month</div><div class="kpi-value">28</div><div class="kpi-sub">Target: 30 by Mar 31</div></div>
+            <div class="kpi-card gold"><div class="kpi-label">Avg Compliance</div><div class="kpi-value">74%</div><div class="kpi-sub"><span class="up">↑ Above district avg</span></div></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Client Onboarding Progress</div></div>
+              <div id="nsp-progress-list" style="margin-top:4px"></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">This Week's Schedule</div><button class="btn btn-sm btn-primary" onclick="showSubpage('nsp','visits')">Full Calendar →</button></div>
+              <div id="nsp-schedule"></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">Client Quick View</div><button class="btn btn-sm btn-secondary" onclick="showSubpage('nsp','clients')">View All 15 →</button></div>
+            <div id="nsp-client-preview"></div>
+          </div>
+        </div>
+        <!-- Clients -->
+        <div class="subpage" id="nsp-clients">
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">My 15 Assigned Clients</div><button class="btn btn-sm btn-primary">+ Add Visit Note</button></div>
+            <div id="nsp-all-clients"></div>
+          </div>
+        </div>
+        <!-- Visits -->
+        <div class="subpage" id="nsp-visits">
+          <div class="kpi-row kpi-row-3">
+            <div class="kpi-card green"><div class="kpi-label">Completed This Month</div><div class="kpi-value">28</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Scheduled (Upcoming)</div><div class="kpi-value">7</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">Monthly Target</div><div class="kpi-value">30</div></div>
+          </div>
+          <div class="card">
+            <div class="sec-head"><div class="sec-title">Visit Log — March 2026</div><button class="btn btn-sm btn-primary">+ Log New Visit</button></div>
+            <div id="visit-log"></div>
+          </div>
+        </div>
+        <!-- Reports -->
+        <div class="subpage" id="nsp-reports">
+          <div class="grid-2">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Submit Weekly Report</div></div>
+              <div style="margin-top:4px">
+                <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Week ending</label><input type="date" value="2026-03-16" style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit"></div>
+                <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Visits completed this week</label><input type="number" value="7" style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit"></div>
+                <div style="margin-bottom:12px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Key observations</label><textarea rows="4" style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit;resize:vertical">Good week — Ama's General Store successfully filed VAT return. 2 new businesses onboarded. Akosua Boateng still having difficulty with inventory module, scheduled another training visit...</textarea></div>
+                <div style="margin-bottom:16px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">Challenges / support needed</label><textarea rows="3" style="width:100%;padding:9px 12px;border:1px solid var(--bdr);border-radius:9px;font-size:13px;font-family:inherit;resize:vertical">Network connectivity issues at Adum market on Tuesday. Requesting data bundles for 3 clients who cannot afford MoMo top-up.</textarea></div>
+                <button class="btn btn-primary" onclick="showToast('✅ Weekly report submitted to District Officer!')">Submit Report to GRA District</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Previous Reports</div></div>
+              <div id="past-reports"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MSME OWNER (Web + POS)
+══════════════════════════════════════════════ -->
+<div id="page-msme" class="page">
+  <div class="dash-shell">
+    <div class="sidebar">
+      <div class="sb-logo"><div class="sb-logo-ico">🏪</div><div><div class="sb-logo-t">GRA BizTrack</div><div class="sb-logo-s">Business Portal</div></div></div>
+      <div class="sb-role"><div class="sb-role-lbl">Business Owner</div><div class="sb-role-name">Ama Mensah</div><div class="sb-role-sub">Ama's General Store · Kumasi</div></div>
+      <div class="sb-nav">
+        <div class="sb-section">My Business</div>
+        <button class="sb-item active" onclick="showSubpage('msme','overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>My Dashboard</button>
+        <button class="sb-item" onclick="showSubpage('msme','pos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg>POS / Sell Items</button>
+        <button class="sb-item" onclick="showSubpage('msme','reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Reports</button>
+        <button class="sb-item" onclick="showSubpage('msme','tax')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>My Tax</button>
+      </div>
+      <div class="sb-bottom">
+        <div class="sb-user"><div class="sb-avatar" style="background:var(--gr);color:#fff">AM</div><div><div class="sb-user-name">Ama Mensah</div><div class="sb-user-role">TIN: C0087654321</div></div></div>
+        <button class="sb-logout" onclick="logout()">← Switch Role / Logout</button>
+      </div>
+    </div>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div class="topbar-title" id="msme-page-title">Ama's General Store — Dashboard</div>
+        <div class="topbar-right">
+          <span class="badge badge-g">● GRA Compliant</span>
+          <span style="font-size:12px;color:var(--t3)">March 16, 2026</span>
+        </div>
+      </div>
+      <div class="dash-body">
+        <!-- MSME Overview -->
+        <div class="subpage active" id="msme-overview">
+          <div class="kpi-row kpi-row-4">
+            <div class="kpi-card green"><div class="kpi-label">Revenue This Month</div><div class="kpi-value">GH₵ 18,420</div><div class="kpi-sub"><span class="up">↑ 8%</span> vs February</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Tax Paid (Mar)</div><div class="kpi-value">GH₵ 2,847</div><div class="kpi-sub">Next due: Mar 17</div><div class="kpi-ico" style="background:var(--brand-l)">🧾</div></div>
+            <div class="kpi-card blue"><div class="kpi-label">Total Transactions</div><div class="kpi-value">342</div><div class="kpi-sub">Avg GH₵ 53.8 / sale</div></div>
+            <div class="kpi-card purple"><div class="kpi-label">Credit Outstanding</div><div class="kpi-value">GH₵ 1,840</div><div class="kpi-sub">6 customers owe</div></div>
+          </div>
+          <div class="grid-7-5">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Daily Sales — March 2026</div></div>
+              <div class="chart-wrap lg"><canvas id="msme-sales-chart"></canvas></div>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Sales by Product Category</div></div>
+              <div class="chart-wrap"><canvas id="msme-product-chart"></canvas></div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Recent Transactions</div><span class="sec-action" onclick="showSubpage('msme','reports')">View all →</span></div>
+              <table class="data-table">
+                <thead><tr><th>Customer</th><th>Items</th><th>Time</th><th>Amount</th><th>VAT</th></tr></thead>
+                <tbody id="msme-tx-table"></tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Inventory Status</div></div>
+              <div id="msme-inv-list"></div>
+            </div>
+          </div>
+        </div>
+        <!-- POS VIEW -->
+        <div class="subpage" id="msme-pos">
+          <div class="msme-shell">
+            <div class="device-wrap">
+              <div style="margin-bottom:12px;padding:12px 16px;background:#fff;border-radius:12px;border:1px solid var(--bdr)">
+                <div style="font-size:12px;font-weight:700;margin-bottom:2px">📱 Sunmi V3 PLUS — Live POS</div>
+                <div style="font-size:11px;color:var(--t3)">Tap products to add to cart. Charge button generates a GRA-compliant VAT receipt and triggers the thermal printer.</div>
+              </div>
+              <div class="device">
+                <div class="shell-d">
+                  <div class="d-stripe"></div>
+                  <div class="d-printer"><div class="d-slot"></div></div>
+                  <div class="d-cam"><div class="d-dot"></div><div class="d-mic"></div><div class="d-dot"></div></div>
+                  <div class="d-screen" id="pos2-screen">
+                    <!-- Pos screens rendered by JS -->
+                    <div class="pos-screen on" id="pos2-home">
+                      <div class="psbar"><span>9:41</span><span>GRA MTS · 4G</span></div>
+                      <div class="plbar"><button class="plb on">Twi</button><button class="plb">English</button><button class="plb">Ewe</button></div>
+                      <div class="pcnt">
+                        <div class="phero" style="background:var(--gr)">
+                          <div class="phero-lbl">Maakye, Ama! 👋</div>
+                          <div class="phero-amt">GH₵ 18,420</div>
+                          <div style="font-size:9px;opacity:.7">Da yi atɔn · Today's revenue</div>
+                          <div class="ppills">
+                            <div class="ppill"><div class="ppill-l">Atɔn 342</div><div class="ppill-v">Tx</div></div>
+                            <div class="ppill"><div class="ppill-l">Asɛde</div><div class="ppill-v" style="color:#FFD54F">GH₵ 186</div></div>
+                          </div>
+                        </div>
+                        <div class="palert"><span style="font-size:13px">⚠️</span><span style="font-size:10px;color:#6D4C00;font-weight:600">VAT fa bɛn 3 nna mu — Mar 17</span></div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+                          <button onclick="pos2Nav('sell')" style="background:var(--brand);color:#fff;border-radius:12px;padding:12px 8px;border:none;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:20px;margin-bottom:5px">🛒</div><div style="font-size:11px;font-weight:700">Tɔn Nneɛma</div><div style="font-size:9px;opacity:.8">Sell Items</div></button>
+                          <button onclick="pos2Nav('tax')" style="background:var(--gd);color:#2a1a00;border-radius:12px;padding:12px 8px;border:none;cursor:pointer;font-family:inherit;text-align:left"><div style="font-size:20px;margin-bottom:5px">📑</div><div style="font-size:11px;font-weight:700">Asɛde</div><div style="font-size:9px;opacity:.8">Tax / GRA</div></button>
+                        </div>
+                        <div class="pcard"><div class="pcard-t">Adwumadie a Atwam — Recent</div>
+                          <div class="ptx-row"><div class="ptx-av" style="background:var(--gr-l)">🧑</div><div><div class="ptx-nm">Kofi Asante</div><div class="ptx-dt">09:24am</div></div><div class="ptx-amt">GH₵ 145</div></div>
+                          <div class="ptx-row"><div class="ptx-av" style="background:var(--gr-l)">👩</div><div><div class="ptx-nm">Abena Owusu</div><div class="ptx-dt">08:52am</div></div><div class="ptx-amt">GH₵ 78</div></div>
+                        </div>
+                      </div>
+                      <div class="pvfab"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="18" height="18"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+                      <div class="pbnav"><button class="pni on" onclick="pos2Nav('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="pnl">Fie</span></button><button class="pni" onclick="pos2Nav('sell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="pnl">Tɔn</span></button><button class="pni" onclick="pos2Nav('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="pnl">Asɛde</span></button></div>
+                    </div>
+                    <div class="pos-screen" id="pos2-sell">
+                      <div class="psbar"><span>9:41</span><span>GRA MTS · 4G</span></div>
+                      <div class="phdr" style="background:var(--brand)"><div class="phdr-t">Tɔn Nneɛma — Sell</div><div class="phdr-s">Keka nneɛma / Tap to add</div></div>
+                      <div class="pcnt" style="padding-bottom:0">
+                        <div class="ptile-grid" id="pos2-prod-grid"></div>
+                      </div>
+                      <div class="pcart-bar">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                          <div><div style="font-size:9px;color:var(--t2)" id="pos2-count">0 items</div><div style="font-size:8px;color:var(--gr)">VAT + NHIL auto-calculated</div></div>
+                          <div class="pcart-total" id="pos2-total">GH₵ 0</div>
+                        </div>
+                        <button class="pcharge-btn" onclick="pos2Charge()" id="pos2-charge-btn">Charge & Print Receipt</button>
+                      </div>
+                      <div class="pvfab"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="18" height="18"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+                      <div class="pbnav"><button class="pni" onclick="pos2Nav('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="pnl">Fie</span></button><button class="pni on" onclick="pos2Nav('sell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="pnl">Tɔn</span></button><button class="pni" onclick="pos2Nav('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="pnl">Asɛde</span></button></div>
+                    </div>
+                    <div class="pos-screen" id="pos2-tax">
+                      <div class="psbar"><span>9:41</span><span>GRA MTS · 4G</span></div>
+                      <div class="pcnt">
+                        <div class="phero" style="background:var(--gr)">
+                          <div class="phero-lbl">Asɛde Due — Tax</div>
+                          <div class="phero-amt">GH₵ 2,847</div>
+                          <div style="font-size:9px;opacity:.7">March 2026 · Auto by GRA MTS</div>
+                          <div class="ppills">
+                            <div class="ppill"><div class="ppill-l">VAT</div><div class="ppill-v">GH₵ 1,890</div></div>
+                            <div class="ppill"><div class="ppill-l">Income</div><div class="ppill-v">GH₵ 680</div></div>
+                            <div class="ppill"><div class="ppill-l">NHIL</div><div class="ppill-v">GH₵ 277</div></div>
+                          </div>
+                        </div>
+                        <div class="pact-row"><div class="pact-ico" style="background:var(--gr-l)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gr)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="pact-t">File VAT Return</div><div class="pact-s">Due Mar 17</div></div><span style="margin-left:auto;color:#ccc">›</span></div>
+                        <div class="pact-row"><div class="pact-ico" style="background:var(--brand-l)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div><div class="pact-t">Pay Tax Online</div><div class="pact-s">MoMo / Bank</div></div><span style="margin-left:auto;color:#ccc">›</span></div>
+                      </div>
+                      <div class="pvfab"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="18" height="18"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+                      <div class="pbnav"><button class="pni" onclick="pos2Nav('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="pnl">Fie</span></button><button class="pni" onclick="pos2Nav('sell')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="pnl">Tɔn</span></button><button class="pni on" onclick="pos2Nav('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="pnl">Asɛde</span></button></div>
+                    </div>
+                  </div>
+                  <div class="d-bottom"><div class="d-bc"></div><div class="d-bsq"></div><div class="d-bc"></div></div>
+                  <div class="d-stripe"></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="card" style="margin-bottom:16px">
+                <div class="sec-head"><div class="sec-title">Today's Sales Summary</div><span class="badge badge-g">Live · March 16</span></div>
+                <div class="kpi-row kpi-row-3" style="margin-bottom:0">
+                  <div class="kpi-card green"><div class="kpi-label">Revenue</div><div class="kpi-value sm" id="today-rev">GH₵ 1,240</div></div>
+                  <div class="kpi-card orange"><div class="kpi-label">Transactions</div><div class="kpi-value sm" id="today-tx">17</div></div>
+                  <div class="kpi-card blue"><div class="kpi-label">Tax Collected</div><div class="kpi-value sm" id="today-tax">GH₵ 186</div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="sec-head"><div class="sec-title">Today's Transaction Log</div></div>
+                <table class="data-table">
+                  <thead><tr><th>Time</th><th>Customer</th><th>Items</th><th>Total</th><th>VAT</th><th>Receipt</th></tr></thead>
+                  <tbody id="pos-tx-log"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Reports -->
+        <div class="subpage" id="msme-reports">
+          <div class="grid-2" style="margin-bottom:0">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">P&L Statement — March 2026</div><button class="btn btn-sm btn-secondary">📥 Download PDF</button></div>
+              <table class="data-table">
+                <tbody>
+                  <tr><td style="font-weight:600">Total Revenue</td><td style="text-align:right;font-weight:700;color:var(--gr)">GH₵ 18,420</td></tr>
+                  <tr><td>Cost of Goods Sold</td><td style="text-align:right;color:var(--er)">- GH₵ 12,900</td></tr>
+                  <tr><td style="font-weight:600">Gross Profit</td><td style="text-align:right;font-weight:700;color:var(--gr)">GH₵ 5,520</td></tr>
+                  <tr><td>Operating Expenses</td><td style="text-align:right;color:var(--er)">- GH₵ 1,840</td></tr>
+                  <tr><td>Staff Wages</td><td style="text-align:right;color:var(--er)">- GH₵ 4,200</td></tr>
+                  <tr><td style="font-weight:600">Net Profit</td><td style="text-align:right;font-weight:800;color:var(--gr);font-size:16px">GH₵ -520</td></tr>
+                  <tr><td style="color:var(--t3)">VAT Collected</td><td style="text-align:right;color:var(--t3)">GH₵ 2,763</td></tr>
+                  <tr><td style="color:var(--t3)">NHIL Collected</td><td style="text-align:right;color:var(--t3)">GH₵ 461</td></tr>
+                  <tr><td style="color:var(--t3)">Tax Remitted to GRA</td><td style="text-align:right;color:var(--t3)">GH₵ 2,847</td></div></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Cash Flow</div><button class="btn btn-sm btn-secondary">📥 Download XLS</button></div>
+              <div class="chart-wrap"><canvas id="cashflow-chart"></canvas></div>
+            </div>
+          </div>
+        </div>
+        <!-- Tax -->
+        <div class="subpage" id="msme-tax">
+          <div class="kpi-row kpi-row-3">
+            <div class="kpi-card green"><div class="kpi-label">Tax Paid YTD</div><div class="kpi-value">GH₵ 7,240</div><div class="kpi-sub">Jan–Mar 2026</div></div>
+            <div class="kpi-card orange"><div class="kpi-label">Next Payment Due</div><div class="kpi-value">GH₵ 2,847</div><div class="kpi-sub"><span class="down">Due Mar 17 — 1 day!</span></div></div>
+            <div class="kpi-card green"><div class="kpi-label">Filing Status</div><div class="kpi-value sm">Up to Date ✓</div><div class="kpi-sub">Last filed: Feb 28</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Tax History</div></div>
+              <table class="data-table">
+                <thead><tr><th>Period</th><th>VAT</th><th>Income Tax</th><th>Total</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>January 2026</td><td>GH₵ 1,640</td><td>GH₵ 560</td><td style="font-weight:700">GH₵ 2,383</td><td><span class="badge badge-g">Paid ✓</span></td></tr>
+                  <tr><td>February 2026</td><td>GH₵ 1,724</td><td>GH₵ 620</td><td style="font-weight:700">GH₵ 2,010</td><td><span class="badge badge-g">Paid ✓</span></td></tr>
+                  <tr><td>March 2026</td><td>GH₵ 1,890</td><td>GH₵ 680</td><td style="font-weight:700">GH₵ 2,847</td><td><span class="badge badge-o">Due Mar 17</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="sec-head"><div class="sec-title">Pay March Tax Now</div></div>
+              <div style="text-align:center;padding:20px 0">
+                <div style="font-size:14px;color:var(--t3);margin-bottom:8px">Amount Due</div>
+                <div style="font-size:40px;font-weight:800;color:var(--brand);margin-bottom:4px">GH₵ 2,847</div>
+                <div style="font-size:12px;color:var(--t3);margin-bottom:24px">March 1–31, 2026 · VAT + Income Tax + NHIL</div>
+                <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:14px;padding:14px" onclick="showToast('✅ Redirecting to GRA e-Payment portal...')">💳 Pay via Mobile Money</button>
+                <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:10px" onclick="showToast('🏦 Bank payment instructions sent to 0244-123-456')">🏦 Pay via Bank Transfer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════ DATA ═══════════════
+var regions=[
+  {name:'Ashanti',comp:71,rev:847,msme:12400,color:'#1A6B3A'},
+  {name:'Greater Accra',comp:78,rev:1240,msme:18200,color:'#1A6B3A'},
+  {name:'Western',comp:64,rev:312,msme:5800,color:'#D4A017'},
+  {name:'Eastern',comp:67,rev:284,msme:4900,color:'#D4A017'},
+  {name:'Central',comp:61,rev:198,msme:3200,color:'#D4A017'},
+  {name:'Volta',comp:54,rev:142,msme:2800,color:'#D4A017'},
+  {name:'Brong Ahafo',comp:58,rev:176,msme:3100,color:'#D4A017'},
+  {name:'Northern',comp:43,rev:98,msme:1900,color:'#C62828'},
+  {name:'Upper East',comp:38,rev:72,msme:1400,color:'#C62828'},
+  {name:'Upper West',comp:35,rev:58,msme:1100,color:'#C62828'},
+  {name:'Savannah',comp:41,rev:68,msme:1300,color:'#C62828'},
+  {name:'North East',comp:39,rev:61,msme:1200,color:'#C62828'},
+  {name:'Bono',comp:55,rev:132,msme:2400,color:'#D4A017'},
+  {name:'Bono East',comp:52,rev:118,msme:2100,color:'#D4A017'},
+  {name:'Ahafo',comp:57,rev:128,msme:2200,color:'#D4A017'},
+  {name:'Western North',comp:60,rev:156,msme:2600,color:'#D4A017'},
+];
+var sectors=[
+  {name:'Retail Trade',msme:18420,rev:847,comp:71,avg:460},
+  {name:'Food & Beverage',msme:9840,rev:524,comp:68,avg:533},
+  {name:'Services',msme:6720,rev:398,comp:74,avg:592},
+  {name:'Manufacturing',msme:4180,rev:312,comp:62,avg:746},
+  {name:'Transport',msme:3240,rev:184,comp:42,avg:568},
+  {name:'Agriculture',msme:2840,rev:156,comp:58,avg:549},
+  {name:'Construction',msme:1640,rev:198,comp:55,avg:1207},
+  {name:'Healthcare',msme:407,rev:224,comp:81,avg:5504},
+];
+var distMSMEs=[
+  {name:"Ama's General Store",emoji:'🛒',sector:'Retail',tin:'C0087654321',rev:18420,tax:2847,filed:true,status:'compliant',nsp:'Kofi Amponsah'},
+  {name:'Kwame Provisions',emoji:'🏪',sector:'Retail',tin:'C0023456789',rev:12840,tax:1926,filed:true,status:'compliant',nsp:'Abena Darko'},
+  {name:'Maame Food Court',emoji:'🍲',sector:'Food',tin:'C0034567890',rev:9200,tax:1380,filed:false,status:'overdue',nsp:'Kofi Amponsah'},
+  {name:'Yaa Fashion House',emoji:'👗',sector:'Services',tin:'C0045678901',rev:7400,tax:1110,filed:true,status:'compliant',nsp:'Abena Darko'},
+  {name:'Kofi Auto Parts',emoji:'🔧',sector:'Retail',tin:'C0056789012',rev:22100,tax:3315,filed:false,status:'overdue',nsp:'Kwame Asiedu'},
+  {name:'Adwoa Salon',emoji:'✂️',sector:'Services',tin:'C0067890123',rev:4800,tax:720,filed:true,status:'compliant',nsp:'Kofi Amponsah'},
+  {name:'Mensah Enterprises',emoji:'📦',sector:'Trading',tin:'C0098765432',rev:31200,tax:4680,filed:true,status:'compliant',nsp:'Kwame Asiedu'},
+  {name:'Ebo Transport',emoji:'🚌',sector:'Transport',tin:'C0078901234',rev:8400,tax:1260,filed:false,status:'overdue',nsp:'Abena Darko'},
+];
+var myClients=[
+  {name:"Ama's General Store",emoji:'🛒',sector:'Retail',status:'compliant',visits:3,nextVisit:'Mar 19',tax:'GH₵ 2,847',onboard:100},
+  {name:'Maame Food Court',emoji:'🍲',sector:'Food',status:'overdue',visits:2,nextVisit:'Mar 17',tax:'GH₵ 1,380',onboard:85},
+  {name:'Adwoa Salon',emoji:'✂️',sector:'Services',status:'compliant',visits:2,nextVisit:'Mar 23',tax:'GH₵ 720',onboard:100},
+  {name:'Akosua Provisions',emoji:'🏪',sector:'Retail',status:'new',visits:1,nextVisit:'Mar 18',tax:'GH₵ 0',onboard:45},
+  {name:'John Carpentry',emoji:'🔨',sector:'Services',status:'compliant',visits:3,nextVisit:'Mar 25',tax:'GH₵ 940',onboard:100},
+  {name:'Rose Chop Bar',emoji:'🍛',sector:'Food',status:'new',visits:1,nextVisit:'Mar 18',tax:'GH₵ 0',onboard:30},
+  {name:'Dada Electronics',emoji:'📱',sector:'Retail',status:'overdue',visits:2,nextVisit:'Mar 20',tax:'GH₵ 2,100',onboard:70},
+];
+var visitLog=[
+  {date:'Mar 15',name:"Ama's General Store",emoji:'🛒',type:'VAT Filing Support',outcome:'Filed successfully',status:'done'},
+  {date:'Mar 14',name:'Adwoa Salon',emoji:'✂️',type:'Inventory Training',outcome:'Setup complete',status:'done'},
+  {date:'Mar 13',name:'Maame Food Court',emoji:'🍲',type:'Onboarding Visit 2',outcome:'POS setup done',status:'done'},
+  {date:'Mar 12',name:'Akosua Provisions',emoji:'🏪',type:'First Visit',outcome:'Registered on system',status:'done'},
+  {date:'Mar 17',name:'Maame Food Court',emoji:'🍲',type:'Tax Filing Reminder',outcome:'Scheduled',status:'upcoming'},
+  {date:'Mar 18',name:'Akosua Provisions',emoji:'🏪',type:'Onboarding Step 2',outcome:'Scheduled',status:'upcoming'},
+  {date:'Mar 19',name:"Ama's General Store",emoji:'🛒',type:'Monthly Check-in',outcome:'Scheduled',status:'upcoming'},
+];
+var products2=[
+  {id:1,emoji:'🌾',name:'Rice 5kg',price:65,stock:142},
+  {id:2,emoji:'🛢️',name:'Ngo 2L',price:45,stock:4},
+  {id:3,emoji:'🍬',name:'Suga 2kg',price:22,stock:67},
+  {id:4,emoji:'🥤',name:'Nsa dua x6',price:30,stock:12},
+];
+var pos2Cart={};
+var posTxLog=[
+  {time:'09:24am',customer:'Kofi Asante',items:'Rice 5kg, Oil 2L',total:145,vat:21.75},
+  {time:'08:52am',customer:'Abena Owusu',items:'Drinks x6',total:78,vat:11.70},
+  {time:'08:10am',customer:'Walk-in',items:'Sugar, Flour',total:55,vat:8.25},
+];
+
+// ═══════════════ NAVIGATION ═══════════════
+function login(role) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+role).classList.add('active');
+  initCharts(role);
+  renderData(role);
+}
+function logout() {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-login').classList.add('active');
+}
+function showSubpage(role, id) {
+  var main = document.getElementById('page-'+role);
+  main.querySelectorAll('.subpage').forEach(s=>s.classList.remove('active'));
+  var el = document.getElementById(role===('national')?'nat-'+id:role===('district')?'dist-'+id:role===('nsp')?'nsp-'+id:'msme-'+id);
+  if(el) el.classList.add('active');
+  // Update sidebar
+  main.querySelectorAll('.sb-item').forEach(b=>b.classList.remove('active'));
+  event && event.currentTarget && event.currentTarget.classList && event.currentTarget.classList.add('active');
+  // Update topbar title
+  var titles={'overview':'National Revenue Overview','compliance':'Compliance Map — All Regions','sectors':'Sector Analytics','audit':'Audit & Risk Management','deadlines':'Filing Deadlines Tracker','msmes':'All MSMEs Directory','businesses':'MSME List — Kumasi Central','nsp':'NSP Advisor Performance','enforcement':'Enforcement Actions'};
+  var t=document.getElementById('nat-page-title')||document.getElementById('dist-page-title');
+  if(t && titles[id]) t.textContent=titles[id];
+}
+function pos2Nav(screen) {
+  document.querySelectorAll('.pos-screen').forEach(s=>s.classList.remove('on'));
+  var el=document.getElementById('pos2-'+screen);
+  if(el) el.classList.add('on');
+}
+
+// ═══════════════ POS2 LOGIC ═══════════════
+function renderPos2Products() {
+  var grid=document.getElementById('pos2-prod-grid');
+  if(!grid)return;
+  grid.innerHTML=products2.map(p=>`
+    <div class="ptile ${pos2Cart[p.id]?'sel':''}" onclick="pos2Add(${p.id})" id="pos2-tile-${p.id}">
+      <div class="pcb" id="pos2-cb-${p.id}">${pos2Cart[p.id]||0}</div>
+      <div class="pe">${p.emoji}</div>
+      <div class="pn">${p.name}</div>
+      <div class="pp">GH₵ ${p.price}</div>
+    </div>`).join('');
+}
+function pos2Add(id) {
+  var p=products2.find(x=>x.id===id);
+  if(!p)return;
+  pos2Cart[id]=(pos2Cart[id]||0)+1;
+  renderPos2Products();
+  var total=0,count=0;
+  Object.entries(pos2Cart).forEach(([i,q])=>{var pr=products2.find(x=>x.id==i);if(pr){total+=pr.price*q;count+=q;}});
+  var grand=Math.round(total*1.175);
+  setText2('pos2-total','GH₵ '+grand);
+  setText2('pos2-count',count+' items · VAT+NHIL included');
+  showToast('✅ '+p.name+' added · Cart: GH₵ '+grand);
+}
+function pos2Charge() {
+  var count=Object.values(pos2Cart).reduce((a,b)=>a+b,0);
+  if(!count){showToast('❌ Add items first!');return;}
+  var total=0;
+  Object.entries(pos2Cart).forEach(([i,q])=>{var pr=products2.find(x=>x.id==i);if(pr)total+=pr.price*q;});
+  var grand=Math.round(total*1.175);
+  showToast('✅ Sale GH₵ '+grand+' charged! VAT receipt printing...');
+  var row=document.getElementById('pos-tx-log');
+  var now=new Date();
+  var t=now.getHours()+':'+(now.getMinutes()<10?'0':'')+now.getMinutes();
+  if(row) row.insertAdjacentHTML('afterbegin','<tr><td>'+t+'</td><td>Customer</td><td>'+count+' items</td><td style="font-weight:700">GH₵ '+grand+'</td><td style="color:var(--gr)">GH₵ '+Math.round(total*0.15)+'</td><td><span class="badge badge-g">Printed ✓</span></td></tr>');
+  setText2('today-rev','GH₵ '+(1240+grand).toLocaleString());
+  setText2('today-tx',(17+1).toString());
+  setText2('today-tax','GH₵ '+(186+Math.round(total*0.175)).toLocaleString());
+  pos2Cart={};
+  renderPos2Products();
+  setText2('pos2-total','GH₵ 0');
+  setText2('pos2-count','0 items');
+}
+function setText2(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
+
+// ═══════════════ RENDER DATA ═══════════════
+function renderData(role) {
+  if(role==='national') {
+    // Region list
+    var rl=document.getElementById('region-list');
+    if(rl) rl.innerHTML=regions.slice(0,8).map(r=>`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+        <div style="font-size:12px;color:var(--t2);width:90px">${r.name}</div>
+        <div style="flex:1;height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden"><div style="height:100%;width:${r.comp}%;background:${r.color};border-radius:4px"></div></div>
+        <div style="font-size:12px;font-weight:700;min-width:36px;text-align:right;color:${r.color}">${r.comp}%</div>
+      </div>`).join('');
+    // All regions
+    var ar=document.getElementById('all-regions-list');
+    if(ar) ar.innerHTML=regions.map(r=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f5f5f5">
+        <div style="width:8px;height:8px;border-radius:50%;background:${r.color}"></div>
+        <div style="font-size:12px;font-weight:600;flex:1">${r.name}</div>
+        <span class="badge ${r.comp>=70?'badge-g':r.comp>=50?'badge-gd':'badge-r'}">${r.comp}%</span>
+        <div style="font-size:11px;color:var(--t3)">${r.msme.toLocaleString()} MSMEs</div>
+      </div>`).join('');
+    // Ghana SVG map (simplified regions as shapes)
+    renderGhanaMap();
+    // Sector table
+    var st=document.getElementById('sector-table');
+    if(st) st.innerHTML=sectors.map(s=>`<tr><td><strong>${s.name}</strong></td><td>${s.msme.toLocaleString()}</td><td>${s.rev}</td><td><div class="prog-wrap"><div class="prog-bg"><div class="prog-fill" style="width:${s.comp}%;background:${s.comp>=70?'var(--gr)':s.comp>=60?'var(--gd)':'var(--er)'}"></div></div><div class="prog-pct" style="color:${s.comp>=70?'var(--gr)':s.comp>=60?'var(--gd)':'var(--er)'}">${s.comp}%</div></div></td><td>GH₵ ${s.avg}</td><td><span style="color:${s.rev>300?'var(--gr)':'var(--brand)'}">↑</span></td></tr>`).join('');
+    // Sector compliance
+    var sc=document.getElementById('sector-compliance-list');
+    if(sc) sc.innerHTML=sectors.map(s=>`
+      <div class="sector-row">
+        <div class="sector-label">${s.name}</div>
+        <div class="sector-bar-bg"><div class="sector-bar" style="width:${s.comp}%;background:${s.comp>=70?'var(--gr)':s.comp>=60?'var(--gd)':'var(--er)'}"></div></div>
+        <div class="sector-val">${s.comp}%</div>
+      </div>`).join('');
+    // Risk flags
+    var rf=document.getElementById('risk-flags-list');
+    if(rf) rf.innerHTML=`
+      <div class="risk-row"><div class="risk-ico" style="background:var(--er-l)">🔴</div><div><div class="risk-title">47 MSMEs — Zero filings in 6+ months</div><div class="risk-sub">Kumasi Central · Retail sector · Est. gap: GH₵ 2.1M</div></div><div class="risk-badge"><span class="badge badge-r">Critical</span></div></div>
+      <div class="risk-row"><div class="risk-ico" style="background:var(--brand-l)">📊</div><div><div class="risk-title">Revenue-to-declaration mismatch detected</div><div class="risk-sub">312 MSMEs reporting below mobile money turnover</div></div><div class="risk-badge"><span class="badge badge-o">High</span></div></div>
+      <div class="risk-row"><div class="risk-ico" style="background:var(--gd-l)">🏭</div><div><div class="risk-title">Construction sector under-declaring</div><div class="risk-sub">Northern region · 28 contractors flagged by AI</div></div><div class="risk-badge"><span class="badge badge-gd">Medium</span></div></div>
+      <div class="risk-row"><div class="risk-ico" style="background:var(--brand-l)">🚌</div><div><div class="risk-title">Transport businesses — NHIL non-compliance</div><div class="risk-sub">424 vehicles · NHIL not remitted for 2 quarters</div></div><div class="risk-badge"><span class="badge badge-o">High</span></div></div>`;
+    // Filing list
+    var fl=document.getElementById('filing-list');
+    if(fl) fl.innerHTML=`
+      <div class="filing-row"><div class="filing-days" style="background:var(--er-l);color:var(--er)">1d</div><div><div class="filing-name">Monthly VAT Return</div><div class="filing-sub">All VAT-registered MSMEs · 47,291 businesses</div></div><span class="badge badge-r">Mar 17</span></div>
+      <div class="filing-row"><div class="filing-days" style="background:var(--brand-l);color:var(--brand)">15d</div><div><div class="filing-name">PAYE Monthly Return</div><div class="filing-sub">All employers with staff · Auto-calculated in app</div></div><span class="badge badge-o">Mar 31</span></div>
+      <div class="filing-row"><div class="filing-days" style="background:var(--brand-l);color:var(--brand)">15d</div><div><div class="filing-name">Provisional Income Tax</div><div class="filing-sub">2nd instalment · Self-employed MSMEs</div></div><span class="badge badge-o">Mar 31</span></div>
+      <div class="filing-row"><div class="filing-days" style="background:var(--gd-l);color:#7B5000">46d</div><div><div class="filing-name">Q1 Corporate Tax Return</div><div class="filing-sub">Companies with annual filing obligation</div></div><span class="badge badge-gd">Apr 30</span></div>`;
+    // National MSME table
+    var nmt=document.getElementById('nat-msme-table');
+    if(nmt) nmt.innerHTML=distMSMEs.map(m=>`<tr><td><strong>${m.emoji} ${m.name}</strong></td><td>Ashanti</td><td>${m.sector}</td><td style="font-family:monospace;font-size:11px">${m.tin}</td><td>${m.filed?'Mar 14':'—'}</td><td style="font-weight:700">GH₵ ${m.rev.toLocaleString()}</td><td><span class="badge ${m.status==='compliant'?'badge-g':m.status==='overdue'?'badge-r':'badge-b'}">${m.status}</span></td></tr>`).join('');
+  }
+  if(role==='district') {
+    var dt=document.getElementById('dist-recent-table');
+    if(dt) dt.innerHTML=distMSMEs.slice(0,5).map(m=>`<tr><td><strong>${m.emoji} ${m.name}</strong></td><td>${m.sector}</td><td>Today</td><td style="font-weight:700">GH₵ ${m.tax.toLocaleString()}</td><td><span class="badge ${m.status==='compliant'?'badge-g':m.status==='overdue'?'badge-r':'badge-b'}">${m.status}</span></td><td>${m.nsp}</td></tr>`).join('');
+    var dat=document.getElementById('dist-all-msme-table');
+    if(dat) dat.innerHTML=distMSMEs.map(m=>`<tr><td><strong>${m.emoji} ${m.name}</strong></td><td>${m.sector}</td><td style="font-family:monospace;font-size:11px">${m.tin}</td><td>GH₵ ${m.rev.toLocaleString()}</td><td style="font-weight:700">GH₵ ${m.tax.toLocaleString()}</td><td>${m.filed?'✓ Mar 14':'—'}</td><td><span class="badge ${m.status==='compliant'?'badge-g':m.status==='overdue'?'badge-r':'badge-b'}">${m.status}</span></td><td><button class="btn btn-sm btn-secondary" onclick="showToast('Opening ${m.name} profile...')">View</button></td></tr>`).join('');
+    var ndt=document.getElementById('nsp-table-dist');
+    if(ndt) ndt.innerHTML=[['Kofi Amponsah',7,28,'74%',4,'badge-g'],['Abena Darko',8,24,'69%',4,'badge-g'],['Kwame Asiedu',7,19,'61%',3,'badge-gd'],['Efe Tetteh',6,14,'54%',2,'badge-o'],['Akua Osei',7,18,'68%',3,'badge-g']].map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>${r[2]}</td><td><span class="badge ${r[5]}">${r[3]}</span></td><td>${r[4]}/4</td><td><span class="badge ${r[5]}">${r[5]==='badge-g'?'Good':r[5]==='badge-gd'?'Average':'Needs Support'}</span></td></tr>`).join('');
+    var et=document.getElementById('enforcement-table');
+    if(et) et.innerHTML=[['Kofi Auto Parts','Non-filing (6 months)','4,200','182','Formal Notice','Kwabena O.'],['Ebo Transport','NHIL arrears','1,840','94','Negotiation','Kwabena O.'],['Market Stores Ltd','Under-declaration','12,400','47','Audit','Senior Officer'],['Agya Provisions','No TIN registration','800','30','Warning','Kwabena O.']].map(r=>`<tr><td><strong>${r[0]}</strong></td><td>${r[1]}</td><td>GH₵ ${r[2]}</td><td>${r[3]} days</td><td><span class="badge badge-o">${r[4]}</span></td><td>${r[5]}</td></tr>`).join('');
+  }
+  if(role==='nsp') {
+    // Progress list
+    var pl=document.getElementById('nsp-progress-list');
+    if(pl) pl.innerHTML=myClients.slice(0,5).map(c=>`
+      <div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+          <span style="font-size:12px;font-weight:600">${c.emoji} ${c.name}</span>
+          <span class="badge ${c.status==='compliant'?'badge-g':c.status==='overdue'?'badge-r':'badge-b'}">${c.onboard}%</span>
+        </div>
+        <div class="prog-bg"><div class="prog-fill" style="width:${c.onboard}%;background:${c.onboard===100?'var(--gr)':c.onboard>=70?'var(--gd)':'var(--bl)'}"></div></div>
+      </div>`).join('');
+    // Schedule
+    var sc=document.getElementById('nsp-schedule');
+    if(sc) sc.innerHTML=visitLog.filter(v=>v.status==='upcoming').map(v=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #f5f5f5">
+        <div style="width:38px;height:38px;border-radius:10px;background:var(--bl-l);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bl);flex-shrink:0">${v.date.replace('Mar ','')}</div>
+        <div><div style="font-size:12px;font-weight:600">${v.emoji} ${v.name}</div><div style="font-size:10px;color:var(--t3)">${v.type}</div></div>
+        <span class="badge badge-b" style="margin-left:auto">Scheduled</span>
+      </div>`).join('');
+    // Client preview
+    var cp=document.getElementById('nsp-client-preview');
+    if(cp) cp.innerHTML=myClients.slice(0,5).map(c=>`
+      <div class="msme-row">
+        <div class="msme-av" style="background:${c.status==='compliant'?'var(--gr-l)':c.status==='overdue'?'var(--er-l)':'var(--bl-l)'}">${c.emoji}</div>
+        <div><div class="msme-name">${c.name}</div><div class="msme-meta">${c.sector} · Next visit: ${c.nextVisit}</div></div>
+        <div class="msme-right"><div class="msme-amt">${c.tax}</div><span class="badge ${c.status==='compliant'?'badge-g':c.status==='overdue'?'badge-r':'badge-b'}">${c.status}</span></div>
+      </div>`).join('');
+    // All clients
+    var ac=document.getElementById('nsp-all-clients');
+    if(ac) ac.innerHTML=myClients.map(c=>`
+      <div class="visit-card">
+        <div class="visit-ico" style="background:${c.status==='compliant'?'var(--gr-l)':c.status==='overdue'?'var(--er-l)':'var(--bl-l)'}">${c.emoji}</div>
+        <div style="flex:1"><div class="visit-nm">${c.name}</div><div class="visit-meta">${c.sector} · ${c.visits} visits · Next: ${c.nextVisit}</div><div style="margin-top:5px"><div class="prog-bg"><div class="prog-fill" style="width:${c.onboard}%;background:${c.onboard===100?'var(--gr)':c.onboard>=70?'var(--gd)':'var(--bl)'}"></div></div></div></div>
+        <div class="visit-right"><span class="badge ${c.status==='compliant'?'badge-g':c.status==='overdue'?'badge-r':'badge-b'}">${c.status}</span><div style="font-size:11px;color:var(--t3)">${c.onboard}% onboard</div></div>
+      </div>`).join('');
+    // Visit log
+    var vl=document.getElementById('visit-log');
+    if(vl) vl.innerHTML=visitLog.map(v=>`
+      <div class="visit-card">
+        <div class="visit-ico" style="background:${v.status==='done'?'var(--gr-l)':'var(--bl-l)'}">${v.emoji}</div>
+        <div style="flex:1"><div class="visit-nm">${v.name}</div><div class="visit-meta">${v.date} · ${v.type}</div><div style="font-size:11px;color:var(--t3);margin-top:2px">${v.outcome}</div></div>
+        <span class="badge ${v.status==='done'?'badge-g':'badge-b'}">${v.status==='done'?'Done ✓':'Upcoming'}</span>
+      </div>`).join('');
+    // Past reports
+    var pr=document.getElementById('past-reports');
+    if(pr) pr.innerHTML=[['Week of Mar 9','Submitted Mar 10','7 visits','badge-g'],['Week of Mar 2','Submitted Mar 3','6 visits','badge-g'],['Week of Feb 24','Submitted Feb 25','8 visits','badge-g'],['Week of Feb 17','Submitted Feb 18','5 visits','badge-g']].map(r=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f5f5f5">
+        <div style="width:36px;height:36px;border-radius:9px;background:var(--gr-l);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">📄</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:600">${r[0]}</div><div style="font-size:10px;color:var(--t3)">${r[1]} · ${r[2]}</div></div>
+        <span class="badge ${r[3]}">Submitted</span>
+      </div>`).join('');
+  }
+  if(role==='msme') {
+    // Tx table
+    var tt=document.getElementById('msme-tx-table');
+    if(tt) tt.innerHTML=posTxLog.map(t=>`<tr><td>${t.time}</td><td>${t.customer}</td><td>${t.items}</td><td style="font-weight:700">GH₵ ${t.total}</td><td style="color:var(--gr)">GH₵ ${t.vat.toFixed(2)}</td></tr>`).join('');
+    // Inventory
+    var il=document.getElementById('msme-inv-list');
+    if(il) il.innerHTML=[
+      {e:'🌾',n:'Rice 5kg',s:142,ok:true},{e:'🛢️',n:'Cooking Oil 2L',s:4,ok:false},
+      {e:'🍬',n:'Sugar 2kg',s:67,ok:true},{e:'🥤',n:'Soft Drinks',s:12,ok:true},
+    ].map(i=>`
+      <div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #f5f5f5">
+        <div style="font-size:20px;width:36px;text-align:center">${i.e}</div>
+        <div style="flex:1"><div style="font-size:12px;font-weight:600">${i.n}</div><div style="font-size:10px;color:var(--t3)">${i.s} units</div></div>
+        <span class="badge ${i.ok?'badge-g':'badge-o'}">${i.ok?'OK':'Low ⚠️'}</span>
+      </div>`).join('');
+    // POS tx log
+    var ptl=document.getElementById('pos-tx-log');
+    if(ptl) ptl.innerHTML=posTxLog.map(t=>`<tr><td>${t.time}</td><td>${t.customer}</td><td>${t.items}</td><td style="font-weight:700">GH₵ ${t.total}</td><td style="color:var(--gr)">GH₵ ${t.vat.toFixed(2)}</td><td><span class="badge badge-g">Printed ✓</span></td></tr>`).join('');
+    renderPos2Products();
+  }
+}
+
+// ═══════════════ CHARTS ═══════════════
+var charts={};
+function initCharts(role) {
+  Object.values(charts).forEach(c=>c.destroy());
+  charts={};
+  setTimeout(()=>{
+    if(role==='national') {
+      charts.rev=new Chart(document.getElementById('revenueChart'),{type:'bar',data:{labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],datasets:[{label:'2026',data:[820,940,1080,null,null,null,null,null,null,null,null,null],backgroundColor:'rgba(26,107,58,.8)',borderRadius:6},{label:'2025',data:[620,710,780,840,890,920,870,950,1010,1080,1140,1200],backgroundColor:'rgba(26,107,58,.2)',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,ticks:{callback:v=>'GH₵'+v+'M'}}}}});
+      charts.taxType=new Chart(document.getElementById('taxTypeChart'),{type:'doughnut',data:{labels:['VAT','Income Tax','NHIL','GETFund','PAYE'],datasets:[{data:[1240,680,280,140,500],backgroundColor:['#1A6B3A','#1565C0','#D4A017','#E8500A','#6A1B9A'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right'}}}});
+      charts.sector=new Chart(document.getElementById('sectorChart'),{type:'bar',data:{labels:sectors.map(s=>s.name),datasets:[{label:'Revenue (GH₵M)',data:sectors.map(s=>s.rev),backgroundColor:['#1A6B3A','#1565C0','#D4A017','#E8500A','#C62828','#6A1B9A','#00695C','#1A6B3A'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}});
+      charts.risk=new Chart(document.getElementById('riskChart'),{type:'doughnut',data:{labels:['Critical','High','Medium','Low'],datasets:[{data:[847,2341,8920,35183],backgroundColor:['#C62828','#E8500A','#D4A017','#1A6B3A'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+      charts.filing=new Chart(document.getElementById('filingChart'),{type:'doughnut',data:{labels:['Filed On Time','Filed Late','Not Yet Filed'],datasets:[{data:[28920,8120,10251],backgroundColor:['#1A6B3A','#D4A017','#C62828'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+    }
+    if(role==='district') {
+      charts.distRev=new Chart(document.getElementById('distRevenueChart'),{type:'line',data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'2026',data:[62,71,84,null,null,null],borderColor:'#E8500A',backgroundColor:'rgba(232,80,10,.1)',tension:.4,fill:true},{label:'2025',data:[48,54,61,68,72,78],borderColor:'rgba(232,80,10,.3)',tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:false,ticks:{callback:v=>'GH₵'+v+'M'}}}}});
+      charts.distStatus=new Chart(document.getElementById('distStatusChart'),{type:'pie',data:{labels:['Compliant','Overdue','New'],datasets:[{data:[2745,1108,994],backgroundColor:['#1A6B3A','#C62828','#1565C0'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+    }
+    if(role==='msme') {
+      var days=Array.from({length:16},(_,i)=>'Mar '+(i+1));
+      var sales=[420,680,540,820,940,1240,780,1040,860,1120,980,1340,1060,1480,1240,1240];
+      charts.msmeSales=new Chart(document.getElementById('msme-sales-chart'),{type:'bar',data:{labels:days,datasets:[{label:'Daily Sales GH₵',data:sales,backgroundColor:sales.map((v,i)=>i===15?'#E8500A':'rgba(26,107,58,.7)'),borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>'GH₵'+v}}}}});
+      charts.msmeProduct=new Chart(document.getElementById('msme-product-chart'),{type:'doughnut',data:{labels:['Rice/Grains','Cooking Oil','Sugar','Drinks','Other'],datasets:[{data:[35,22,18,14,11],backgroundColor:['#1A6B3A','#1565C0','#D4A017','#E8500A','#6A1B9A'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+      charts.cashflow=new Chart(document.getElementById('cashflow-chart'),{type:'line',data:{labels:['Week 1','Week 2','Week 3','Week 4'],datasets:[{label:'Revenue',data:[3840,4920,4780,4880],borderColor:'#1A6B3A',backgroundColor:'rgba(26,107,58,.1)',fill:true,tension:.4},{label:'Expenses',data:[2840,3620,3480,3860],borderColor:'#C62828',backgroundColor:'rgba(198,40,40,.1)',fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}}}});
+    }
+  },300);
+}
+
+// ═══════════════ GHANA MAP ═══════════════
+function renderGhanaMap() {
+  var svg=document.getElementById('ghana-svg');
+  if(!svg)return;
+  // Simplified Ghana regions as rectangles arranged geographically
+  var layout=[
+    {r:'Upper West',x:20,y:10,w:80,h:60},{r:'Upper East',x:110,y:10,w:80,h:60},{r:'North East',x:200,y:10,w:80,h:60},{r:'Savannah',x:60,y:75,w:90,h:60},
+    {r:'Northern',x:155,y:75,w:110,h:70},{r:'Bono',x:30,y:145,w:90,h:60},{r:'Bono East',x:125,y:145,w:80,h:60},{r:'Ahafo',x:210,y:145,w:70,h:60},
+    {r:'Brong Ahafo',x:30,y:210,w:80,h:60},{r:'Ashanti',x:115,y:210,w:90,h:60},{r:'Eastern',x:210,y:210,w:80,h:60},
+    {r:'Western North',x:10,y:275,w:80,h:60},{r:'Central',x:95,y:275,w:80,h:60},{r:'Western',x:10,y:340,w:100,h:55},
+    {r:'Greater Accra',x:200,y:330,w:90,h:55},{r:'Volta',x:215,y:275,w:80,h:50},
+  ];
+  var regionMap={};
+  regions.forEach(r=>regionMap[r.name]=r);
+  svg.innerHTML=layout.map(l=>{
+    var d=regionMap[l.r];
+    var fill=d?(d.comp>=70?'#1A6B3A':d.comp>=50?'#D4A017':'#C62828'):'#ccc';
+    var opacity=d?0.5+d.comp/200:0.3;
+    return `<g>
+      <rect x="${l.x}" y="${l.y}" width="${l.w}" height="${l.h}" fill="${fill}" opacity="${opacity}" rx="4" stroke="white" stroke-width="1.5" onmouseover="mapHover('${l.r}',${l.x+l.w/2},${l.y+l.h/2})" onmouseout="mapOut()"/>
+      <text x="${l.x+l.w/2}" y="${l.y+l.h/2+2}" text-anchor="middle" font-size="${l.w<70?7:8}" fill="white" font-weight="600" pointer-events="none">${l.r.split(' ')[0]}</text>
+      ${d?`<text x="${l.x+l.w/2}" y="${l.y+l.h/2+12}" text-anchor="middle" font-size="7" fill="white" opacity=".9" pointer-events="none">${d.comp}%</text>`:''}
+    </g>`;}).join('');
+}
+function mapHover(name,x,y) {
+  var d=regions.find(r=>r.name===name);
+  var tt=document.getElementById('map-tooltip');
+  if(!tt||!d)return;
+  tt.innerHTML=`<strong>${d.name}</strong><br>Compliance: ${d.comp}%<br>Revenue: GH₵ ${d.rev}M<br>MSMEs: ${d.msme.toLocaleString()}`;
+  tt.style.display='block';
+  tt.style.left=(x+10)+'px';
+  tt.style.top=(y-20)+'px';
+}
+function mapOut(){var tt=document.getElementById('map-tooltip');if(tt)tt.style.display='none';}
+
+// ═══════════════ TOAST ═══════════════
+function showToast(msg) {
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>
