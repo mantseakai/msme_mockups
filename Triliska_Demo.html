@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triliska — Business Management Tools Demo</title>
+<style>
+:root {
+  --brand:#E8500A; --brand-l:#FFF0E8;
+  --gr:#1A6B3A; --gr-l:#E8F5EE; --gr-d:#1e4d30;
+  --gd:#D4A017; --gd-l:#FFF8E1;
+  --bl:#1565C0; --bl-l:#E3F2FD;
+  --pu:#6A1B9A; --pu-l:#F3E5F5;
+  --er:#C62828; --er-l:#FEECEC;
+  --teal:#00695C; --teal-l:#E0F2F1;
+  --bg:#F2F4F6; --white:#fff;
+  --t1:#1A1A1A; --t2:#666; --t3:#AAAAAA;
+  --bdr:#E5E5E5;
+  --r-sm:8px; --r-md:10px; --r-lg:13px; --r-xl:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Noto Sans',sans-serif;background:#1a1a2e;display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:24px 12px;}
+
+/* ── DEMO WRAPPER ── */
+.demo-wrap{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;justify-content:center;width:100%;max-width:1100px;}
+
+/* ── DEVICE SHELL ── */
+.device{width:320px;flex-shrink:0;position:relative;}
+.shell{background:#1C1C1C;border-radius:28px;border:2.5px solid #2a2a2a;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.7);}
+.d-printer{background:#111;height:26px;display:flex;align-items:center;justify-content:center;border-bottom:2.5px solid var(--brand);}
+.d-slot{width:120px;height:5px;background:#050505;border-radius:3px;}
+.d-cam{background:#161616;height:20px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.d-dot{width:7px;height:7px;border-radius:50%;background:#222;border:1px solid #333;}
+.d-mic{width:18px;height:3px;background:#222;border-radius:2px;}
+.d-screen{height:580px;position:relative;overflow:hidden;background:var(--bg);}
+.d-bottom{background:#1C1C1C;height:30px;display:flex;align-items:center;justify-content:center;gap:20px;border-top:1px solid #2a2a2a;}
+.d-bc{width:10px;height:10px;border-radius:50%;background:#252525;border:1px solid #3a3a3a;}
+.d-bsq{width:9px;height:9px;background:#252525;border:1px solid #3a3a3a;border-radius:2px;}
+.d-stripe{height:5px;background:var(--brand);}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;height:100%;background:var(--bg);position:absolute;inset:0;}
+.screen.active{display:flex;}
+
+/* ── STATUS BAR ── */
+.sbar{background:var(--gr);color:#fff;font-size:10px;padding:4px 10px;display:flex;justify-content:space-between;flex-shrink:0;}
+
+/* ── LANG BAR ── */
+.lbar{background:var(--gr-d);display:flex;gap:5px;padding:5px 9px;align-items:center;flex-shrink:0;}
+.lbar-label{font-size:9px;color:rgba(255,255,255,.5);margin-right:2px;}
+.lb{font-size:10px;padding:3px 9px;border-radius:20px;border:none;cursor:pointer;font-family:inherit;background:rgba(255,255,255,.15);color:#fff;transition:all .15s;}
+.lb.active{background:var(--gd);color:#1a1000;font-weight:600;}
+
+/* ── HEADER ── */
+.hdr{padding:10px 12px;color:#fff;flex-shrink:0;}
+.hdr-t{font-size:14px;font-weight:600;}
+.hdr-s{font-size:10px;opacity:.8;margin-top:1px;}
+
+/* ── SCROLL CONTENT ── */
+.cnt{flex:1;overflow-y:auto;padding:10px 10px 4px;scrollbar-width:none;}
+.cnt::-webkit-scrollbar{display:none;}
+
+/* ── BOTTOM NAV ── */
+.bnav{background:#fff;border-top:.5px solid var(--bdr);display:flex;height:64px;flex-shrink:0;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:none;background:transparent;cursor:pointer;font-family:inherit;padding:0;transition:background .1s;}
+.ni:active{background:#f5f5f5;}
+.ni svg{width:24px;height:24px;stroke:#bbb;transition:stroke .15s;}
+.ni .nl{font-size:9px;color:#bbb;transition:color .15s;}
+.ni.active svg{stroke:var(--brand);}
+.ni.active .nl{color:var(--brand);}
+.ni-pip{width:5px;height:5px;border-radius:50%;background:var(--brand);display:none;margin-top:1px;}
+.ni.active .ni-pip{display:block;}
+
+/* ── VOICE FAB ── */
+.vfab{position:absolute;bottom:72px;right:10px;z-index:15;width:44px;height:44px;border-radius:50%;background:var(--bl);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(21,101,192,.5);transition:transform .15s;}
+.vfab:active{transform:scale(.92);}
+.vfab svg{width:20px;height:20px;}
+
+/* ── VOICE OVERLAY ── */
+.voverlay{display:none;position:absolute;inset:0;background:rgba(21,101,192,.94);z-index:40;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+.voverlay.show{display:flex;}
+.vpulse{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;animation:pulse 1.3s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.7}}
+.voverlay .vt{font-size:15px;font-weight:600;color:#fff;}
+.voverlay .vs{font-size:11px;color:rgba(255,255,255,.75);}
+.vlang-pill{font-size:11px;background:rgba(255,255,255,.2);color:#fff;padding:4px 14px;border-radius:20px;}
+.vclose{padding:8px 22px;border-radius:20px;background:rgba(255,255,255,.2);border:none;color:#fff;font-family:inherit;font-size:12px;cursor:pointer;margin-top:4px;}
+
+/* ── MORE SHEET ── */
+.more-ov{display:none;position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:30;align-items:flex-end;}
+.more-ov.show{display:flex;}
+.more-sheet{width:100%;background:#fff;border-radius:20px 20px 0 0;padding:14px 12px 20px;}
+.more-handle{width:40px;height:4px;border-radius:2px;background:#ddd;margin:0 auto 10px;}
+.more-title{font-size:11px;color:#999;text-align:center;margin-bottom:10px;}
+.more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.more-tile{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 4px;border-radius:12px;background:#F5F5F5;cursor:pointer;border:none;font-family:inherit;transition:background .15s;}
+.more-tile:active{background:#EBEBEB;}
+.more-tile .mt-ico{font-size:24px;}
+.more-tile .mt-lbl{font-size:9px;color:#444;text-align:center;font-weight:500;line-height:1.3;}
+.more-tile .mt-en{font-size:8px;color:#999;text-align:center;}
+
+/* ── SHARED CARDS ── */
+.card{background:#fff;border-radius:var(--r-lg);border:.5px solid var(--bdr);padding:11px 12px;margin-bottom:7px;}
+.card-t{font-size:11px;font-weight:600;color:var(--t2);margin-bottom:7px;}
+
+/* ── HERO CARD ── */
+.hero{border-radius:var(--r-xl);padding:14px;color:#fff;margin-bottom:9px;}
+.hero-lbl{font-size:10px;opacity:.8;margin-bottom:3px;}
+.hero-amt{font-size:28px;font-weight:700;line-height:1.1;}
+.hero-sub{font-size:9px;opacity:.7;margin-top:2px;}
+.hero-pills{display:flex;gap:6px;margin-top:10px;}
+.hero-pill{flex:1;background:rgba(255,255,255,.15);border-radius:10px;padding:8px 4px;text-align:center;}
+.hero-pill .hp-l{font-size:9px;opacity:.8;}
+.hero-pill .hp-v{font-size:13px;font-weight:600;}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px;}
+.kpi{background:#fff;border-radius:var(--r-md);border:.5px solid var(--bdr);padding:10px;}
+.kpi-l{font-size:9px;color:var(--t3);margin-bottom:3px;}
+.kpi-v{font-size:18px;font-weight:600;}
+.kpi-s{font-size:9px;color:var(--t3);margin-top:2px;}
+.kpi-badge{display:inline-block;font-size:8px;padding:2px 6px;border-radius:6px;margin-top:3px;font-weight:500;}
+
+/* ── ACTION TILES ── */
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px;}
+.atile{border-radius:14px;padding:13px 11px;border:none;cursor:pointer;font-family:inherit;text-align:left;transition:opacity .15s;display:flex;flex-direction:column;gap:7px;}
+.atile:active{opacity:.85;}
+.atile-ico{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;}
+.atile-ico svg{width:19px;height:19px;stroke:currentColor;}
+.atile-t{font-size:12px;font-weight:600;}
+.atile-s{font-size:9px;opacity:.75;}
+
+/* ── ALERT BANNER ── */
+.alert{background:#FFF8E1;border:1px solid #FFD54F;border-radius:11px;padding:9px 11px;display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.alert-ico{width:28px;height:28px;border-radius:8px;background:#FFD54F;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.alert-t{font-size:11px;font-weight:600;color:#6D4C00;}
+.alert-s{font-size:9px;color:#9E7300;}
+
+/* ── TX LIST ── */
+.tx-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:.5px solid #f0f0f0;}
+.tx-row:last-child{border:none;}
+.tx-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.tx-nm{font-size:11px;font-weight:600;color:var(--t1);}
+.tx-dt{font-size:9px;color:var(--t3);}
+.tx-amt{font-size:13px;font-weight:600;margin-left:auto;}
+
+/* ── BADGE ── */
+.badge{font-size:9px;padding:3px 9px;border-radius:10px;font-weight:600;flex-shrink:0;}
+.badge-g{background:var(--gr-l);color:var(--gr);}
+.badge-o{background:var(--brand-l);color:var(--brand);}
+.badge-r{background:var(--er-l);color:var(--er);}
+.badge-b{background:var(--bl-l);color:var(--bl);}
+.badge-p{background:var(--pu-l);color:var(--pu);}
+.badge-gd{background:var(--gd-l);color:#7B5000;}
+
+/* ── BUTTONS ── */
+.btn-primary{width:100%;padding:14px;border-radius:var(--r-lg);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .15s;}
+.btn-primary:active{opacity:.85;}
+.btn-secondary{width:100%;padding:11px;border-radius:var(--r-md);background:#fff;border:1px solid #ddd;color:#444;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:6px;transition:background .15s;}
+.btn-secondary:active{background:#f5f5f5;}
+
+/* ── POS ── */
+.cat-pills{display:flex;gap:5px;padding:7px 10px;background:#fff;border-bottom:.5px solid var(--bdr);overflow-x:auto;flex-shrink:0;}
+.cat-pills::-webkit-scrollbar{display:none;}
+.cat-p{white-space:nowrap;font-size:10px;padding:5px 12px;border-radius:20px;border:none;cursor:pointer;font-family:inherit;transition:all .15s;}
+.cat-p.active{background:var(--brand);color:#fff;}
+.cat-p:not(.active){background:#F0F0F0;color:#555;}
+.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;}
+.prod-tile{background:#fff;border-radius:12px;border:2px solid var(--bdr);padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;position:relative;}
+.prod-tile:active,.prod-tile.in-cart{border-color:var(--brand);background:var(--brand-l);}
+.prod-tile .pe{font-size:28px;margin-bottom:5px;}
+.prod-tile .pn{font-size:10px;color:#444;font-weight:600;margin-bottom:2px;}
+.prod-tile .pp{font-size:14px;font-weight:700;color:var(--brand);}
+.prod-tile .ps{font-size:8px;color:var(--t3);}
+.prod-tile .cart-badge{position:absolute;top:6px;right:6px;width:18px;height:18px;border-radius:50%;background:var(--brand);color:#fff;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
+.prod-tile.in-cart .cart-badge{display:flex;}
+
+/* ── CART BAR ── */
+.cart-bar{background:#fff;border-top:.5px solid var(--bdr);padding:9px 10px;flex-shrink:0;}
+.cart-summary{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
+.cart-info .ci-count{font-size:10px;color:var(--t2);}
+.cart-info .ci-tax{font-size:9px;color:var(--gr);}
+.cart-total{font-size:20px;font-weight:700;color:var(--t1);}
+
+/* ── INVENTORY ── */
+.inv-row{background:#fff;border-radius:11px;border:.5px solid var(--bdr);padding:10px 11px;margin-bottom:6px;display:flex;align-items:center;gap:9px;}
+.inv-ico{width:38px;height:38px;border-radius:11px;background:var(--brand-l);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.inv-nm{font-size:11px;font-weight:600;color:var(--t1);}
+.inv-qty{font-size:9px;color:var(--t3);}
+.search-bar{background:#fff;border-radius:var(--r-md);border:.5px solid var(--bdr);display:flex;align-items:center;gap:7px;padding:9px 12px;margin-bottom:8px;}
+.search-bar svg{width:14px;height:14px;stroke:var(--t3);flex-shrink:0;}
+.search-bar span{font-size:11px;color:var(--t3);}
+
+/* ── TAX ── */
+.act-row{background:#fff;border-radius:11px;border:.5px solid var(--bdr);padding:11px 12px;margin-bottom:6px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:background .15s;}
+.act-row:active{background:#f8f8f8;}
+.act-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.act-ico svg{width:19px;height:19px;}
+.act-t{font-size:12px;font-weight:600;color:var(--t1);}
+.act-s{font-size:10px;color:var(--t3);}
+.act-chev{margin-left:auto;font-size:18px;color:#ccc;}
+
+/* ── ONBOARD ── */
+.ob-steps{display:flex;gap:5px;margin-bottom:12px;justify-content:center;}
+.ob-step{height:5px;border-radius:3px;flex:1;}
+.biz-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px;}
+.biz-card{background:#fff;border-radius:12px;border:2px solid var(--bdr);padding:13px 8px;text-align:center;cursor:pointer;transition:all .15s;font-family:inherit;}
+.biz-card:active,.biz-card.sel{border-color:var(--brand);background:var(--brand-l);}
+.biz-card .be{font-size:26px;margin-bottom:5px;}
+.biz-card .bt{font-size:11px;font-weight:600;color:#333;}
+.biz-card .bs{font-size:9px;color:#888;}
+.inp{width:100%;padding:11px 12px;border-radius:var(--r-md);border:1px solid var(--bdr);font-size:12px;font-family:inherit;color:var(--t1);background:#fff;margin-bottom:6px;}
+.inp::placeholder{color:#ccc;}
+.inp:focus{outline:none;border-color:var(--gr);}
+.inp-hint{font-size:10px;color:var(--bl);margin-bottom:10px;}
+.field-lbl{font-size:12px;font-weight:500;color:#444;margin-bottom:6px;}
+
+/* ── RECEIPT ── */
+.receipt{background:#fff;border-radius:12px;border:.5px solid var(--bdr);padding:14px;margin-bottom:7px;}
+.rcpt-head{text-align:center;margin-bottom:10px;}
+.rcpt-logo{font-size:22px;margin-bottom:3px;}
+.rcpt-biz{font-size:13px;font-weight:700;color:#111;}
+.rcpt-sub{font-size:9px;color:#888;}
+.rcpt-dash{border-top:1.5px dashed #ddd;margin:8px 0;}
+.rcpt-kv{display:flex;justify-content:space-between;font-size:10px;color:#555;padding:2px 0;}
+.rcpt-kv .rv{font-weight:600;color:#111;}
+.rcpt-item{display:flex;justify-content:space-between;font-size:11px;color:#444;padding:3px 0;}
+.rcpt-tax{display:flex;justify-content:space-between;font-size:10px;color:var(--gr);padding:2px 0;}
+.rcpt-total{display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding:6px 0 0;}
+.rcpt-qr{width:52px;height:52px;margin:10px auto 4px;background:#111;border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.qr-inner{width:36px;height:36px;background:#fff;border-radius:2px;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:3px;}
+.qp{background:#111;border-radius:1px;}
+.rcpt-gra{font-size:8px;text-align:center;color:#aaa;}
+
+/* ── CREDIT ── */
+.cred-card{background:#fff;border-radius:11px;border:.5px solid var(--bdr);padding:10px 12px;margin-bottom:6px;}
+.cred-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.prog-bg{height:6px;background:#F0F0F0;border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.prog-fill{height:100%;border-radius:3px;transition:width .4s;}
+.cred-meta{display:flex;justify-content:space-between;font-size:9px;color:var(--t3);}
+
+/* ── INVOICE ── */
+.inv-doc{background:#fff;border-radius:12px;border:.5px solid var(--bdr);padding:13px;margin-bottom:7px;}
+.inv-head{text-align:center;margin-bottom:9px;}
+.inv-no{font-size:10px;color:#888;margin-bottom:3px;}
+.inv-amt{font-size:26px;font-weight:700;color:var(--gr);}
+.inv-kv{display:flex;justify-content:space-between;font-size:11px;color:#555;padding:3px 0;}
+.inv-total{display:flex;justify-content:space-between;font-size:13px;font-weight:700;border-top:.5px solid var(--bdr);padding-top:7px;margin-top:5px;}
+
+/* ── PAYROLL ── */
+.staff-row{background:#fff;border-radius:10px;border:.5px solid var(--bdr);padding:9px 11px;margin-bottom:5px;display:flex;align-items:center;gap:9px;}
+.staff-av{width:34px;height:34px;border-radius:50%;background:var(--bl-l);color:var(--bl);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.staff-nm{font-size:11px;font-weight:600;color:var(--t1);}
+.staff-role{font-size:9px;color:var(--t3);}
+.staff-sal{font-size:12px;font-weight:700;text-align:right;}
+
+/* ── SUSU ── */
+.susu-mem{background:#fff;border-radius:10px;border:.5px solid var(--bdr);padding:9px 11px;margin-bottom:5px;display:flex;align-items:center;gap:9px;}
+.susu-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+
+/* ── HELP ── */
+.help-banner{background:var(--teal-l);border-radius:11px;padding:10px 12px;display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+.help-row{background:#fff;border-radius:11px;border:.5px solid var(--bdr);padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:9px;cursor:pointer;}
+.help-ico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.vid-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:5px;margin-bottom:9px;}
+.vid-scroll::-webkit-scrollbar{display:none;}
+.vid-card{flex-shrink:0;width:95px;background:#fff;border-radius:10px;overflow:hidden;border:.5px solid var(--bdr);}
+.vid-thumb{height:56px;display:flex;align-items:center;justify-content:center;font-size:24px;}
+.vid-t{font-size:9px;padding:5px 6px;color:#444;line-height:1.4;}
+
+/* ── SECTION DIV ── */
+.sec-lbl{font-size:10px;font-weight:600;color:var(--t2);margin:9px 0 6px;}
+
+/* ── PRINT MODAL ── */
+.print-modal{display:none;position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:50;align-items:center;justify-content:center;}
+.print-modal.show{display:flex;}
+.print-box{background:#fff;border-radius:16px;padding:20px;text-align:center;width:220px;}
+.print-box .pb-ico{font-size:32px;margin-bottom:8px;}
+.print-box .pb-t{font-size:14px;font-weight:600;margin-bottom:4px;}
+.print-box .pb-s{font-size:11px;color:#777;margin-bottom:14px;}
+.print-bar{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-bottom:14px;}
+.print-progress{height:100%;background:var(--gr);border-radius:4px;width:0;transition:width 2s linear;}
+.print-done{font-size:11px;color:var(--gr);font-weight:600;display:none;}
+.print-close{padding:8px 20px;border-radius:10px;background:var(--gr);color:#fff;border:none;font-family:inherit;font-size:12px;cursor:pointer;display:none;}
+
+/* ── SIDE PANEL ── */
+.side-panel{max-width:340px;flex:1;min-width:240px;}
+.side-title{font-size:22px;font-weight:700;color:#fff;margin-bottom:4px;}
+.side-sub{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:18px;line-height:1.6;}
+.screen-nav{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:18px;}
+.sn-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:9px 10px;cursor:pointer;font-family:inherit;text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;}
+.sn-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);}
+.sn-btn.active-nav{border-color:var(--brand);background:rgba(232,80,10,.15);}
+.sn-ico{font-size:16px;}
+.sn-t{font-size:11px;font-weight:600;color:#fff;}
+.sn-s{font-size:9px;color:rgba(255,255,255,.5);}
+.demo-note{background:rgba(255,255,255,.06);border-radius:12px;border:1px solid rgba(255,255,255,.1);padding:13px 14px;}
+.demo-note h4{font-size:12px;font-weight:600;color:var(--gd);margin-bottom:7px;}
+.demo-note p{font-size:11px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:5px;}
+.demo-note p:last-child{margin:0;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:#fff;font-size:12px;padding:10px 18px;border-radius:20px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+
+/* ── SALE SUCCESS ── */
+.sale-success{display:none;position:absolute;inset:0;background:rgba(26,107,58,.95);z-index:45;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#fff;}
+.sale-success.show{display:flex;}
+.ss-circle{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:36px;}
+.ss-t{font-size:20px;font-weight:700;}
+.ss-s{font-size:13px;opacity:.8;}
+.ss-amt{font-size:32px;font-weight:700;}
+.ss-close{padding:10px 28px;border-radius:12px;background:rgba(255,255,255,.2);border:none;color:#fff;font-family:inherit;font-size:13px;cursor:pointer;margin-top:8px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){.side-panel{max-width:100%;width:100%;}.demo-wrap{gap:16px;}.screen-nav{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div class="demo-wrap">
+
+<!-- ════════════════════════════════ DEVICE ════════════════════════════════ -->
+<div class="device">
+<div class="shell">
+  <div class="d-stripe"></div>
+  <div class="d-printer"><div class="d-slot"></div></div>
+  <div class="d-cam"><div class="d-dot"></div><div class="d-mic"></div><div class="d-dot"></div></div>
+
+  <div class="d-screen" id="device-screen">
+
+    <!-- ░░ VOICE OVERLAY ░░ -->
+    <div class="voverlay" id="voverlay">
+      <div class="vpulse"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></div>
+      <div class="vt" id="v-listening">Tie... / Listening...</div>
+      <div class="vlang-pill" id="v-lang">Twi</div>
+      <div class="vs">Ka asɛm / Speak your command</div>
+      <button class="vclose" onclick="closeVoice()">Tua — Close</button>
+    </div>
+
+    <!-- ░░ MORE SHEET ░░ -->
+    <div class="more-ov" id="more-ov" onclick="closeMore(event)">
+      <div class="more-sheet" onclick="event.stopPropagation()">
+        <div class="more-handle"></div>
+        <div class="more-title">Nea Ɛkeka Ho — More Modules</div>
+        <div class="more-grid">
+          <button class="more-tile" onclick="navTo('onboard');closeMore()"><div class="mt-ico">📋</div><div class="mt-lbl">Rego</div><div class="mt-en">Register</div></button>
+          <button class="more-tile" onclick="navTo('receipt');closeMore()"><div class="mt-ico">🧾</div><div class="mt-lbl">Risit</div><div class="mt-en">Receipt</div></button>
+          <button class="more-tile" onclick="navTo('credit');closeMore()"><div class="mt-ico">🤝</div><div class="mt-lbl">Kadi</div><div class="mt-en">Credit</div></button>
+          <button class="more-tile" onclick="navTo('invoice');closeMore()"><div class="mt-ico">📄</div><div class="mt-lbl">Bil</div><div class="mt-en">Invoice</div></button>
+          <button class="more-tile" onclick="navTo('payroll');closeMore()"><div class="mt-ico">👥</div><div class="mt-lbl">Pagrol</div><div class="mt-en">Payroll</div></button>
+          <button class="more-tile" onclick="navTo('susu');closeMore()"><div class="mt-ico">🪙</div><div class="mt-lbl">Susu</div><div class="mt-en">Savings</div></button>
+          <button class="more-tile" onclick="navTo('help');closeMore()"><div class="mt-ico">❓</div><div class="mt-lbl">Mmoa</div><div class="mt-en">Help</div></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ░░ PRINT MODAL ░░ -->
+    <div class="print-modal" id="print-modal">
+      <div class="print-box">
+        <div class="pb-ico">🖨️</div>
+        <div class="pb-t" id="pm-title">Printing Receipt...</div>
+        <div class="pb-s" id="pm-sub">Tprinting Risit</div>
+        <div class="print-bar"><div class="print-progress" id="pm-bar"></div></div>
+        <div class="print-done" id="pm-done">✓ Receipt printed!</div>
+        <button class="print-close" id="pm-close" onclick="closePrint()">Done</button>
+      </div>
+    </div>
+
+    <!-- ░░ SALE SUCCESS ░░ -->
+    <div class="sale-success" id="sale-success">
+      <div class="ss-circle">✓</div>
+      <div class="ss-t" id="ss-title">Atɔn No Yɛ!</div>
+      <div class="ss-s">Sale Successful</div>
+      <div class="ss-amt" id="ss-amt">GH₵ 0</div>
+      <div style="font-size:11px;opacity:.8">VAT receipt printing...</div>
+      <button class="ss-close" onclick="closeSale()">New Sale — Atɔn Foforɔ</button>
+    </div>
+
+    <!-- ════ SCREEN: HOME ════ -->
+    <div class="screen active" id="screen-home">
+      <div class="sbar"><span id="home-time">9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="lbar">
+        <span class="lbar-label">Lang:</span>
+        <button class="lb active" onclick="setLang('Twi',this)">Twi</button>
+        <button class="lb" onclick="setLang('English',this)">English</button>
+        <button class="lb" onclick="setLang('Ewe',this)">Ewe</button>
+        <button class="lb" onclick="setLang('Hausa',this)">Hausa</button>
+      </div>
+      <div class="cnt">
+        <div class="hero" style="background:var(--gr)">
+          <div class="hero-lbl" id="h-greet-lbl">Maakye,</div>
+          <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:2px">Ama Mensah 👋</div>
+          <div class="hero-sub" id="h-sub">Wɔ da yi, wode GH₵ 1,240 ayɛ dwuma</div>
+          <div class="hero-pills">
+            <div class="hero-pill"><div class="hp-l" id="h-sales-lbl">Da yi atɔn</div><div class="hp-v" id="h-sales-val">GH₵ 1,240</div></div>
+            <div class="hero-pill"><div class="hp-l" id="h-tax-lbl">Asɛde to bo</div><div class="hp-v" style="color:#FFD54F">GH₵ 186</div></div>
+          </div>
+        </div>
+        <div class="alert">
+          <div class="alert-ico">⚠️</div>
+          <div><div class="alert-t" id="h-alert-t">VAT fa bɛn 3 nna mu</div><div class="alert-s">Mar 17, 2026 · Business Management Tools</div></div>
+        </div>
+        <div class="action-grid">
+          <button class="atile" style="background:var(--brand);color:#fff" onclick="navTo('pos')">
+            <div class="atile-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg></div>
+            <div><div class="atile-t" id="h-sell-t">Tɔn Nneɛma</div><div class="atile-s">Sell Items</div></div>
+          </button>
+          <button class="atile" style="background:var(--gr);color:#fff" onclick="navTo('inventory')">
+            <div class="atile-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+            <div><div class="atile-t">Stok</div><div class="atile-s">Inventory</div></div>
+          </button>
+          <button class="atile" style="background:var(--gd);color:#2a1a00" onclick="navTo('tax')">
+            <div class="atile-ico" style="background:rgba(0,0,0,.12)"><svg viewBox="0 0 24 24" fill="none" stroke="#2a1a00" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+            <div><div class="atile-t">Asɛde</div><div class="atile-s">Tax / Business Management Tools</div></div>
+          </button>
+          <button class="atile" style="background:var(--bl);color:#fff" onclick="openMore()">
+            <div class="atile-ico"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="white" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="white" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="white" stroke="none"/></svg></div>
+            <div><div class="atile-t">Nea Ɛkeka Ho</div><div class="atile-s">More Modules</div></div>
+          </button>
+        </div>
+        <div class="card">
+          <div class="card-t" id="h-recent-t">Adwumadie a Atwam Nie — Recent</div>
+          <div class="tx-row"><div class="tx-av" style="background:var(--gr-l)">🧑</div><div><div class="tx-nm">Kofi Asante</div><div class="tx-dt">Rice, Oil · 09:24am</div></div><div class="tx-amt" style="color:var(--gr)">GH₵ 145</div></div>
+          <div class="tx-row"><div class="tx-av" style="background:var(--gr-l)">👩</div><div><div class="tx-nm">Abena Owusu</div><div class="tx-dt">Drinks x6 · 08:52am</div></div><div class="tx-amt" style="color:var(--gr)">GH₵ 78</div></div>
+          <div class="tx-row"><div class="tx-av" style="background:var(--gr-l)">👴</div><div><div class="tx-nm">Walk-in Customer</div><div class="tx-dt">Sugar, Flour · 08:10am</div></div><div class="tx-amt" style="color:var(--gr)">GH₵ 55</div></div>
+        </div>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav" id="bnav-home">
+        <button class="ni active" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN: POS ════ -->
+    <div class="screen" id="screen-pos">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="lbar"><span class="lbar-label">Lang:</span><button class="lb active">Twi</button><button class="lb" onclick="setLang('English',this)">English</button><button class="lb">Ewe</button><button class="lb">Hausa</button></div>
+      <div class="hdr" style="background:var(--brand)"><div class="hdr-t">Tɔn Nneɛma — Sell Items</div><div class="hdr-s">Keka nneɛma / Tap items to add to cart</div></div>
+      <div class="cat-pills">
+        <button class="cat-p active">Aduan / Food</button>
+        <button class="cat-p" onclick="this.parentElement.querySelectorAll('.cat-p').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Nsa / Drinks</button>
+        <button class="cat-p" onclick="this.parentElement.querySelectorAll('.cat-p').forEach(b=>b.classList.remove('active'));this.classList.add('active')">Biribiara / Other</button>
+      </div>
+      <div class="cnt" style="padding-bottom:0">
+        <div class="prod-grid" id="prod-grid">
+          <!-- Products injected by JS -->
+        </div>
+      </div>
+      <div class="cart-bar">
+        <div class="cart-summary">
+          <div class="cart-info">
+            <div class="ci-count" id="cart-count-label">0 nneɛma wɔ cart mu</div>
+            <div class="ci-tax">VAT 15% + NHIL 2.5% yɛ sika mu</div>
+          </div>
+          <div class="cart-total" id="cart-total-display">GH₵ 0</div>
+        </div>
+        <button class="btn-primary" style="background:var(--gr)" onclick="chargeSale()" id="charge-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <span id="charge-label">Charge & Print — Fa Sika</span>
+        </button>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav">
+        <button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button>
+        <button class="ni active" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN: INVENTORY ════ -->
+    <div class="screen" id="screen-inventory">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="lbar"><span class="lbar-label">Lang:</span><button class="lb active">Twi</button><button class="lb">English</button><button class="lb">Ewe</button><button class="lb">Hausa</button></div>
+      <div class="hdr" style="background:var(--gr)"><div class="hdr-t">Stok — Inventory</div><div class="hdr-s" id="inv-sub">48 nneɛma · 2 bɛwie ntɛm</div></div>
+      <div class="cnt">
+        <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Hwehwɛ / Search products...</span></div>
+        <div id="inv-list"></div>
+        <button class="btn-primary" style="background:var(--brand);margin-top:4px" onclick="showToast('📸 Camera opened — take product photo')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Fa Nneɛma Foforɔ — Add New Item
+        </button>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav">
+        <button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button>
+        <button class="ni active" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN: TAX ════ -->
+    <div class="screen" id="screen-tax">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="lbar"><span class="lbar-label">Lang:</span><button class="lb active">Twi</button><button class="lb">English</button><button class="lb">Ewe</button><button class="lb">Hausa</button></div>
+      <div class="cnt">
+        <div class="hero" style="background:var(--gr);text-align:center">
+          <div class="hero-lbl">Asɛde a Wohia a Tua — Tax Due (Mar 2026)</div>
+          <div class="hero-amt">GH₵ 2,847</div>
+          <div class="hero-sub">Automatically calculated by Business Management Tools</div>
+          <div class="hero-pills">
+            <div class="hero-pill"><div class="hp-l">VAT 15%</div><div class="hp-v">GH₵ 1,890</div></div>
+            <div class="hero-pill"><div class="hp-l">Income Tax</div><div class="hp-v">GH₵ 680</div></div>
+            <div class="hero-pill"><div class="hp-l">NHIL</div><div class="hp-v">GH₵ 277</div></div>
+          </div>
+        </div>
+        <div class="act-row" onclick="showToast('📋 Opening VAT Return Form...')">
+          <div class="act-ico" style="background:var(--gr-l)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gr)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg></div>
+          <div><div class="act-t">Fa VAT Form — File VAT Return</div><div class="act-s">Due: Mar 17, 2026 · Automatic</div></div>
+          <div class="act-chev">›</div>
+        </div>
+        <div class="act-row" onclick="showToast('💳 Opening e-Payment portal...')">
+          <div class="act-ico" style="background:var(--brand-l)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+          <div><div class="act-t">Tua Asɛde — Pay Tax Online</div><div class="act-s">e-Payments · Mobile Money accepted</div></div>
+          <div class="act-chev">›</div>
+        </div>
+        <div class="act-row" onclick="showToast('🕐 Loading compliance history...')">
+          <div class="act-ico" style="background:var(--bl-l)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--bl)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div><div class="act-t">Asɛde Akɔ Akyi — History</div><div class="act-s">Past filings and payments · Audit trail</div></div>
+          <div class="act-chev">›</div>
+        </div>
+        <div class="act-row" onclick="showToast('📊 Generating tax report PDF...')">
+          <div class="act-ico" style="background:var(--gd-l)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gd)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div><div class="act-t">Tax Report — Asɛde Ripɔt</div><div class="act-s">Download PDF for accountant</div></div>
+          <div class="act-chev">›</div>
+        </div>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav">
+        <button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button>
+        <button class="ni active" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button>
+        <button class="ni" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button>
+      </div>
+    </div>
+
+    <!-- ════ SCREEN: ONBOARD ════ -->
+    <div class="screen" id="screen-onboard">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G</span></div>
+      <div class="hdr" style="background:var(--gr)"><div class="hdr-t">Rego — Register Your Business</div><div class="hdr-s">Step 2 of 4 · Kɔ ɛfam 2 mu</div></div>
+      <div class="cnt">
+        <div class="ob-steps">
+          <div class="ob-step" style="background:var(--gr)"></div>
+          <div class="ob-step" style="background:var(--brand)"></div>
+          <div class="ob-step" style="background:#ddd"></div>
+          <div class="ob-step" style="background:#ddd"></div>
+        </div>
+        <div class="field-lbl">Wo adwuma bɛn? — Select your business type:</div>
+        <div class="biz-grid">
+          <button class="biz-card sel" onclick="selectBiz(this)"><div class="be">🛒</div><div class="bt">Adetɔn</div><div class="bs">Retail Shop</div></button>
+          <button class="biz-card" onclick="selectBiz(this)"><div class="be">🍲</div><div class="bt">Aduan</div><div class="bs">Food Vendor</div></button>
+          <button class="biz-card" onclick="selectBiz(this)"><div class="be">✂️</div><div class="bt">Nnwuma</div><div class="bs">Services</div></button>
+          <button class="biz-card" onclick="selectBiz(this)"><div class="be">🏭</div><div class="bt">Yɛde</div><div class="bs">Manufacturing</div></button>
+        </div>
+        <div class="field-lbl">Wo TIN — TIN Number (optional):</div>
+        <input class="inp" placeholder="C0012345678" value="C0087654321">
+        <div class="inp-hint">🔵 Wontumi TIN no, Triliska bɛboa wo — Triliska will help you register for free</div>
+        <div class="field-lbl">Wo adwuma din — Business Name:</div>
+        <input class="inp" placeholder="Ama's General Store" value="Ama's General Store">
+        <div class="field-lbl">Phone number — Wone nɔma:</div>
+        <input class="inp" placeholder="0244-123-456" value="0244-123-456">
+        <button class="btn-primary" style="background:var(--gr)" onclick="showToast('✅ Step 3: Location verification...')">Kɔ Ɛfam a Edi Hɔ — Next Step →</button>
+        <button class="btn-secondary" onclick="navTo('home')">← San Kɔ — Back</button>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav"><button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button><button class="ni active" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button></div>
+    </div>
+
+    <!-- ════ SCREEN: RECEIPT ════ -->
+    <div class="screen" id="screen-receipt">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="hdr" style="background:var(--gr)"><div class="hdr-t">Risit — VAT Receipt</div><div class="hdr-s">Tax-compliant · Ready to print</div></div>
+      <div class="cnt">
+        <div class="receipt">
+          <div class="rcpt-head">
+            <div class="rcpt-logo">🏪</div>
+            <div class="rcpt-biz">AMA'S GENERAL STORE</div>
+            <div class="rcpt-sub">TIN: C0087654321 · VAT Reg: V0045321</div>
+            <div class="rcpt-sub">Kumasi Central Market · 0244-123-456</div>
+          </div>
+          <div class="rcpt-dash"></div>
+          <div class="rcpt-kv"><span>Risit No:</span><span class="rv" id="rcpt-no">#INV-2026-0847</span></div>
+          <div class="rcpt-kv"><span>Date:</span><span class="rv">14 Mar 2026, 09:24am</span></div>
+          <div class="rcpt-kv"><span>Customer:</span><span class="rv" id="rcpt-cust">Kofi Asante</span></div>
+          <div class="rcpt-dash"></div>
+          <div id="rcpt-items">
+            <div class="rcpt-item"><span>Rice 5kg x1</span><span>GH₵ 65.00</span></div>
+            <div class="rcpt-item"><span>Ngo 2L x2</span><span>GH₵ 90.00</span></div>
+          </div>
+          <div class="rcpt-dash"></div>
+          <div class="rcpt-kv"><span>Subtotal</span><span id="rcpt-sub-amt">GH₵ 155.00</span></div>
+          <div class="rcpt-tax"><span>VAT (15%)</span><span id="rcpt-vat">GH₵ 23.25</span></div>
+          <div class="rcpt-tax"><span>NHIL (2.5%)</span><span id="rcpt-nhil">GH₵ 3.88</span></div>
+          <div class="rcpt-dash"></div>
+          <div class="rcpt-total"><span>TOTAL</span><span id="rcpt-total" style="color:var(--gr)">GH₵ 182.13</span></div>
+          <div class="rcpt-qr"><div class="qr-inner"><div class="qp"></div><div class="qp"></div><div></div><div class="qp"></div><div></div><div></div><div class="qp"></div><div></div><div></div><div class="qp"></div><div class="qp"></div><div></div><div class="qp"></div><div class="qp"></div><div></div><div></div><div class="qp"></div><div></div><div class="qp"></div><div></div><div class="qp"></div><div></div><div></div><div class="qp"></div><div class="qp"></div></div></div>
+          <div class="rcpt-gra">Verified Receipt · Scan to validate · Me da wo ase!</div>
+        </div>
+        <button class="btn-primary" style="background:var(--brand)" onclick="doPrint('Receipt')">🖨️ Tprint Risit — Print Receipt</button>
+        <button class="btn-secondary" onclick="showToast('📱 SMS sent to customer!')">📱 SMS Risit — Send via SMS</button>
+      </div>
+      <div class="bnav"><button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button><button class="ni active" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button></div>
+    </div>
+
+    <!-- ════ SCREEN: CREDIT ════ -->
+    <div class="screen" id="screen-credit">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="hdr" style="background:#7B1FA2"><div class="hdr-t">Kadi — Customer Credit</div><div class="hdr-s">GH₵ 1,840 outstanding · 6 customers</div></div>
+      <div class="cnt">
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi-l">Total Owed</div><div class="kpi-v orn">GH₵ 1,840</div><div class="kpi-s">6 customers</div></div>
+          <div class="kpi"><div class="kpi-l">Overdue</div><div class="kpi-v" style="color:var(--er)">GH₵ 520</div><div class="kpi-s">2 overdue</div></div>
+        </div>
+        <div class="cred-card">
+          <div class="cred-top"><div class="tx-av" style="background:var(--pu-l);font-size:15px">👩</div><div style="flex:1"><div class="tx-nm">Akosua Boateng</div><div class="tx-dt">0244-567-890 · Due Mar 10</div></div><div class="badge badge-r">Overdue</div></div>
+          <div class="prog-bg"><div class="prog-fill" style="width:30%;background:var(--brand)"></div></div>
+          <div class="cred-meta"><span>Paid: GH₵ 120</span><span style="color:var(--er);font-weight:600">Owes: GH₵ 280</span></div>
+        </div>
+        <div class="cred-card">
+          <div class="cred-top"><div class="tx-av" style="background:var(--gr-l);font-size:15px">🧑</div><div style="flex:1"><div class="tx-nm">Kwame Mensah</div><div class="tx-dt">0207-234-567 · Due Mar 20</div></div><div class="badge badge-g">On track</div></div>
+          <div class="prog-bg"><div class="prog-fill" style="width:55%;background:var(--gr)"></div></div>
+          <div class="cred-meta"><span>Paid: GH₵ 100</span><span style="color:var(--gr);font-weight:600">Owes: GH₵ 350</span></div>
+        </div>
+        <div class="cred-card">
+          <div class="cred-top"><div class="tx-av" style="background:var(--bl-l);font-size:15px">👨</div><div style="flex:1"><div class="tx-nm">Yaw Darko</div><div class="tx-dt">0553-890-123 · Due Apr 1</div></div><div class="badge badge-b">New</div></div>
+          <div class="prog-bg"><div class="prog-fill" style="width:10%;background:var(--bl)"></div></div>
+          <div class="cred-meta"><span>Paid: GH₵ 0</span><span style="color:var(--bl);font-weight:600">Owes: GH₵ 210</span></div>
+        </div>
+        <div class="cred-card">
+          <div class="cred-top"><div class="tx-av" style="background:var(--gd-l);font-size:15px">👩</div><div style="flex:1"><div class="tx-nm">Efua Asante</div><div class="tx-dt">0201-456-789 · Due Mar 5</div></div><div class="badge badge-r">Overdue</div></div>
+          <div class="prog-bg"><div class="prog-fill" style="width:20%;background:var(--er)"></div></div>
+          <div class="cred-meta"><span>Paid: GH₵ 60</span><span style="color:var(--er);font-weight:600">Owes: GH₵ 240</span></div>
+        </div>
+        <button class="btn-primary" style="background:#7B1FA2;margin-top:4px" onclick="showToast('➕ Opening new credit form...')">+ Fa Onipa Foforɔ — Add Credit Customer</button>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav"><button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button><button class="ni active" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button></div>
+    </div>
+
+    <!-- ════ SCREEN: INVOICE ════ -->
+    <div class="screen" id="screen-invoice">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="hdr" style="background:var(--brand)"><div class="hdr-t">Bil — Invoice Generator</div><div class="hdr-s">Tax-compliant invoice · Auto VAT</div></div>
+      <div class="cnt">
+        <div class="inv-doc">
+          <div class="inv-head">
+            <div class="inv-no">#INV-2026-0848</div>
+            <div class="inv-amt">GH₵ 450.00</div>
+            <span class="badge badge-b" style="margin-top:4px">Due: Mar 28, 2026</span>
+          </div>
+          <div style="border-top:.5px solid var(--bdr);padding-top:9px;margin-top:9px">
+            <div class="inv-kv"><span style="color:var(--t3)">To:</span><span style="font-weight:600">Mensah Enterprises</span></div>
+            <div class="inv-kv"><span style="color:var(--t3)">Phone:</span><span>0244-789-012</span></div>
+            <div class="inv-kv"><span style="color:var(--t3)">TIN:</span><span>C0098765432</span></div>
+          </div>
+          <div style="border-top:.5px solid var(--bdr);margin:8px 0 7px;padding-top:7px">
+            <div class="inv-kv"><span>Rice 5kg × 4</span><span>GH₵ 260.00</span></div>
+            <div class="inv-kv"><span>Sugar 2kg × 5</span><span>GH₵ 110.00</span></div>
+            <div class="inv-kv" style="color:var(--t3)"><span>Subtotal</span><span>GH₵ 370.00</span></div>
+            <div class="inv-kv" style="color:var(--gr)"><span>VAT (15%)</span><span>GH₵ 55.50</span></div>
+            <div class="inv-kv" style="color:var(--gr)"><span>NHIL (2.5%)</span><span>GH₵ 9.25</span></div>
+            <div class="inv-total"><span>Total</span><span style="color:var(--gr)">GH₵ 450.00</span></div>
+          </div>
+        </div>
+        <button class="btn-primary" style="background:var(--brand)" onclick="doPrint('Invoice')">🖨️ Print Invoice — Tprint Bil</button>
+        <button class="btn-secondary" onclick="showToast('📱 Invoice sent via WhatsApp!')">📱 Share via WhatsApp / SMS</button>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav"><button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button><button class="ni active" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button></div>
+    </div>
+
+    <!-- ════ SCREEN: PAYROLL ════ -->
+    <div class="screen" id="screen-payroll">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="hdr" style="background:var(--bl)"><div class="hdr-t">Pagrol — Payroll</div><div class="hdr-s">March 2026 · 4 staff · PAYE auto-deducted</div></div>
+      <div class="cnt">
+        <div class="hero" style="background:var(--bl)">
+          <div class="hero-lbl">Total Payroll — Adwumayɛfo Sika</div>
+          <div class="hero-amt">GH₵ 4,200</div>
+          <div class="hero-sub">Mar 31, 2026 · PAYE automatically filed</div>
+          <div class="hero-pills">
+            <div class="hero-pill"><div class="hp-l">Net Pay</div><div class="hp-v">GH₵ 3,710</div></div>
+            <div class="hero-pill"><div class="hp-l">PAYE Tax</div><div class="hp-v">GH₵ 490</div></div>
+            <div class="hero-pill"><div class="hp-l">SSNIT</div><div class="hp-v">GH₵ 0</div></div>
+          </div>
+        </div>
+        <div class="staff-row">
+          <div class="staff-av">KA</div>
+          <div><div class="staff-nm">Kwame Acheampong</div><div class="staff-role">Shop Assistant</div></div>
+          <div style="margin-left:auto;text-align:right"><div class="staff-sal" style="color:var(--t1)">GH₵ 1,200</div><span class="badge badge-g" style="margin-top:2px;display:inline-block">Paid ✓</span></div>
+        </div>
+        <div class="staff-row">
+          <div class="staff-av">AB</div>
+          <div><div class="staff-nm">Adwoa Bonsu</div><div class="staff-role">Cashier</div></div>
+          <div style="margin-left:auto;text-align:right"><div class="staff-sal" style="color:var(--t1)">GH₵ 950</div><span class="badge badge-g" style="margin-top:2px;display:inline-block">Paid ✓</span></div>
+        </div>
+        <div class="staff-row">
+          <div class="staff-av" style="background:var(--brand-l);color:var(--brand)">EO</div>
+          <div><div class="staff-nm">Ebo Osei</div><div class="staff-role">Delivery Driver</div></div>
+          <div style="margin-left:auto;text-align:right"><div class="staff-sal" style="color:var(--t1)">GH₵ 800</div><span class="badge badge-o" style="margin-top:2px;display:inline-block">Pending</span></div>
+        </div>
+        <div class="staff-row">
+          <div class="staff-av" style="background:var(--pu-l);color:var(--pu)">FD</div>
+          <div><div class="staff-nm">Faustina Darko</div><div class="staff-role">Stock Manager</div></div>
+          <div style="margin-left:auto;text-align:right"><div class="staff-sal" style="color:var(--t1)">GH₵ 1,250</div><span class="badge badge-g" style="margin-top:2px;display:inline-block">Paid ✓</span></div>
+        </div>
+        <button class="btn-primary" style="background:var(--bl);margin-top:6px" onclick="showToast('✅ Payroll processed! PAYE filed.')">Tua Pagrol — Run & File Payroll</button>
+        <button class="btn-secondary" onclick="doPrint('Payslips')">🖨️ Print All Payslips</button>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav"><button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button><button class="ni active" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button></div>
+    </div>
+
+    <!-- ════ SCREEN: SUSU ════ -->
+    <div class="screen" id="screen-susu">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="hdr" style="background:var(--pu)"><div class="hdr-t">Susu — Savings Group Tracker</div><div class="hdr-s">Kumasi Market Women Group · 12 members</div></div>
+      <div class="cnt">
+        <div class="hero" style="background:var(--pu)">
+          <div class="hero-lbl">Susu Pot — Total Collected</div>
+          <div class="hero-amt">GH₵ 3,600</div>
+          <div class="hero-sub">Round 3 of 12 · Next payout: Apr 1, 2026</div>
+          <div class="hero-pills">
+            <div class="hero-pill"><div class="hp-l">Next Recipient</div><div class="hp-v" style="font-size:11px">Akosua B.</div></div>
+            <div class="hero-pill"><div class="hp-l">Monthly</div><div class="hp-v">GH₵ 300</div></div>
+            <div class="hero-pill"><div class="hp-l">Paid This Mo.</div><div class="hp-v">10 / 12</div></div>
+          </div>
+        </div>
+        <div class="sec-lbl">This Month's Contributions</div>
+        <div class="card" style="padding:9px 11px">
+          <div class="tx-row"><div class="susu-av" style="background:var(--pu-l)">👩</div><div><div class="tx-nm">Ama Mensah (You)</div><div class="tx-dt">Paid Mar 5</div></div><span class="badge badge-g">GH₵ 300 ✓</span></div>
+          <div class="tx-row"><div class="susu-av" style="background:var(--pu-l)">👩</div><div><div class="tx-nm">Akosua Boateng</div><div class="tx-dt">Paid Mar 3</div></div><span class="badge badge-g">GH₵ 300 ✓</span></div>
+          <div class="tx-row"><div class="susu-av" style="background:var(--brand-l)">👩</div><div><div class="tx-nm">Yaa Amponsah</div><div class="tx-dt">Due Mar 15</div></div><span class="badge badge-gd">GH₵ 300 ⏳</span></div>
+          <div class="tx-row"><div class="susu-av" style="background:var(--er-l)">👩</div><div><div class="tx-nm">Efua Gyamfi</div><div class="tx-dt">Overdue!</div></div><span class="badge badge-r">GH₵ 300 ❌</span></div>
+          <div class="tx-row"><div class="susu-av" style="background:var(--pu-l)">👩</div><div><div class="tx-nm">Abena Frimpong</div><div class="tx-dt">Paid Mar 1</div></div><span class="badge badge-g">GH₵ 300 ✓</span></div>
+        </div>
+        <button class="btn-primary" style="background:var(--pu)" onclick="showToast('✅ Contribution recorded for Yaa Amponsah!')">+ Kora Sika — Record Contribution</button>
+        <button class="btn-secondary" onclick="showToast('📱 Payment reminder sent to all pending members!')">📲 Send Payment Reminders</button>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav"><button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button><button class="ni active" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button></div>
+    </div>
+
+    <!-- ════ SCREEN: HELP ════ -->
+    <div class="screen" id="screen-help">
+      <div class="sbar"><span>9:41</span><span>Triliska · 4G ▲</span></div>
+      <div class="hdr" style="background:var(--teal)"><div class="hdr-t">Mmoa — Help & Tutorials</div><div class="hdr-s">Ka nsɛm / Speak for help anytime 🎙️</div></div>
+      <div class="cnt">
+        <div class="help-banner">
+          <div style="font-size:22px">🎙️</div>
+          <div><div style="font-size:11px;font-weight:600;color:#004D40">Ka "Mmoa" bɛn sɛ wo pɛ</div><div style="font-size:9px;color:var(--teal)">Say "Help" anytime — voice assistance in your language</div></div>
+          <button onclick="openVoice()" style="margin-left:auto;padding:5px 10px;border-radius:8px;background:var(--teal);color:#fff;border:none;font-size:10px;cursor:pointer;font-family:inherit">Try it</button>
+        </div>
+        <div class="sec-lbl">Video Tutorials — Nhwehwɛmu</div>
+        <div class="vid-scroll">
+          <div class="vid-card"><div class="vid-thumb" style="background:var(--brand-l)">🛒</div><div class="vid-t">Yɛ atɔn<br>How to sell</div></div>
+          <div class="vid-card"><div class="vid-thumb" style="background:var(--gr-l)">📋</div><div class="vid-t">Rego<br>How to register</div></div>
+          <div class="vid-card"><div class="vid-thumb" style="background:var(--gd-l)">🧾</div><div class="vid-t">Asɛde<br>Pay your tax</div></div>
+          <div class="vid-card"><div class="vid-thumb" style="background:var(--pu-l)">🪙</div><div class="vid-t">Susu<br>Savings group</div></div>
+        </div>
+        <div class="sec-lbl">Quick Help — Mmoa Ntem</div>
+        <div class="help-row" onclick="showToast('📹 Playing: How to make a sale...')"><div class="help-ico" style="background:var(--brand-l)">🛒</div><div><div style="font-size:12px;font-weight:600">Yɛ Atɔn — How to sell</div><div style="font-size:10px;color:var(--t3)">Twi · English · Ewe · Hausa</div></div><div style="margin-left:auto;font-size:16px;color:#ccc">›</div></div>
+        <div class="help-row" onclick="showToast('📹 Playing: Adding items to inventory...')"><div class="help-ico" style="background:var(--gr-l)">📦</div><div><div style="font-size:12px;font-weight:600">Fa Nneɛma Ho — Add inventory</div><div style="font-size:10px;color:var(--t3)">With photos + voice input</div></div><div style="margin-left:auto;font-size:16px;color:#ccc">›</div></div>
+        <div class="help-row" onclick="showToast('📞 Calling Triliska Support: 0800-900-111...')"><div class="help-ico" style="background:var(--gd-l)">📞</div><div><div style="font-size:12px;font-weight:600">Call Support — Frɛ Triliska</div><div style="font-size:10px;color:var(--t3)">0800-900-111 · Free call · 8am–5pm</div></div><div style="margin-left:auto;font-size:16px;color:#ccc">›</div></div>
+        <div class="help-row" onclick="showToast('💬 Opening chat with your Triliska advisor...')"><div class="help-ico" style="background:var(--bl-l)">💬</div><div><div style="font-size:12px;font-weight:600">Chat with Business Advisor</div><div style="font-size:10px;color:var(--t3)">Your assigned National Service Person</div></div><div style="margin-left:auto;font-size:16px;color:#ccc">›</div></div>
+      </div>
+      <button class="vfab" onclick="openVoice()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2a3 3 0 013 3v6a3 3 0 01-6 0V5a3 3 0 013-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="23"/></svg></button>
+      <div class="bnav"><button class="ni" onclick="navTo('home')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span class="nl">Fie</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('pos')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span class="nl">Tɔn</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('inventory')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 9l9-6 9 6v10a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="nl">Stok</span><div class="ni-pip"></div></button><button class="ni" onclick="navTo('tax')"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="nl">Asɛde</span><div class="ni-pip"></div></button><button class="ni active" onclick="openMore()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg><span class="nl">Biara</span><div class="ni-pip"></div></button></div>
+    </div>
+
+  </div><!-- d-screen -->
+  <div class="d-bottom"><div class="d-bc"></div><div class="d-bsq"></div><div class="d-bc"></div></div>
+  <div class="d-stripe"></div>
+</div><!-- shell -->
+</div><!-- device -->
+
+<!-- ════════════════════════════════ SIDE PANEL ════════════════════════════════ -->
+<div class="side-panel">
+  <div class="side-title">Triliska</div>
+  <div class="side-sub">Interactive demo for Ghana Revenue Authority.<br>All 12 screens · Working POS · Language switching · Voice simulation</div>
+
+  <div class="screen-nav">
+    <button class="sn-btn active-nav" id="nav-btn-home" onclick="navTo('home')"><div class="sn-ico">🏠</div><div><div class="sn-t">Home / Fie</div><div class="sn-s">Dashboard</div></div></button>
+    <button class="sn-btn" id="nav-btn-pos" onclick="navTo('pos')"><div class="sn-ico">🛒</div><div><div class="sn-t">POS / Tɔn</div><div class="sn-s">Sell Items</div></div></button>
+    <button class="sn-btn" id="nav-btn-inventory" onclick="navTo('inventory')"><div class="sn-ico">📦</div><div><div class="sn-t">Inventory</div><div class="sn-s">Stok</div></div></button>
+    <button class="sn-btn" id="nav-btn-tax" onclick="navTo('tax')"><div class="sn-ico">📑</div><div><div class="sn-t">Tax / Asɛde</div><div class="sn-s">Business Management Tools</div></div></button>
+    <button class="sn-btn" id="nav-btn-onboard" onclick="navTo('onboard')"><div class="sn-ico">📋</div><div><div class="sn-t">Register</div><div class="sn-s">Rego</div></div></button>
+    <button class="sn-btn" id="nav-btn-receipt" onclick="navTo('receipt')"><div class="sn-ico">🧾</div><div><div class="sn-t">VAT Receipt</div><div class="sn-s">Risit</div></div></button>
+    <button class="sn-btn" id="nav-btn-credit" onclick="navTo('credit')"><div class="sn-ico">🤝</div><div><div class="sn-t">Credit</div><div class="sn-s">Kadi</div></div></button>
+    <button class="sn-btn" id="nav-btn-invoice" onclick="navTo('invoice')"><div class="sn-ico">📄</div><div><div class="sn-t">Invoice / Bil</div><div class="sn-s">Generator</div></div></button>
+    <button class="sn-btn" id="nav-btn-payroll" onclick="navTo('payroll')"><div class="sn-ico">👥</div><div><div class="sn-t">Payroll</div><div class="sn-s">Pagrol</div></div></button>
+    <button class="sn-btn" id="nav-btn-susu" onclick="navTo('susu')"><div class="sn-ico">🪙</div><div><div class="sn-t">Susu</div><div class="sn-s">Savings group</div></div></button>
+    <button class="sn-btn" id="nav-btn-help" onclick="navTo('help')"><div class="sn-ico">❓</div><div><div class="sn-t">Help / Mmoa</div><div class="sn-s">Tutorials</div></div></button>
+    <button class="sn-btn" id="nav-btn-more" onclick="openMore()"><div class="sn-ico">⋯</div><div><div class="sn-t">More / Biara</div><div class="sn-s">Module menu</div></div></button>
+  </div>
+
+  <div class="demo-note">
+    <h4>🎯 Triliska Demo Script</h4>
+    <p><strong style="color:#fff">1. Start at Home</strong> — show the daily dashboard with VAT alert</p>
+    <p><strong style="color:#fff">2. Go to POS</strong> — tap products to add to cart, show auto tax calculation, press Charge</p>
+    <p><strong style="color:#fff">3. Switch language</strong> — tap Ewe or Hausa to show localisation</p>
+    <p><strong style="color:#fff">4. Tap voice button 🎙️</strong> — show voice-first accessibility feature</p>
+    <p><strong style="color:#fff">5. Open Tax screen</strong> — show Business Management Tools integration and e-filing</p>
+    <p><strong style="color:#fff">6. Show Receipt</strong> — Tax-compliant receipt with QR code and print</p>
+    <p><strong style="color:#fff">7. Open More menu</strong> — show Susu, Credit, Payroll breadth</p>
+  </div>
+</div>
+
+</div><!-- demo-wrap -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+var products = [
+  {id:1, emoji:'🌾', name:'Rice 5kg', twi:'Rice 5kg', price:65, stock:142, low:false},
+  {id:2, emoji:'🛢️', name:'Cooking Oil 2L', twi:'Ngo 2L', price:45, stock:4, low:true},
+  {id:3, emoji:'🍬', name:'Sugar 2kg', twi:'Suga 2kg', price:22, stock:67, low:false},
+  {id:4, emoji:'🥤', name:'Soft Drinks x6', twi:'Nsa dua x6', price:30, stock:12, low:false},
+  {id:5, emoji:'🌽', name:'Maize 10kg', twi:'Aburo 10kg', price:40, stock:28, low:false},
+  {id:6, emoji:'🧴', name:'Vegetable Oil 1L', twi:'Ngo foforo 1L', price:18, stock:3, low:true},
+];
+var inventory = [
+  {emoji:'🌾', name:'Rice 5kg', twi:'Rice 5kg', stock:142, ok:true},
+  {emoji:'🛢️', name:'Cooking Oil 2L', twi:'Ngo 2L', stock:4, ok:false},
+  {emoji:'🍬', name:'Sugar 2kg', twi:'Suga 2kg', stock:67, ok:true},
+  {emoji:'🌽', name:'Maize 10kg', twi:'Aburo 10kg', stock:28, ok:true},
+  {emoji:'🥤', name:'Soft Drinks (Crate)', twi:'Nsa dua', stock:2, ok:false},
+  {emoji:'🧴', name:'Vegetable Oil 1L', twi:'Ngo foforo 1L', stock:3, ok:false},
+];
+var cart = {};
+var currentLang = 'Twi';
+var currentScreen = 'home';
+
+// ── LANG ──
+var langs = {
+  Twi:{greet:'Maakye,',sub:'Wɔ da yi, wode GH₵ 1,240 ayɛ dwuma',salesLbl:'Da yi atɔn',taxLbl:'Asɛde to bo',alert:'VAT fa bɛn 3 nna mu',sell:'Tɔn Nneɛma',recent:'Adwumadie a Atwam Nie',listen:'Tie...'},
+  English:{greet:'Good morning,',sub:"Today's sales: GH₵ 1,240",salesLbl:'Today Sales',taxLbl:'Tax Due',alert:'VAT filing due in 3 days',sell:'Sell Items',recent:'Recent Transactions',listen:'Listening...'},
+  Ewe:{greet:'Ŋdi na',sub:'Egbɔgbɔwo: GH₵ 1,240',salesLbl:'Dɔwɔna',taxLbl:'Asi',alert:'VAT xa ɖe ɣleti 3 me',sell:'Xɔ Nuwo',recent:'Dɔwɔnawo',listen:'Ŋlɔ...'},
+  Hausa:{greet:'Barka da safiya,',sub:'Yau ka yi GH₵ 1,240',salesLbl:'Kasuwanci yau',taxLbl:'Haraji',alert:'VAT yana kusa kwana 3',sell:'Sayar da Kaya',recent:'Kwanakin baya',listen:'Saurare...'},
+};
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lb').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  var d = langs[lang];
+  setText('h-greet-lbl', d.greet);
+  setText('h-sub', d.sub);
+  setText('h-sales-lbl', d.salesLbl);
+  setText('h-tax-lbl', d.taxLbl);
+  setText('h-alert-t', d.alert);
+  setText('h-sell-t', d.sell);
+  setText('h-recent-t', d.recent);
+  setText('v-listening', d.listen + ' / Listening...');
+  setText('v-lang', lang);
+  showToast('Language changed to ' + lang);
+}
+function setText(id, val) { var el = document.getElementById(id); if(el) el.textContent = val; }
+
+// ── NAVIGATION ──
+var allScreens = ['home','pos','inventory','tax','onboard','receipt','credit','invoice','payroll','susu','help'];
+function navTo(id) {
+  currentScreen = id;
+  allScreens.forEach(s => {
+    var el = document.getElementById('screen-'+s);
+    if(el) el.classList.toggle('active', s===id);
+  });
+  document.querySelectorAll('.sn-btn').forEach(b => b.classList.remove('active-nav'));
+  var nb = document.getElementById('nav-btn-'+id);
+  if(nb) nb.classList.add('active-nav');
+  updateClock();
+}
+
+// ── CLOCK ──
+function updateClock() {
+  var now = new Date();
+  var h = now.getHours(), m = now.getMinutes();
+  var t = (h>12?h-12:h||12)+':'+(m<10?'0'+m:m)+(h>=12?' PM':' AM');
+  document.querySelectorAll('.sbar span:first-child').forEach(el => el.textContent = t);
+}
+setInterval(updateClock, 30000);
+updateClock();
+
+// ── VOICE ──
+function openVoice() {
+  document.getElementById('v-lang').textContent = currentLang;
+  document.getElementById('v-listening').textContent = langs[currentLang].listen + ' / Listening...';
+  document.getElementById('voverlay').classList.add('show');
+  setTimeout(() => {
+    closeVoice();
+    showToast('🎙️ Voice command received in ' + currentLang);
+  }, 4000);
+}
+function closeVoice() { document.getElementById('voverlay').classList.remove('show'); }
+
+// ── MORE SHEET ──
+function openMore() { document.getElementById('more-ov').classList.add('show'); }
+function closeMore(e) { if(!e || e.target===document.getElementById('more-ov')) document.getElementById('more-ov').classList.remove('show'); }
+
+// ── PRODUCTS / POS ──
+function renderProducts() {
+  var grid = document.getElementById('prod-grid');
+  grid.innerHTML = '';
+  products.forEach(p => {
+    var inCart = cart[p.id] && cart[p.id] > 0;
+    var tile = document.createElement('div');
+    tile.className = 'prod-tile' + (inCart?' in-cart':'');
+    tile.id = 'prod-'+p.id;
+    tile.innerHTML = '<div class="cart-badge" id="cb-'+p.id+'">'+(cart[p.id]||0)+'</div><div class="pe">'+p.emoji+'</div><div class="pn">'+p.twi+'</div><div class="pp">GH₵ '+p.price+'</div><div class="ps">'+(p.low?'⚠️ Only '+p.stock+' left':p.stock+' in stock')+'</div>';
+    tile.onclick = () => addToCart(p.id);
+    grid.appendChild(tile);
+  });
+}
+function addToCart(id) {
+  var p = products.find(x=>x.id===id);
+  if(!p) return;
+  if(p.stock <= 0) { showToast('❌ Out of stock!'); return; }
+  cart[id] = (cart[id]||0)+1;
+  p.stock--;
+  renderProducts();
+  updateCartDisplay();
+  showToast('✅ '+p.twi+' added to cart');
+}
+function updateCartDisplay() {
+  var total = 0, count = 0;
+  Object.entries(cart).forEach(([id,qty]) => {
+    var p = products.find(x=>x.id==id);
+    if(p) { total += p.price * qty; count += qty; }
+  });
+  var vat = total * 0.15, nhil = total * 0.025;
+  var grand = total + vat + nhil;
+  var el = document.getElementById('cart-total-display');
+  if(el) el.textContent = 'GH₵ '+Math.round(grand);
+  var cl = document.getElementById('cart-count-label');
+  if(cl) cl.textContent = count+' nneɛma wɔ cart mu';
+  var cb = document.getElementById('charge-btn');
+  if(cb) cb.style.opacity = count>0?'1':'0.5';
+}
+function chargeSale() {
+  var total = 0, count = 0;
+  Object.entries(cart).forEach(([id,qty]) => {
+    var p = products.find(x=>x.id==id);
+    if(p) { total += p.price * qty; count += qty; }
+  });
+  if(count === 0) { showToast('❌ Add items to cart first!'); return; }
+  var vat = total*0.15, nhil = total*0.025, grand = Math.round(total+vat+nhil);
+  document.getElementById('ss-amt').textContent = 'GH₵ '+grand.toLocaleString();
+  document.getElementById('ss-title').textContent = langs[currentLang].sell === 'Sell Items' ? 'Sale Complete!' : 'Atɔn No Yɛ!';
+  document.getElementById('sale-success').classList.add('show');
+  updateReceipt(total, vat, nhil, grand);
+}
+function closeSale() {
+  document.getElementById('sale-success').classList.remove('show');
+  cart = {};
+  products.forEach(p => { if(p.originalStock===undefined) p.originalStock = p.stock; });
+  renderProducts();
+  updateCartDisplay();
+  navTo('pos');
+}
+function updateReceipt(sub, vat, nhil, total) {
+  var no = '#INV-2026-0'+Math.floor(Math.random()*900+100);
+  setText('rcpt-no', no);
+  var itemsEl = document.getElementById('rcpt-items');
+  if(itemsEl) {
+    var html = '';
+    Object.entries(cart).forEach(([id,qty]) => {
+      var p = products.find(x=>x.id==id);
+      if(p) html += '<div class="rcpt-item"><span>'+p.twi+' x'+qty+'</span><span>GH₵ '+(p.price*qty).toFixed(2)+'</span></div>';
+    });
+    itemsEl.innerHTML = html;
+  }
+  setText('rcpt-sub-amt','GH₵ '+sub.toFixed(2));
+  setText('rcpt-vat','GH₵ '+vat.toFixed(2));
+  setText('rcpt-nhil','GH₵ '+nhil.toFixed(2));
+  setText('rcpt-total','GH₵ '+total.toLocaleString());
+}
+
+// ── INVENTORY ──
+function renderInventory() {
+  var el = document.getElementById('inv-list');
+  if(!el) return;
+  el.innerHTML = inventory.map(item => `
+    <div class="inv-row">
+      <div class="inv-ico">${item.emoji}</div>
+      <div><div class="inv-nm">${item.twi}</div><div class="inv-qty">${item.stock} units · ${item.name}</div></div>
+      <span class="badge ${item.ok?'badge-g':'badge-o'}">${item.ok?'Yɛ ✓':'Hwɛ! ⚠️'}</span>
+    </div>
+  `).join('');
+}
+
+// ── BUSINESS TYPE ──
+function selectBiz(btn) {
+  document.querySelectorAll('.biz-card').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  showToast('✅ Business type selected');
+}
+
+// ── PRINT ──
+function doPrint(type) {
+  var modal = document.getElementById('print-modal');
+  var bar = document.getElementById('pm-bar');
+  var done = document.getElementById('pm-done');
+  var close = document.getElementById('pm-close');
+  document.getElementById('pm-title').textContent = 'Printing '+type+'...';
+  document.getElementById('pm-sub').textContent = 'Tprinting — Please wait';
+  modal.classList.add('show');
+  bar.style.width = '0';
+  done.style.display = 'none';
+  close.style.display = 'none';
+  setTimeout(() => { bar.style.width = '100%'; }, 100);
+  setTimeout(() => {
+    done.style.display = 'block';
+    close.style.display = 'inline-block';
+    document.getElementById('pm-sub').textContent = '✅ '+type+' printed successfully!';
+  }, 2200);
+}
+function closePrint() { document.getElementById('print-modal').classList.remove('show'); }
+
+// ── TOAST ──
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── INIT ──
+renderProducts();
+renderInventory();
+updateCartDisplay();
+</script>
+</body>
+</html>
