@@ -1,0 +1,394 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.ww{display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 12px;}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+.tab{font-size:11px;padding:5px 12px;border-radius:20px;border:1px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;color:var(--color-text-secondary);font-family:var(--font-sans);}
+.tab.on{background:#1A3A6E;color:#B8D4FF;border-color:#1A3A6E;}
+.ph{width:292px;height:612px;background:#0C111A;border-radius:40px;border:2.5px solid #2A3040;overflow:hidden;display:flex;flex-direction:column;}
+.nb{height:26px;background:#060910;display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;}
+.nb span{font-size:10px;color:#4A5568;font-family:var(--font-sans);}
+.sw{flex:1;position:relative;overflow:hidden;}
+.scr{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;background:#0C111A;}
+.scr.on{display:flex;}
+.sc{flex:1;overflow-y:auto;padding:8px 12px 6px;}
+.sc::-webkit-scrollbar{display:none;}
+.bn{height:52px;background:#111826;border-top:1px solid #1E2840;display:flex;align-items:center;flex-shrink:0;}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:5px 0;}
+.bni svg{width:18px;height:18px;stroke:#3A4560;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.bni span{font-size:9px;color:#3A4560;font-family:var(--font-sans);}
+.bni.on svg{stroke:#F5B800;}
+.bni.on span{color:#F5B800;}
+.sh{padding:10px 12px 5px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.sht{flex:1;font-size:15px;font-weight:700;color:#E8EDF5;font-family:var(--font-sans);}
+.bk{width:28px;height:28px;border-radius:8px;background:#182030;border:1px solid #2A3550;cursor:pointer;color:#E8EDF5;font-size:15px;display:flex;align-items:center;justify-content:center;}
+.gbal{font-size:11px;color:#22C55E;font-weight:700;font-family:var(--font-sans);}
+.slbl{font-size:10px;font-weight:700;color:#3A4560;letter-spacing:1px;margin-bottom:6px;font-family:var(--font-sans);text-transform:uppercase;}
+.tog{display:flex;background:#182030;border-radius:10px;padding:3px;gap:2px;margin-bottom:8px;}
+.tbtn{flex:1;padding:7px 0;border-radius:8px;font-size:11px;font-weight:600;font-family:var(--font-sans);border:none;cursor:pointer;background:transparent;color:#3A4560;}
+.tbtn.on{background:#F5B800;color:#1A0E00;}
+.ngrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;}
+.ball{aspect-ratio:1;border-radius:50%;border:1px solid #1E2840;background:#182030;color:#3A4560;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:var(--font-sans);width:100%;}
+.ball.sel{background:#F5B800;border-color:#F5B800;color:#1A0E00;}
+.ball.dis{opacity:0.25;cursor:default;}
+.ss{display:flex;gap:4px;align-items:center;background:#182030;border-radius:10px;padding:5px 9px;margin-bottom:8px;}
+.sb{width:26px;height:26px;border-radius:50%;background:#F5B800;color:#1A0E00;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--font-sans);}
+.sl{width:26px;height:26px;border-radius:50%;border:1.5px dashed #2A3550;}
+.skrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.sklbl{font-size:11px;color:#3A4560;font-family:var(--font-sans);}
+.skinp{flex:1;background:#182030;border:1px solid #2A3550;border-radius:8px;padding:7px 10px;color:#E8EDF5;font-size:13px;font-weight:700;font-family:var(--font-sans);text-align:right;}
+input[type=number]{-moz-appearance:textfield;}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.mbtn{border:none;cursor:pointer;font-family:var(--font-sans);font-weight:700;border-radius:12px;padding:11px;width:100%;font-size:13px;letter-spacing:0.3px;}
+.mg{background:#F5B800;color:#1A0E00;}
+.mgr{background:#22C55E;color:#021408;}
+.mo{background:transparent;border:1.5px solid #2A3550;color:#E8EDF5;}
+.mbtn:disabled{opacity:0.3;cursor:default;}
+.card{background:#182030;border-radius:12px;padding:10px 12px;margin-bottom:8px;}
+.gg{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.gt{border-radius:12px;padding:11px 10px;cursor:pointer;display:flex;flex-direction:column;gap:3px;min-height:78px;}
+.gtn{font-size:11px;font-weight:700;color:#E8EDF5;font-family:var(--font-sans);}
+.gtd{font-size:9px;color:rgba(232,237,245,0.45);font-family:var(--font-sans);}
+.gtic{font-size:18px;margin-bottom:3px;}
+.rbadge{background:#182030;border-radius:12px;padding:10px;text-align:center;margin-bottom:8px;border-left:3px solid #2A3550;}
+.rval{font-size:34px;font-weight:800;font-family:var(--font-sans);color:#3A4560;}
+.rsub{font-size:10px;color:#3A4560;font-family:var(--font-sans);margin-top:2px;}
+.txn{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #182030;}
+.txnico{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.txnm{flex:1;}
+.txnn{font-size:11px;font-weight:600;color:#E8EDF5;font-family:var(--font-sans);}
+.txnd{font-size:9px;color:#3A4560;font-family:var(--font-sans);}
+.txna{font-size:12px;font-weight:700;font-family:var(--font-sans);}
+.note{font-size:9px;color:#3A4560;text-align:center;margin-top:5px;font-family:var(--font-sans);}
+</style>
+
+<div class="ww">
+<div class="tabs" id="tabs">
+  <button class="tab on" onclick="g('home',0)">Home</button>
+  <button class="tab" onclick="g('649',1)">6/49 Lottery</button>
+  <button class="tab" onclick="g('spin',2)">Spin & Win</button>
+  <button class="tab" onclick="g('games',3)">Mini-Games</button>
+  <button class="tab" onclick="g('wallet',4)">Wallet</button>
+</div>
+
+<div class="ph">
+  <div class="nb"><span>9:41</span><span>MTN ●●● 87%</span></div>
+  <div class="sw">
+
+    <!-- HOME -->
+    <div class="scr on" id="scr-home">
+      <div style="padding:12px 12px 6px;flex-shrink:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div>
+            <div style="font-size:15px;font-weight:800;color:#F5B800;font-family:var(--font-sans);letter-spacing:0.5px;">MY FUTURE</div>
+            <div style="font-size:9px;color:#3A4560;font-family:var(--font-sans);">Ghana National Lottery Authority</div>
+          </div>
+          <div style="background:#182030;border-radius:20px;padding:5px 10px;">
+            <div style="font-size:8px;color:#3A4560;font-family:var(--font-sans);text-transform:uppercase;letter-spacing:0.5px;">Balance</div>
+            <div style="font-size:13px;font-weight:700;color:#22C55E;font-family:var(--font-sans);">GHS 24.50</div>
+          </div>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:#E8EDF5;font-family:var(--font-sans);">Good afternoon, Kofi!</div>
+        <div style="font-size:11px;color:#3A4560;font-family:var(--font-sans);margin-top:1px;">Today's draw closes in 3h 47m</div>
+      </div>
+      <div class="sc">
+        <div style="background:#182030;border-radius:14px;padding:12px;margin-bottom:10px;border-left:3px solid #F5B800;">
+          <div style="font-size:9px;color:#F5B800;font-weight:700;letter-spacing:1px;font-family:var(--font-sans);text-transform:uppercase;">Current Jackpot</div>
+          <div style="font-size:26px;font-weight:800;color:#E8EDF5;font-family:var(--font-sans);line-height:1.1;">GHS 450,000</div>
+          <div style="font-size:10px;color:#3A4560;font-family:var(--font-sans);margin-top:2px;">6/49 Daily Draw · Today 5:30 PM</div>
+          <div style="margin-top:8px;"><button class="mbtn mg" style="padding:8px;font-size:11px;" onclick="g('649',1)">Play 6/49 Now →</button></div>
+        </div>
+        <div class="slbl">Games</div>
+        <div class="gg" style="margin-bottom:8px;">
+          <div class="gt" style="background:#1A2210;border:1px solid #2A3A18;" onclick="g('649',1)"><div class="gtic">🎱</div><div class="gtn">6/49 Lottery</div><div class="gtd">Daily & Monthly draws</div></div>
+          <div class="gt" style="background:#111C2C;border:1px solid #182A3E;" onclick="g('spin',2)"><div class="gtic">🎡</div><div class="gtn">Spin & Win</div><div class="gtd">Instant result</div></div>
+          <div class="gt" style="background:#1C1430;border:1px solid #2A1E40;" onclick="g('games',3)"><div class="gtic">🎰</div><div class="gtn">Number Slots</div><div class="gtd">777 = x100 jackpot!</div></div>
+          <div class="gt" style="background:#1C1810;border:1px solid #3A2A18;" onclick="g('games',3)"><div class="gtic">⚡</div><div class="gtn">More Games</div><div class="gtd">10 instant-win games</div></div>
+        </div>
+        <div class="slbl">Latest 6/49 Result</div>
+        <div class="card" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:9px;color:#3A4560;font-family:var(--font-sans);">Daily Draw · 18 Mar 2026</div>
+            <div style="font-size:13px;font-weight:700;color:#F5B800;font-family:var(--font-sans);margin-top:3px;">3 · 14 · 22 · 31 · 40 · 48</div>
+          </div>
+          <div style="background:#22C55E22;border-radius:8px;padding:4px 8px;font-size:9px;color:#22C55E;font-weight:700;font-family:var(--font-sans);">GROUP 4 WIN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6/49 -->
+    <div class="scr" id="scr-649">
+      <div class="sh">
+        <button class="bk" onclick="g('home',0)">←</button>
+        <div class="sht">6/49 Lottery</div>
+        <div class="gbal">GHS 24.50</div>
+      </div>
+      <div class="sc">
+        <div class="tog">
+          <button class="tbtn on" id="td" onclick="swTog('td','tm','Today 5:30 PM','GHS 450,000')">Daily Draw</button>
+          <button class="tbtn" id="tm" onclick="swTog('tm','td','Fri 28 Mar 5:30 PM','GHS 1,200,000')">Monthly Draw</button>
+        </div>
+        <div style="text-align:center;font-size:10px;color:#3A4560;font-family:var(--font-sans);margin-bottom:8px;">Draw: <span id="drawtime" style="color:#E8EDF5;font-weight:600;">Today 5:30 PM</span> · Jackpot: <span id="jackpot" style="color:#F5B800;font-weight:700;">GHS 450,000</span></div>
+        <div class="slbl">Choose 6 numbers (1–49)</div>
+        <div class="ss" id="ss"></div>
+        <div class="ngrid" id="ng"></div>
+        <div class="skrow">
+          <div class="sklbl">Stake (GHS)</div>
+          <input class="skinp" type="number" id="sk649" value="2" min="1" style="width:70px;">
+        </div>
+        <button class="mbtn mg" id="p649btn" disabled onclick="alert('Entry confirmed!\nRef: NLA-20260319-00847\nGood luck!')">Select 6 numbers to play</button>
+        <div class="note">Min. GHS 1.00 · Tap numbers to select/deselect</div>
+      </div>
+    </div>
+
+    <!-- SPIN & WIN -->
+    <div class="scr" id="scr-spin">
+      <div class="sh">
+        <button class="bk" onclick="g('home',0)">←</button>
+        <div class="sht">Spin & Win</div>
+        <div class="gbal">GHS 24.50</div>
+      </div>
+      <div class="sc">
+        <div class="rbadge" id="rbadge">
+          <div style="font-size:11px;color:#3A4560;font-family:var(--font-sans);">Spin the wheel to reveal your prize</div>
+          <div class="rval" id="rv">?</div>
+          <div class="rsub" id="rs">Your multiplier appears here</div>
+        </div>
+        <div style="display:flex;justify-content:center;margin:4px 0 8px;position:relative;">
+          <div style="position:relative;width:212px;height:212px;">
+            <svg id="wsvg" width="212" height="212" viewBox="0 0 212 212" style="display:block;"></svg>
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#0C111A;border:3px solid #2A3040;display:flex;align-items:center;justify-content:center;font-size:18px;z-index:5;">🎡</div>
+            <div id="ptr" style="position:absolute;top:1px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:14px solid #F5B800;z-index:6;"></div>
+          </div>
+        </div>
+        <div class="skrow">
+          <div class="sklbl">Stake (GHS)</div>
+          <input class="skinp" type="number" id="skspin" value="5" min="1" style="width:70px;">
+        </div>
+        <button class="mbtn mg" id="spinbtn" onclick="doSpin()">SPIN NOW</button>
+        <div class="note">Min. GHS 1.00 · Result is instant and server-generated</div>
+      </div>
+    </div>
+
+    <!-- MORE GAMES -->
+    <div class="scr" id="scr-games">
+      <div class="sh">
+        <button class="bk" onclick="g('home',0)">←</button>
+        <div class="sht">More Games</div>
+        <div class="gbal">GHS 24.50</div>
+      </div>
+      <div class="sc">
+        <div class="slbl">Instant-Win Games</div>
+        <div class="gg" id="mgrid"></div>
+      </div>
+    </div>
+
+    <!-- WALLET -->
+    <div class="scr" id="scr-wallet">
+      <div class="sh">
+        <button class="bk" onclick="g('home',0)">←</button>
+        <div class="sht">My Wallet</div>
+      </div>
+      <div class="sc">
+        <div style="text-align:center;padding:14px 0 10px;">
+          <div style="font-size:10px;color:#3A4560;letter-spacing:1px;font-family:var(--font-sans);text-transform:uppercase;">Available Balance</div>
+          <div style="font-size:36px;font-weight:800;color:#22C55E;font-family:var(--font-sans);">GHS 24.50</div>
+          <div style="font-size:10px;color:#3A4560;font-family:var(--font-sans);margin-top:3px;">MTN MoMo · +233244123456</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;">
+          <button class="mbtn mgr" style="padding:9px;font-size:12px;" onclick="alert('Deposit\n\nEnter amount → MoMo prompt sent → Wallet credited instantly.')">+ Deposit</button>
+          <button class="mbtn mo" style="padding:9px;font-size:12px;" onclick="alert('Withdraw\n\nEnter amount → Enter PIN → Funds sent to MoMo.')">Withdraw</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+          <div style="background:#182030;border-radius:10px;padding:8px;text-align:center;">
+            <div style="font-size:9px;color:#3A4560;font-family:var(--font-sans);text-transform:uppercase;letter-spacing:0.5px;">Total Won</div>
+            <div style="font-size:16px;font-weight:700;color:#22C55E;font-family:var(--font-sans);">GHS 247.00</div>
+          </div>
+          <div style="background:#182030;border-radius:10px;padding:8px;text-align:center;">
+            <div style="font-size:9px;color:#3A4560;font-family:var(--font-sans);text-transform:uppercase;letter-spacing:0.5px;">Games Played</div>
+            <div style="font-size:16px;font-weight:700;color:#E8EDF5;font-family:var(--font-sans);">38</div>
+          </div>
+        </div>
+        <div class="slbl">Recent Transactions</div>
+        <div id="txlist"></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="bn" id="bn">
+    <div class="bni on" onclick="g('home',0)" id="bni0"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span>Home</span></div>
+    <div class="bni" onclick="g('649',1)" id="bni1"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg><span>Draws</span></div>
+    <div class="bni" onclick="g('spin',2)" id="bni2"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><span>Instant</span></div>
+    <div class="bni" onclick="g('wallet',4)" id="bni3"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>Wallet</span></div>
+    <div class="bni" onclick="g('home',0)" id="bni4"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Account</span></div>
+  </div>
+</div>
+
+<p style="font-size:11px;color:var(--color-text-tertiary);text-align:center;max-width:290px;">Click tabs or game tiles to navigate · 6/49 number selection is live · Spin the wheel for a result</p>
+</div>
+
+<script>
+const SCRS=['home','649','spin','games','wallet'];
+const TABS=document.querySelectorAll('.tab');
+const BNI=[0,1,2,3,4].map(i=>document.getElementById('bni'+i));
+const bnMap={home:0,'649':1,spin:2,games:2,wallet:3};
+
+function g(id,ti){
+  SCRS.forEach(s=>{const e=document.getElementById('scr-'+s);if(e)e.classList.toggle('on',s===id);});
+  TABS.forEach((t,i)=>t.classList.toggle('on',i===ti));
+  BNI.forEach((b,i)=>b.classList.toggle('on',i===bnMap[id]));
+}
+
+function swTog(onId,offId,dt,jp){
+  document.getElementById(onId).classList.add('on');
+  document.getElementById(offId).classList.remove('on');
+  document.getElementById('drawtime').textContent=dt;
+  document.getElementById('jackpot').textContent=jp;
+}
+
+// ── 6/49 Number Grid ─────────────────────────────────────────
+const sel=new Set();
+const ng=document.getElementById('ng');
+const ss=document.getElementById('ss');
+const p649btn=document.getElementById('p649btn');
+for(let n=1;n<=49;n++){
+  const b=document.createElement('div');
+  b.className='ball';
+  b.textContent=n;
+  b.onclick=()=>toggleBall(n,b);
+  ng.appendChild(b);
+}
+function renderStrip(){
+  ss.innerHTML='';
+  const nums=[...sel].sort((a,b)=>a-b);
+  nums.forEach(n=>{const d=document.createElement('div');d.className='sb';d.textContent=n;ss.appendChild(d);});
+  for(let i=nums.length;i<6;i++){const d=document.createElement('div');d.className='sl';ss.appendChild(d);}
+}
+function toggleBall(n,el){
+  if(sel.has(n)){sel.delete(n);el.classList.remove('sel');}
+  else{if(sel.size>=6)return;sel.add(n);el.classList.add('sel');}
+  p649btn.disabled=sel.size<6;
+  p649btn.textContent=sel.size<6?`Select ${6-sel.size} more number${sel.size===5?'':'s'}`:'Confirm Entry →';
+  renderStrip();
+}
+renderStrip();
+
+// ── Spin Wheel SVG ────────────────────────────────────────────
+const SEGS=[
+  {lbl:'x0',   col:'#8B1A1A'},
+  {lbl:'x0',   col:'#6B1540'},
+  {lbl:'x0.25',col:'#8B4000'},
+  {lbl:'x0.5', col:'#7A5500'},
+  {lbl:'x0.5', col:'#6B5E00'},
+  {lbl:'x1',   col:'#0F3D6E'},
+  {lbl:'x1',   col:'#1A2F6E'},
+  {lbl:'x2',   col:'#0A4A3C'},
+  {lbl:'x2',   col:'#0A3A50'},
+  {lbl:'x3',   col:'#4A1A8A'},
+  {lbl:'x5',   col:'#8A6000'},
+  {lbl:'x5',   col:'#7A4A00'},
+];
+const mults=[0,0,0.25,0.5,0.5,1,1,2,2,3,5,5];
+const wsvg=document.getElementById('wsvg');
+const PI=Math.PI,cx=106,cy=106,r=100;
+SEGS.forEach((seg,i)=>{
+  const a1=(-90+i*30)*PI/180,a2=(-90+(i+1)*30)*PI/180;
+  const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+  const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d',`M${cx},${cy}L${x1.toFixed(1)},${y1.toFixed(1)}A${r},${r} 0 0,1 ${x2.toFixed(1)},${y2.toFixed(1)}Z`);
+  path.setAttribute('fill',seg.col);
+  path.setAttribute('stroke','#0C111A');
+  path.setAttribute('stroke-width','1.5');
+  wsvg.appendChild(path);
+  const ma=(-90+(i+0.5)*30)*PI/180;
+  const txt=document.createElementNS('http://www.w3.org/2000/svg','text');
+  txt.setAttribute('x',(cx+68*Math.cos(ma)).toFixed(1));
+  txt.setAttribute('y',(cy+68*Math.sin(ma)).toFixed(1));
+  txt.setAttribute('text-anchor','middle');
+  txt.setAttribute('dominant-baseline','middle');
+  txt.setAttribute('font-size','8.5');
+  txt.setAttribute('font-weight','700');
+  txt.setAttribute('fill','rgba(255,255,255,0.85)');
+  txt.setAttribute('font-family','sans-serif');
+  txt.textContent=seg.lbl;
+  wsvg.appendChild(txt);
+});
+
+let spinning=false,curAng=0;
+function doSpin(){
+  if(spinning)return;
+  spinning=true;
+  const btn=document.getElementById('spinbtn');
+  btn.disabled=true;btn.textContent='Spinning...';
+  const ri=Math.floor(Math.random()*12);
+  const stop=curAng+1080+(330-ri*30);
+  let start=null,dur=2800;
+  function step(ts){
+    if(!start)start=ts;
+    const p=Math.min((ts-start)/dur,1);
+    const e=1-Math.pow(1-p,4);
+    const ang=curAng+(stop-curAng)*e;
+    wsvg.style.transform=`rotate(${ang}deg)`;
+    wsvg.style.transformOrigin='106px 106px';
+    if(p<1){requestAnimationFrame(step);}
+    else{
+      curAng=stop%360;spinning=false;
+      btn.disabled=false;btn.textContent='SPIN AGAIN';
+      showResult(ri);
+    }
+  }
+  requestAnimationFrame(step);
+}
+function showResult(ri){
+  const rb=document.getElementById('rbadge');
+  const rv=document.getElementById('rv');
+  const rs=document.getElementById('rs');
+  const stake=parseFloat(document.getElementById('skspin').value)||5;
+  const mult=mults[ri];
+  const win=(stake*mult).toFixed(2);
+  rv.textContent=SEGS[ri].lbl;
+  if(mult===0){rv.style.color='#F85149';rs.textContent=`No win · GHS ${stake.toFixed(2)} lost`;rb.style.borderLeftColor='#F85149';}
+  else if(mult>=3){rv.style.color='#F5B800';rs.textContent=`You won GHS ${win}`;rb.style.borderLeftColor='#F5B800';}
+  else{rv.style.color='#22C55E';rs.textContent=`You won GHS ${win}`;rb.style.borderLeftColor='#22C55E';}
+}
+
+// ── Mini-games Grid ───────────────────────────────────────────
+const MGAMES=[
+  {n:'Odd/Even Blitz',   d:'50/50 · Pick odd or even', ic:'⚖️', bg:'#111C2C', bd:'#182A3E'},
+  {n:'Lucky Digit Pop',  d:'Pick a digit 0–9',          ic:'🎯', bg:'#1A2210', bd:'#2A3A18'},
+  {n:'Color Clash',      d:'Red, Blue or Green',         ic:'🎨', bg:'#1C1430', bd:'#2A1E40'},
+  {n:'1 in 100 Draw',    d:'Exact match wins x100',      ic:'🏀', bg:'#1C1810', bd:'#3A2A18'},
+  {n:'Mega Match 3D',    d:'3-digit match up to x1000',  ic:'🔢', bg:'#111C1C', bd:'#183030'},
+  {n:'Treasure Chest',   d:'1 of 5 hides your prize',    ic:'🎁', bg:'#1C1818', bd:'#3A2020'},
+  {n:'Balloon Pop',      d:'Pop one — win up to x10',    ic:'🎈', bg:'#1A2210', bd:'#2A3818'},
+  {n:'Lucky Ladder',     d:'Climb higher, win bigger',   ic:'🪜', bg:'#1C1430', bd:'#2A1E40'},
+  {n:'Scratch 2 Match',  d:'Match 2 of 6 boxes = x3',   ic:'🃏', bg:'#1A1810', bd:'#3A2A18'},
+  {n:'Number Slots',     d:'777 middle row = x100!',     ic:'🎰', bg:'#111C2C', bd:'#182A3E'},
+];
+const mgrid=document.getElementById('mgrid');
+MGAMES.forEach(m=>{
+  const d=document.createElement('div');
+  d.className='gt';
+  d.style.cssText=`background:${m.bg};border:1px solid ${m.bd};`;
+  d.innerHTML=`<div class="gtic">${m.ic}</div><div class="gtn">${m.n}</div><div class="gtd">${m.d}</div>`;
+  d.onclick=()=>alert(`${m.n}\n\n${m.d}\n\nMin stake: GHS 1.00\nResult is instant.`);
+  mgrid.appendChild(d);
+});
+
+// ── Transactions ──────────────────────────────────────────────
+const TXNS=[
+  {n:'6/49 Win — Group 4',  d:'18 Mar · 5:31PM', a:'+GHS 200.00', pos:true,  ic:'🏆', bg:'#1A2A1A'},
+  {n:'6/49 Stake',          d:'18 Mar · 5:29PM', a:'-GHS 2.00',   pos:false, ic:'🎱', bg:'#182030'},
+  {n:'Spin & Win · x3',     d:'17 Mar · 2:14PM', a:'+GHS 15.00',  pos:true,  ic:'🎡', bg:'#182030'},
+  {n:'MoMo Deposit',        d:'16 Mar · 9:00AM', a:'+GHS 50.00',  pos:true,  ic:'📲', bg:'#182030'},
+  {n:'Number Slots Stake',  d:'15 Mar · 7:45PM', a:'-GHS 5.00',   pos:false, ic:'🎰', bg:'#182030'},
+];
+const txlist=document.getElementById('txlist');
+TXNS.forEach(t=>{
+  const d=document.createElement('div');
+  d.className='txn';
+  d.innerHTML=`<div class="txnico" style="background:${t.bg};">${t.ic}</div><div class="txnm"><div class="txnn">${t.n}</div><div class="txnd">${t.d}</div></div><div class="txna" style="color:${t.pos?'#22C55E':'#F85149'};">${t.a}</div>`;
+  txlist.appendChild(d);
+});
+</script>
