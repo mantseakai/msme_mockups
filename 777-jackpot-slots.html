@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>777 Jackpot — Number Slots</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Black+Ops+One&family=Russo+One&family=Orbitron:wght@400;700;900&family=Barlow:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:    #E8001C;
+  --red2:   #FF3355;
+  --gold:   #FFD700;
+  --gold2:  #FFA500;
+  --green:  #00FF87;
+  --purple: #6B00FF;
+  --dark:   #080810;
+  --dark2:  #0E0E1A;
+  --panel:  #12121E;
+  --chrome: #C0C0C0;
+  --chrome2:#8A8A9A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body {
+  background: var(--dark);
+  color: #fff;
+  font-family: 'Barlow', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── Animated BG ──────────────────────────── */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(107,0,255,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 100%, rgba(232,0,28,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 50%, rgba(255,215,0,0.03) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* scanline effect */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.08) 3px, rgba(0,0,0,0.08) 4px);
+  pointer-events:none;
+  z-index:1;
+}
+
+.app {
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:460px;
+  padding-bottom:60px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* ── Marquee lights ────────────────────────── */
+.marquee-lights {
+  width:100%;
+  padding:10px 0;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  overflow:hidden;
+}
+.light-bulb {
+  width:10px;height:10px;
+  border-radius:50%;
+  animation: bulbFlash 1.4s ease-in-out infinite;
+}
+.light-bulb:nth-child(3n)   { background:var(--red);  animation-delay:0s; }
+.light-bulb:nth-child(3n+1) { background:var(--gold); animation-delay:0.47s; }
+.light-bulb:nth-child(3n+2) { background:var(--green);animation-delay:0.94s; }
+@keyframes bulbFlash {
+  0%,100%{ opacity:1; box-shadow:0 0 8px currentColor; }
+  50%    { opacity:0.2; box-shadow:none; }
+}
+
+/* ── Header ────────────────────────────────── */
+.header {
+  text-align:center;
+  padding: 0 20px 4px;
+}
+.header-nla {
+  font-size:0.62rem;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.35);
+  margin-bottom:4px;
+}
+.header-title {
+  font-family:'Black Ops One',sans-serif;
+  font-size:2.9rem;
+  letter-spacing:0.06em;
+  line-height:1;
+  background:linear-gradient(160deg,#fff 0%,var(--gold) 45%,var(--gold2) 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  text-shadow:none;
+  animation:titleGlow 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 20px rgba(255,215,0,0.3));
+}
+@keyframes titleGlow {
+  0%,100%{ filter:drop-shadow(0 0 15px rgba(255,215,0,0.2)); }
+  50%    { filter:drop-shadow(0 0 35px rgba(255,215,0,0.5)); }
+}
+.header-sub {
+  font-size:0.68rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+  margin-top:2px;
+}
+
+/* ── Machine cabinet ───────────────────────── */
+.cabinet {
+  width:calc(100% - 24px);
+  margin:10px 12px 0;
+  background:linear-gradient(180deg,#1C1C2E 0%,#0E0E1A 100%);
+  border-radius:24px 24px 20px 20px;
+  border:2px solid #2a2a40;
+  box-shadow:
+    0 0 0 1px rgba(255,215,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 20px 60px rgba(0,0,0,0.8);
+  overflow:hidden;
+  position:relative;
+}
+
+/* Chrome top bar */
+.cabinet-top {
+  height:8px;
+  background:linear-gradient(90deg,#2a2a3e,#4a4a6e,#6B00FF,#4a4a6e,#2a2a3e);
+  border-radius:22px 22px 0 0;
+}
+
+/* Jackpot display strip */
+.jackpot-strip {
+  background:#000;
+  border-top:1px solid #222;
+  border-bottom:1px solid #222;
+  padding:8px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.jackpot-strip-label {
+  font-family:'Orbitron',monospace;
+  font-size:0.55rem;
+  letter-spacing:0.2em;
+  color:var(--red2);
+  text-transform:uppercase;
+}
+.jackpot-strip-amount {
+  font-family:'Orbitron',monospace;
+  font-size:1rem;
+  font-weight:900;
+  color:var(--gold);
+  letter-spacing:0.05em;
+  text-shadow:0 0 15px rgba(255,215,0,0.6);
+  animation:jackAmt 2s ease-in-out infinite;
+}
+@keyframes jackAmt {
+  0%,100%{text-shadow:0 0 10px rgba(255,215,0,0.5);}
+  50%{text-shadow:0 0 30px rgba(255,215,0,0.9),0 0 50px rgba(255,165,0,0.4);}
+}
+.jackpot-strip-mult {
+  font-family:'Orbitron',monospace;
+  font-size:0.55rem;
+  letter-spacing:0.1em;
+  color:rgba(255,255,255,0.3);
+}
+
+/* Screen bezel */
+.screen-bezel {
+  padding:14px 18px;
+  background:linear-gradient(180deg,#0A0A14,#0E0E1A);
+  position:relative;
+}
+.screen-bezel::before {
+  content:'';
+  position:absolute;
+  inset:14px 18px;
+  border-radius:8px;
+  background:linear-gradient(135deg,rgba(255,255,255,0.04),transparent 50%,rgba(0,0,0,0.2));
+  pointer-events:none;
+  z-index:10;
+}
+
+/* ── Slot windows container ───────────────── */
+.slots-container {
+  background:#000;
+  border-radius:10px;
+  border:2px solid #1a1a2e;
+  padding:0;
+  overflow:hidden;
+  position:relative;
+  box-shadow:inset 0 0 40px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* Row highlight labels */
+.row-labels {
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:28px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-around;
+  align-items:center;
+  z-index:20;
+  padding:2px 0;
+  background:rgba(0,0,0,0.5);
+  border-right:1px solid #1a1a2e;
+}
+.row-label {
+  font-family:'Orbitron',monospace;
+  font-size:0.42rem;
+  letter-spacing:0.1em;
+  color:rgba(255,255,255,0.2);
+  text-transform:uppercase;
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+}
+.row-label.mid {
+  color:var(--red2);
+  font-weight:700;
+  text-shadow:0 0 8px var(--red2);
+}
+
+.slots-inner {
+  display:flex;
+  margin-left:28px;
+}
+
+/* Individual reel */
+.reel-wrap {
+  flex:1;
+  position:relative;
+  border-right:1px solid #1a1a2e;
+}
+.reel-wrap:last-child { border-right:none; }
+
+/* Mask — shows only 3 numbers */
+.reel-mask {
+  height:240px; /* 3 cells × 80px */
+  overflow:hidden;
+  position:relative;
+}
+
+/* The scrolling strip */
+.reel-strip {
+  display:flex;
+  flex-direction:column;
+  transition:none;
+  will-change:transform;
+}
+.reel-cell {
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Black Ops One',sans-serif;
+  font-size:2.8rem;
+  font-weight:900;
+  color:#e0e0ff;
+  letter-spacing:-0.02em;
+  user-select:none;
+  flex-shrink:0;
+  position:relative;
+  text-shadow:0 2px 8px rgba(0,0,0,0.8);
+}
+.reel-cell.num-7 {
+  color:var(--gold);
+  text-shadow:0 0 20px rgba(255,215,0,0.8),0 2px 8px rgba(0,0,0,0.8);
+}
+
+/* Top & bottom fade on reel */
+.reel-fade-top, .reel-fade-bot {
+  position:absolute;
+  left:0;right:0;
+  height:55px;
+  pointer-events:none;
+  z-index:5;
+}
+.reel-fade-top { top:0;background:linear-gradient(180deg,#000 0%,transparent 100%); }
+.reel-fade-bot { bottom:0;background:linear-gradient(0deg,#000 0%,transparent 100%); }
+
+/* Dividers between rows */
+.row-divider {
+  position:absolute;
+  left:0;right:0;
+  height:1px;
+  background:rgba(255,255,255,0.06);
+  z-index:4;
+  pointer-events:none;
+}
+.row-divider.top { top:80px; }
+.row-divider.bot { top:160px; }
+
+/* ── Middle row highlight ─────────────────── */
+.jackpot-row-highlight {
+  position:absolute;
+  left:28px; right:0;
+  top:80px; height:80px;
+  z-index:3;
+  pointer-events:none;
+  border-top:2px solid var(--red2);
+  border-bottom:2px solid var(--red2);
+  box-shadow:
+    inset 0 0 30px rgba(232,0,28,0.08),
+    0 0 15px rgba(232,0,28,0.3),
+    inset 0 2px 0 rgba(255,50,80,0.4),
+    inset 0 -2px 0 rgba(255,50,80,0.4);
+  animation:rowGlow 2s ease-in-out infinite;
+}
+@keyframes rowGlow {
+  0%,100%{box-shadow:inset 0 0 20px rgba(232,0,28,0.06),0 0 10px rgba(232,0,28,0.2);}
+  50%{box-shadow:inset 0 0 40px rgba(232,0,28,0.15),0 0 25px rgba(232,0,28,0.5);}
+}
+/* Corner accents */
+.jackpot-row-highlight::before,
+.jackpot-row-highlight::after {
+  content:'';
+  position:absolute;
+  width:8px;height:8px;
+  border:2px solid var(--red2);
+  box-shadow:0 0 8px var(--red2);
+}
+.jackpot-row-highlight::before { top:-2px;left:4px;border-right:none;border-bottom:none; }
+.jackpot-row-highlight::after  { bottom:-2px;right:4px;border-left:none;border-top:none; }
+
+/* Jackpot label inside highlight */
+.jackpot-row-tag {
+  position:absolute;
+  top:80px;
+  right:8px;
+  transform:translateY(-50%);
+  z-index:20;
+  background:var(--red);
+  color:#fff;
+  font-family:'Orbitron',monospace;
+  font-size:0.42rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  padding:2px 6px;
+  border-radius:3px;
+  text-transform:uppercase;
+  box-shadow:0 0 10px var(--red2);
+}
+
+/* ── Lightning SVG overlay ───────────────── */
+#lightningCanvas {
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:15;
+}
+
+/* ── Win row flash ───────────────────────── */
+.reel-cell.win-flash {
+  animation:winFlash 0.4s ease infinite;
+}
+@keyframes winFlash {
+  0%,100%{ background:transparent; }
+  50%{ background:rgba(0,255,135,0.15); }
+}
+.reel-cell.jackpot-flash {
+  animation:jackpotFlash 0.3s ease infinite;
+}
+@keyframes jackpotFlash {
+  0%,100%{ background:transparent; color:var(--gold); text-shadow:0 0 20px rgba(255,215,0,0.8); }
+  50%{ background:rgba(255,215,0,0.15); color:#fff; text-shadow:0 0 40px rgba(255,215,0,1); }
+}
+
+/* ── Below slots: row results ─────────────── */
+.row-results {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:10px 0 8px;
+  margin-left:28px;
+}
+.row-result {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:0.6rem;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.2);
+  padding:3px 0;
+  transition:all 0.3s;
+}
+.row-result.active {
+  color:var(--green);
+}
+.row-result.jackpot-active {
+  color:var(--gold);
+  text-shadow:0 0 10px rgba(255,215,0,0.6);
+}
+.row-result-dot {
+  width:6px;height:6px;
+  border-radius:50%;
+  background:currentColor;
+  flex-shrink:0;
+}
+.row-result-mult {
+  margin-left:auto;
+  font-family:'Orbitron',monospace;
+  font-size:0.7rem;
+  font-weight:700;
+}
+
+/* ── Controls ────────────────────────────── */
+.controls-area {
+  padding:12px 18px 16px;
+  background:linear-gradient(180deg,#0A0A14,#050510);
+  border-top:1px solid #1a1a2e;
+}
+
+/* Stake row */
+.stake-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+.stake-group {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.ctrl-label {
+  font-size:0.58rem;
+  letter-spacing:0.15em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+  margin-right:2px;
+}
+.ctrl-btn {
+  width:28px;height:28px;
+  border-radius:6px;
+  border:1px solid #2a2a40;
+  background:#151524;
+  color:rgba(255,255,255,0.6);
+  font-size:1rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;
+  font-family:'Barlow',sans-serif;
+}
+.ctrl-btn:hover { border-color:var(--gold);color:var(--gold); }
+.stake-display {
+  font-family:'Orbitron',monospace;
+  font-size:0.95rem;
+  font-weight:700;
+  color:var(--gold);
+  min-width:68px;
+  text-align:center;
+}
+.wallet-group {
+  text-align:right;
+}
+.wallet-val {
+  font-family:'Orbitron',monospace;
+  font-size:0.85rem;
+  font-weight:700;
+  color:var(--green);
+}
+
+/* Spin button */
+.spin-btn-wrap {
+  position:relative;
+}
+.spin-btn {
+  width:100%;
+  padding:0;
+  border:none;
+  background:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.spin-btn-inner {
+  width:100%;
+  padding:18px 20px;
+  background:linear-gradient(135deg,#6B00FF 0%,#9B30FF 50%,#6B00FF 100%);
+  background-size:200% 100%;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  font-family:'Black Ops One',sans-serif;
+  font-size:1.4rem;
+  letter-spacing:0.1em;
+  color:#fff;
+  transition:all 0.2s;
+  box-shadow:0 6px 0 #3a0080, 0 10px 30px rgba(107,0,255,0.4);
+  border:1px solid rgba(255,255,255,0.1);
+  position:relative;
+  overflow:hidden;
+}
+.spin-btn-inner::before {
+  content:'';
+  position:absolute;
+  top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  transition:left 0.4s;
+}
+.spin-btn:not(.spinning):hover .spin-btn-inner::before { left:150%; }
+.spin-btn:not(.spinning):hover .spin-btn-inner {
+  box-shadow:0 8px 0 #3a0080, 0 14px 40px rgba(107,0,255,0.5);
+  transform:translateY(-2px);
+  background-position:100% 0;
+}
+.spin-btn:not(.spinning):active .spin-btn-inner {
+  box-shadow:0 2px 0 #3a0080, 0 4px 15px rgba(107,0,255,0.3);
+  transform:translateY(4px);
+}
+.spin-btn.spinning .spin-btn-inner {
+  background:linear-gradient(135deg,#222,#333);
+  box-shadow:0 2px 0 #111;
+  transform:translateY(4px);
+  cursor:not-allowed;
+}
+.spin-icon { font-size:1.5rem; }
+.spin-btn.spinning .spin-icon { animation: iconSpin 0.5s linear infinite; }
+@keyframes iconSpin { from{transform:rotate(0);} to{transform:rotate(360deg);} }
+
+/* ── Result flash overlay ─────────────────── */
+.result-overlay {
+  position:absolute;
+  inset:0;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:25;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
+}
+.result-overlay.show { opacity:1; pointer-events:auto; }
+.result-overlay.win-overlay { background:rgba(0,255,135,0.06); }
+.result-overlay.jackpot-overlay { background:rgba(255,215,0,0.08); }
+
+/* ── Result banner ────────────────────────── */
+.result-banner {
+  position:fixed;
+  top:0;left:0;right:0;
+  padding:10px;
+  text-align:center;
+  z-index:200;
+  transform:translateY(-100%);
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none;
+}
+.result-banner.show { transform:translateY(0); }
+.result-banner-inner {
+  display:inline-block;
+  padding:12px 30px;
+  border-radius:12px;
+  font-family:'Black Ops One',sans-serif;
+  font-size:1.3rem;
+  letter-spacing:0.08em;
+}
+.result-banner.win-banner .result-banner-inner {
+  background:linear-gradient(135deg,var(--green),#00c46a);
+  color:#000;
+  box-shadow:0 0 40px rgba(0,255,135,0.5);
+}
+.result-banner.jackpot-banner .result-banner-inner {
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;
+  box-shadow:0 0 50px rgba(255,215,0,0.7);
+  animation:jackBannerPulse 0.4s ease infinite alternate;
+}
+@keyframes jackBannerPulse {
+  from{box-shadow:0 0 30px rgba(255,215,0,0.5);}
+  to{box-shadow:0 0 70px rgba(255,215,0,0.9),0 0 100px rgba(255,165,0,0.4);}
+}
+
+/* ── Gold coins rain ──────────────────────── */
+.coin-rain {
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:150;
+  overflow:hidden;
+}
+.coin {
+  position:absolute;
+  top:-40px;
+  font-size:var(--sz, 1.5rem);
+  animation:coinFall var(--dur) ease-in var(--delay) forwards;
+  opacity:0;
+}
+@keyframes coinFall {
+  0%  { opacity:1; transform:translateY(0) rotate(0deg) translateX(0); }
+  100%{ opacity:0; transform:translateY(110vh) rotate(var(--rot)) translateX(var(--drift)); }
+}
+
+/* ── Info strip ───────────────────────────── */
+.info-strip {
+  width:calc(100% - 24px);
+  margin: 10px 12px 0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+}
+.info-card {
+  background:#0E0E1A;
+  border:1px solid #1a1a2e;
+  border-radius:10px;
+  padding:8px 6px;
+  text-align:center;
+}
+.info-card-val {
+  font-family:'Orbitron',monospace;
+  font-size:0.75rem;
+  font-weight:700;
+  color:var(--gold);
+}
+.info-card-label {
+  font-size:0.55rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.25);
+  margin-top:2px;
+}
+.info-card.special .info-card-val { color:var(--red2); }
+</style>
+</head>
+<body>
+
+<!-- Marquee lights top -->
+<div class="marquee-lights" id="topLights"></div>
+
+<div class="result-banner" id="resultBanner">
+  <div class="result-banner-inner" id="resultBannerText"></div>
+</div>
+<div class="coin-rain" id="coinRain"></div>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-nla">Ghana National Lottery Authority</div>
+    <div class="header-title">777 JACKPOT</div>
+    <div class="header-sub">Number Slots · Virtual Machine</div>
+  </div>
+
+  <!-- Cabinet -->
+  <div class="cabinet">
+    <div class="cabinet-top"></div>
+
+    <!-- Jackpot strip -->
+    <div class="jackpot-strip">
+      <div class="jackpot-strip-label">⚡ 777 Jackpot</div>
+      <div class="jackpot-strip-amount" id="jackpotAmt">GHS 88,500</div>
+      <div class="jackpot-strip-mult">x100 Stake</div>
+    </div>
+
+    <!-- Screen -->
+    <div class="screen-bezel">
+      <div class="slots-container">
+
+        <!-- Lightning canvas -->
+        <canvas id="lightningCanvas"></canvas>
+
+        <!-- Jackpot row highlight -->
+        <div class="jackpot-row-highlight"></div>
+        <div class="jackpot-row-tag">777 Jackpot Row</div>
+
+        <!-- Row labels -->
+        <div class="row-labels">
+          <div class="row-label">Top</div>
+          <div class="row-label mid">★</div>
+          <div class="row-label">Bot</div>
+        </div>
+
+        <!-- Reels -->
+        <div class="slots-inner">
+          <div class="reel-wrap" id="reel0">
+            <div class="reel-mask" id="mask0">
+              <div class="reel-strip" id="strip0"></div>
+              <div class="reel-fade-top"></div>
+              <div class="reel-fade-bot"></div>
+              <div class="row-divider top"></div>
+              <div class="row-divider bot"></div>
+            </div>
+          </div>
+          <div class="reel-wrap" id="reel1">
+            <div class="reel-mask" id="mask1">
+              <div class="reel-strip" id="strip1"></div>
+              <div class="reel-fade-top"></div>
+              <div class="reel-fade-bot"></div>
+              <div class="row-divider top"></div>
+              <div class="row-divider bot"></div>
+            </div>
+          </div>
+          <div class="reel-wrap" id="reel2">
+            <div class="reel-mask" id="mask2">
+              <div class="reel-strip" id="strip2"></div>
+              <div class="reel-fade-top"></div>
+              <div class="reel-fade-bot"></div>
+              <div class="row-divider top"></div>
+              <div class="row-divider bot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row results -->
+        <div class="row-results">
+          <div class="row-result" id="rowRes0">
+            <div class="row-result-dot"></div><span>Top Row</span>
+            <div class="row-result-mult" id="rowMult0">—</div>
+          </div>
+          <div class="row-result" id="rowRes1">
+            <div class="row-result-dot"></div><span>Middle Row (Jackpot)</span>
+            <div class="row-result-mult" id="rowMult1">—</div>
+          </div>
+          <div class="row-result" id="rowRes2">
+            <div class="row-result-dot"></div><span>Bottom Row</span>
+            <div class="row-result-mult" id="rowMult2">—</div>
+          </div>
+        </div>
+
+      </div><!-- /slots-container -->
+
+      <!-- Controls -->
+      <div class="controls-area">
+        <div class="stake-row">
+          <div>
+            <div class="ctrl-label">Stake Amount</div>
+            <div class="stake-group" style="margin-top:5px">
+              <button class="ctrl-btn" onclick="changeStake(-1)">−</button>
+              <div class="stake-display" id="stakeDisplay">GHS 5</div>
+              <button class="ctrl-btn" onclick="changeStake(1)">+</button>
+            </div>
+          </div>
+          <div class="wallet-group">
+            <div class="ctrl-label">Balance</div>
+            <div class="wallet-val" id="walletDisplay" style="margin-top:5px">GHS 200.00</div>
+          </div>
+        </div>
+        <div class="spin-btn-wrap">
+          <button class="spin-btn" id="spinBtn" onclick="doSpin()">
+            <div class="spin-btn-inner">
+              <span class="spin-icon">🎰</span>
+              <span id="spinBtnLabel">SPIN TO WIN</span>
+              <span class="spin-icon">🎰</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div><!-- /screen-bezel -->
+  </div><!-- /cabinet -->
+
+  <!-- Info cards -->
+  <div class="info-strip">
+    <div class="info-card">
+      <div class="info-card-val">x1</div>
+      <div class="info-card-label">3 diff pos</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-val">x1.5</div>
+      <div class="info-card-label">2 same pos</div>
+    </div>
+    <div class="info-card">
+      <div class="info-card-val">x5</div>
+      <div class="info-card-label">3 in a row</div>
+    </div>
+    <div class="info-card special">
+      <div class="info-card-val">x100</div>
+      <div class="info-card-label">777 mid</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Bottom lights -->
+<div class="marquee-lights" id="botLights" style="margin-top:10px;"></div>
+
+<script>
+// ── Marquee lights ────────────────────────────────────────
+function buildLights(elId, count) {
+  const el = document.getElementById(elId);
+  for (let i = 0; i < count; i++) {
+    const d = document.createElement('div');
+    d.className = 'light-bulb';
+    el.appendChild(d);
+  }
+}
+buildLights('topLights', 32);
+buildLights('botLights', 32);
+
+// ── State ─────────────────────────────────────────────────
+const STAKES = [1,2,5,10,20,50,100];
+let stakeIdx = 2;
+let wallet   = 200;
+let spinning = false;
+let lastResult = null; // [top[], mid[], bot[]]
+
+// ── Jackpot ticking ───────────────────────────────────────
+let jackpot = 88500;
+setInterval(()=>{
+  jackpot += Math.floor(Math.random()*350+50);
+  document.getElementById('jackpotAmt').textContent = 'GHS ' + jackpot.toLocaleString();
+}, 3500);
+
+// ── Build reels ───────────────────────────────────────────
+const CELL_H = 80;
+const VISIBLE = 3; // rows shown
+const STRIP_COUNT = 30; // cells in strip (more = smoother blur)
+
+function buildStrip(stripId) {
+  const strip = document.getElementById(stripId);
+  strip.innerHTML = '';
+  for (let i = 0; i < STRIP_COUNT; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'reel-cell';
+    cell.textContent = Math.floor(Math.random()*10);
+    if (cell.textContent === '7') cell.classList.add('num-7');
+    strip.appendChild(cell);
+  }
+}
+buildStrip('strip0');
+buildStrip('strip1');
+buildStrip('strip2');
+
+// Position each strip so middle 3 cells show (cells 0,1,2 by default)
+function positionStrip(stripId, topCell) {
+  const strip = document.getElementById(stripId);
+  strip.style.transform = `translateY(-${topCell * CELL_H}px)`;
+  strip.style.transition = 'none';
+}
+// Initially show cells 0–2
+[0,1,2].forEach(i => positionStrip(`strip${i}`, 0));
+
+// Set final display: set cells at positions topCell, topCell+1, topCell+2 to specific digits
+function setStripValues(stripId, topCell, digits) {
+  const strip = document.getElementById(stripId);
+  const cells = strip.querySelectorAll('.reel-cell');
+  digits.forEach((d, i) => {
+    const cell = cells[(topCell + i) % cells.length];
+    cell.textContent = d;
+    cell.classList.toggle('num-7', d === 7);
+    cell.classList.remove('win-flash','jackpot-flash');
+  });
+}
+
+// ── Audio ─────────────────────────────────────────────────
+let audioCtx = null;
+function ac() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+function playTick(vol=0.07) {
+  try {
+    const c = ac();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type='square'; o.frequency.value=800;
+    g.gain.setValueAtTime(vol, c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime+0.04);
+    o.start(); o.stop(c.currentTime+0.04);
+  } catch(e){}
+}
+function playWin(jackpot=false) {
+  try {
+    const c = ac();
+    const notes = jackpot ? [523,659,784,1047,1318,1568] : [523,659,784,1047];
+    notes.forEach((f,i) => {
+      const o=c.createOscillator(), g=c.createGain();
+      o.connect(g); g.connect(c.destination);
+      o.type='sine'; o.frequency.value=f;
+      const t=c.currentTime+i*0.1;
+      g.gain.setValueAtTime(0,t);
+      g.gain.linearRampToValueAtTime(0.1,t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001,t+0.4);
+      o.start(t); o.stop(t+0.45);
+    });
+  } catch(e){}
+}
+function playBust() {
+  try {
+    const c=ac(), o=c.createOscillator(), g=c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.type='sawtooth'; o.frequency.value=150;
+    g.gain.setValueAtTime(0.08,c.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.5);
+    o.start(); o.stop(c.currentTime+0.5);
+  } catch(e){}
+}
+
+// ── Lightning canvas ──────────────────────────────────────
+const lc = document.getElementById('lightningCanvas');
+function sizeCanvas() {
+  const sc = document.querySelector('.slots-container');
+  lc.width  = sc.offsetWidth;
+  lc.height = sc.offsetHeight;
+}
+window.addEventListener('resize', sizeCanvas);
+setTimeout(sizeCanvas, 100);
+
+function drawLightning(row, color='#00FF87') {
+  sizeCanvas();
+  const lctx = lc.getContext('2d');
+  lctx.clearRect(0,0,lc.width,lc.height);
+  const LABEL_W = 28;
+  const y = 80 + row * 80 + 40; // center of row
+  const x1 = LABEL_W + 10;
+  const x2 = lc.width - 10;
+  drawBolt(lctx, x1, y, x2, y, color);
+}
+
+function drawBolt(ctx, x1, y1, x2, y2, color) {
+  const segs = 8;
+  const points = [[x1,y1]];
+  for (let i=1;i<segs;i++) {
+    const t = i/segs;
+    const px = x1 + (x2-x1)*t;
+    const py = y1 + (y2-y1)*t + (Math.random()-0.5)*22;
+    points.push([px,py]);
+  }
+  points.push([x2,y2]);
+
+  // Outer glow
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 8;
+  ctx.globalAlpha = 0.15;
+  ctx.beginPath();
+  ctx.moveTo(points[0][0],points[0][1]);
+  points.slice(1).forEach(p => ctx.lineTo(p[0],p[1]));
+  ctx.stroke();
+  // Mid
+  ctx.lineWidth = 3;
+  ctx.globalAlpha = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(points[0][0],points[0][1]);
+  points.slice(1).forEach(p => ctx.lineTo(p[0],p[1]));
+  ctx.stroke();
+  // Core
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = '#fff';
+  ctx.beginPath();
+  ctx.moveTo(points[0][0],points[0][1]);
+  points.slice(1).forEach(p => ctx.lineTo(p[0],p[1]));
+  ctx.stroke();
+  ctx.restore();
+}
+
+function clearLightning() {
+  const lctx = lc.getContext('2d');
+  lctx.clearRect(0,0,lc.width,lc.height);
+}
+
+let lightningInterval = null;
+function animateLightning(row, color, duration) {
+  if (lightningInterval) clearInterval(lightningInterval);
+  const end = Date.now() + duration;
+  lightningInterval = setInterval(()=>{
+    if (Date.now() > end) { clearLightning(); clearInterval(lightningInterval); lightningInterval=null; return; }
+    drawLightning(row, color);
+  }, 80);
+}
+
+// ── Coin rain ─────────────────────────────────────────────
+function spawnCoins(count=60) {
+  const wrap = document.getElementById('coinRain');
+  wrap.innerHTML = '';
+  const emojis = ['🪙','💰','⭐','✨','🌟','💛'];
+  for (let i=0;i<count;i++) {
+    const coin = document.createElement('div');
+    coin.className = 'coin';
+    const sz = (Math.random()*1.2+0.8).toFixed(1);
+    coin.style.cssText = `
+      left:${Math.random()*100}%;
+      --sz:${sz}rem;
+      --dur:${(Math.random()*1.5+1.5).toFixed(2)}s;
+      --delay:${(Math.random()*1.2).toFixed(2)}s;
+      --drift:${(Math.random()*120-60).toFixed(0)}px;
+      --rot:${(Math.random()*360).toFixed(0)}deg;
+    `;
+    coin.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    wrap.appendChild(coin);
+  }
+  setTimeout(()=>{ wrap.innerHTML=''; }, 4000);
+}
+
+// ── Row result display ────────────────────────────────────
+function setRowResult(rowIdx, matched, mult, isJackpot=false) {
+  const res  = document.getElementById(`rowRes${rowIdx}`);
+  const mEl  = document.getElementById(`rowMult${rowIdx}`);
+  res.classList.remove('active','jackpot-active');
+  if (matched) {
+    res.classList.add(isJackpot ? 'jackpot-active' : 'active');
+    mEl.textContent = isJackpot ? '🏆 x100' : `x${mult}`;
+  } else {
+    mEl.textContent = '—';
+  }
+}
+function resetRowResults() {
+  [0,1,2].forEach(i=>setRowResult(i,false,0));
+}
+
+// ── Stake controls ────────────────────────────────────────
+function changeStake(dir) {
+  stakeIdx = Math.max(0, Math.min(STAKES.length-1, stakeIdx+dir));
+  document.getElementById('stakeDisplay').textContent = `GHS ${STAKES[stakeIdx]}`;
+}
+function updateWallet() {
+  document.getElementById('walletDisplay').textContent = `GHS ${wallet.toFixed(2)}`;
+}
+
+// ── Show result banner ────────────────────────────────────
+let bannerTimer;
+function showBanner(text, type) {
+  const b = document.getElementById('resultBanner');
+  const t = document.getElementById('resultBannerText');
+  b.className = `result-banner show ${type}`;
+  t.textContent = text;
+  clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(()=>{ b.classList.remove('show'); }, 3500);
+}
+
+// ── Flash winning cells ───────────────────────────────────
+function flashCells(stripId, topCell, cls, count=3) {
+  const strip = document.getElementById(stripId);
+  const cells = strip.querySelectorAll('.reel-cell');
+  for (let i=0;i<count;i++) {
+    cells[(topCell+i)%cells.length].classList.add(cls);
+  }
+}
+function clearAllFlash() {
+  document.querySelectorAll('.reel-cell').forEach(c=>c.classList.remove('win-flash','jackpot-flash'));
+}
+
+// ── Main spin logic ───────────────────────────────────────
+function doSpin() {
+  if (spinning) return;
+  const stake = STAKES[stakeIdx];
+  if (stake > wallet) { showToast('Insufficient balance!'); return; }
+
+  wallet -= stake;
+  updateWallet();
+  spinning = true;
+  clearAllFlash();
+  clearLightning();
+  resetRowResults();
+
+  const btn = document.getElementById('spinBtn');
+  btn.classList.add('spinning');
+  document.getElementById('spinBtnLabel').textContent = 'SPINNING...';
+
+  // Decide outcome (weighted)
+  const mode = pickMode();
+  const topCell = 5; // which strip index becomes row 0
+
+  // Generate numbers for each reel: [top, mid, bot]
+  let reelNums = [[],[],[]];
+  if (mode === 'jackpot') {
+    reelNums = [[randomDigit(),7,randomDigit()],[randomDigit(),7,randomDigit()],[randomDigit(),7,randomDigit()]];
+  } else if (mode === 'x5') {
+    // pick a row to win (0=top,1=mid,2=bot) and a winning digit
+    const winRow = Math.floor(Math.random()*3);
+    const winDigit = randomDigitNotSeven();
+    for (let r=0;r<3;r++) {
+      reelNums[r] = [randomDigit(),randomDigit(),randomDigit()];
+      reelNums[r][winRow] = winDigit;
+    }
+    // Make sure other rows don't accidentally all match
+    ensureNoUnintendedMatch(reelNums, winRow);
+  } else if (mode === 'x1.5') {
+    const winRow = Math.floor(Math.random()*3);
+    const winDigit = randomDigitNotSeven();
+    for (let r=0;r<3;r++) reelNums[r] = [randomDigit(),randomDigit(),randomDigit()];
+    // 2 of 3 reels share digit in that row
+    reelNums[0][winRow] = winDigit;
+    reelNums[1][winRow] = winDigit;
+    reelNums[2][winRow] = differentDigit(winDigit);
+  } else if (mode === 'x1') {
+    const winRow = Math.floor(Math.random()*3);
+    const digits = [randomDigitNotSeven(),differentDigit2(),differentDigit3()];
+    for (let r=0;r<3;r++) {
+      reelNums[r] = [randomDigit(),randomDigit(),randomDigit()];
+      reelNums[r][winRow] = digits[r];
+    }
+    ensureNoUnintendedMatch(reelNums, winRow);
+  } else {
+    // no win
+    for (let r=0;r<3;r++) reelNums[r] = [randomDigit(),randomDigit(),randomDigit()];
+    ensureNoMatch(reelNums);
+  }
+
+  // Spin each reel sequentially with delay
+  const SPIN_DUR = [1800, 2200, 2700];
+  let settled = 0;
+  const topCells = [topCell, topCell, topCell];
+
+  [0,1,2].forEach((reelIdx) => {
+    setTimeout(() => {
+      spinReel(reelIdx, topCell, reelNums[reelIdx], SPIN_DUR[reelIdx], () => {
+        settled++;
+        if (settled === 3) {
+          spinning = false;
+          btn.classList.remove('spinning');
+          document.getElementById('spinBtnLabel').textContent = 'SPIN TO WIN';
+          evaluateResult(reelNums, topCell, stake);
+        }
+      });
+    }, reelIdx * 180);
+  });
+}
+
+function spinReel(reelIdx, topCell, finalDigits, duration, onDone) {
+  const stripId = `strip${reelIdx}`;
+  const strip   = document.getElementById(stripId);
+  const mask    = document.getElementById(`mask${reelIdx}`);
+  const cells   = strip.querySelectorAll('.reel-cell');
+  const TOTAL   = cells.length;
+
+  // Randomise all cells except final landing positions
+  cells.forEach((c,i) => {
+    if (i < topCell || i >= topCell+3) {
+      const d = Math.floor(Math.random()*10);
+      c.textContent = d;
+      c.classList.toggle('num-7', d===7);
+    }
+  });
+
+  // Set final landing cells
+  finalDigits.forEach((d,i) => {
+    const cell = cells[(topCell+i) % TOTAL];
+    cell.textContent = d;
+    cell.classList.toggle('num-7', d===7);
+    cell.classList.remove('win-flash','jackpot-flash');
+  });
+
+  // Start way above and spin down
+  const startOffset = -TOTAL * CELL_H + topCell * CELL_H - 800;
+  strip.style.transition = 'none';
+  strip.style.transform  = `translateY(${startOffset}px)`;
+  strip.offsetHeight; // reflow
+
+  // Spinning animation: fast scroll with blur
+  let tickCount = 0;
+  const blurInterval = setInterval(()=>{
+    strip.style.filter = `blur(${Math.random()*3+2}px)`;
+    // Random cell scramble for blur effect
+    cells.forEach(c => {
+      if (Math.random() < 0.3) {
+        const d=Math.floor(Math.random()*10);
+        c.textContent=d;
+        c.classList.toggle('num-7',d===7);
+      }
+    });
+    tickCount++;
+    playTick(0.05 - tickCount*0.001);
+  }, 60);
+
+  // Settle
+  setTimeout(()=>{
+    clearInterval(blurInterval);
+    // Restore final values
+    finalDigits.forEach((d,i) => {
+      const cell = cells[(topCell+i) % TOTAL];
+      cell.textContent = d;
+      cell.classList.toggle('num-7', d===7);
+    });
+    strip.style.filter = 'none';
+    strip.style.transition = `transform ${duration * 0.35}ms cubic-bezier(0.23,1,0.32,1)`;
+    strip.style.transform  = `translateY(-${topCell * CELL_H}px)`;
+    strip.addEventListener('transitionend', ()=>{
+      strip.style.transition = 'none';
+      playTick(0.1);
+      onDone();
+    }, {once:true});
+  }, duration * 0.65);
+}
+
+// ── Evaluate and show result ──────────────────────────────
+function evaluateResult(reelNums, topCell, stake) {
+  // reelNums[reel][row]: rows are 0=top,1=mid,2=bot
+  const rows = [
+    [reelNums[0][0], reelNums[1][0], reelNums[2][0]],
+    [reelNums[0][1], reelNums[1][1], reelNums[2][1]],
+    [reelNums[0][2], reelNums[1][2], reelNums[2][2]],
+  ];
+
+  let totalWin = 0;
+  let hasJackpot = false;
+  let hasWin = false;
+
+  rows.forEach((row, rowIdx) => {
+    const [a,b,c] = row;
+    let mult = 0, matched = false, isJackpot = false;
+
+    // 777 jackpot check (mid row = rowIdx 1)
+    if (rowIdx === 1 && a===7 && b===7 && c===7) {
+      mult = 100; matched = true; isJackpot = true; hasJackpot = true;
+    } else if (a===b && b===c) {
+      // All 3 same — determine position multiplier
+      mult = 5; matched = true; hasWin = true;
+    } else if ((a===b) || (b===c) || (a===c)) {
+      // 2 same
+      mult = 1.5; matched = true; hasWin = true;
+    } else if (a!==b && b!==c && a!==c) {
+      // All different — x1
+      mult = 1; matched = true; hasWin = true;
+    }
+
+    setRowResult(rowIdx, matched && mult>0, mult, isJackpot);
+
+    if (matched && mult > 0) {
+      const payout = stake * mult;
+      totalWin += payout;
+
+      // Flash cells
+      const cls = isJackpot ? 'jackpot-flash' : mult >= 5 ? 'win-flash' : '';
+      if (cls) {
+        [0,1,2].forEach(r => {
+          const strip = document.getElementById(`strip${r}`);
+          const cell  = strip.querySelectorAll('.reel-cell')[(topCell + rowIdx) % strip.querySelectorAll('.reel-cell').length];
+          cell.classList.add(cls);
+        });
+      }
+
+      // Lightning for 3-match rows
+      if (a===b && b===c && !isJackpot) {
+        setTimeout(()=>animateLightning(rowIdx,'#00FF87',2500), 300);
+      }
+      if (isJackpot) {
+        setTimeout(()=>animateLightning(1,'#FFD700',4000), 300);
+      }
+    }
+  });
+
+  // Jackpot!
+  if (hasJackpot) {
+    wallet += stake * 100;
+    updateWallet();
+    setTimeout(()=>{
+      spawnCoins(80);
+      playWin(true);
+      showBanner(`🏆 777 JACKPOT! +GHS ${(stake*100).toFixed(2)}`, 'jackpot-banner');
+    }, 400);
+  } else if (totalWin > 0) {
+    wallet += totalWin;
+    updateWallet();
+    setTimeout(()=>{
+      playWin(false);
+      showBanner(`⚡ WIN! +GHS ${totalWin.toFixed(2)}`, 'win-banner');
+    }, 300);
+  } else {
+    setTimeout(playBust, 200);
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────
+function randomDigit()        { return Math.floor(Math.random()*10); }
+function randomDigitNotSeven(){ let d; do{ d=Math.floor(Math.random()*10); }while(d===7); return d; }
+function differentDigit(n)    { let d; do{ d=Math.floor(Math.random()*10); }while(d===n); return d; }
+function differentDigit2()    { return Math.floor(Math.random()*5)*2; }
+function differentDigit3()    { return Math.floor(Math.random()*5)*2+1; }
+
+function pickMode() {
+  const r = Math.random();
+  if (r < 0.005) return 'jackpot'; // 0.5%
+  if (r < 0.06)  return 'x5';      // 5.5%
+  if (r < 0.20)  return 'x1.5';    // 14%
+  if (r < 0.40)  return 'x1';      // 20%
+  return 'none';                    // 60%
+}
+
+function ensureNoUnintendedMatch(reelNums, skipRow) {
+  [0,1,2].forEach(row => {
+    if (row === skipRow) return;
+    const vals = [reelNums[0][row], reelNums[1][row], reelNums[2][row]];
+    if (vals[0]===vals[1] && vals[1]===vals[2]) {
+      reelNums[2][row] = differentDigit(vals[2]);
+    }
+  });
+}
+
+function ensureNoMatch(reelNums) {
+  [0,1,2].forEach(row => {
+    const vals = [reelNums[0][row], reelNums[1][row], reelNums[2][row]];
+    while (vals[0]===vals[1] && vals[1]===vals[2]) {
+      reelNums[2][row] = Math.floor(Math.random()*10);
+      vals[2] = reelNums[2][row];
+    }
+  });
+}
+
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid #333;color:#fff;font-family:Barlow,sans-serif;font-size:0.82rem;padding:12px 24px;border-radius:100px;z-index:300;white-space:nowrap;letter-spacing:0.06em;';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2500);
+}
+
+// Init
+positionStrip('strip0', 5);
+positionStrip('strip1', 5);
+positionStrip('strip2', 5);
+sizeCanvas();
+</script>
+</body>
+</html>
