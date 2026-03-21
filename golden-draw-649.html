@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6/49 — The Golden Draw</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Cinzel:wght@400;600;700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #D4AF37;
+    --gold-light: #F0D060;
+    --gold-pale: #FFF4CC;
+    --gold-dark: #9A7B1C;
+    --purple: #2D0A4E;
+    --purple-mid: #4A1272;
+    --purple-light: #7B3FA8;
+    --purple-pale: #C4A0E8;
+    --cream: #FDF6E3;
+    --text-light: #F5E8C0;
+    --shadow-gold: 0 0 20px rgba(212,175,55,0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--purple);
+    color: var(--text-light);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Decorative background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 20%, rgba(74,18,114,0.8) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(45,10,78,0.9) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Star field */
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--dur, 3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+    opacity: 0;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: var(--opacity, 0.6); transform: scale(1); }
+  }
+
+  /* Marquee */
+  .marquee-wrap {
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light), var(--gold), var(--gold-dark));
+    color: var(--purple);
+    padding: 8px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    border-bottom: 1px solid var(--gold-dark);
+  }
+  .marquee-inner {
+    display: flex;
+    animation: marquee 22s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-inner span {
+    font-family: 'Cinzel', serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 0 60px;
+    text-transform: uppercase;
+  }
+  .marquee-inner span strong {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .marquee-sep {
+    margin: 0 20px;
+    opacity: 0.5;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* Main layout */
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 0 40px;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 28px 20px 20px;
+    position: relative;
+  }
+  .header-badge {
+    display: inline-block;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(212,175,55,0.4);
+    padding: 5px 18px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+  }
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(160deg, var(--gold-light) 0%, var(--gold) 40%, var(--gold-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.04em;
+    text-shadow: none;
+  }
+  .header-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--purple-pale);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .ornament-line {
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dark));
+  }
+  .ornament-line.r { background: linear-gradient(90deg, var(--gold-dark), transparent); }
+  .ornament-diamond {
+    width: 8px; height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px rgba(212,175,55,0.6);
+  }
+
+  /* Jackpot display */
+  .jackpot-card {
+    margin: 0 16px 20px;
+    background: linear-gradient(135deg, rgba(74,18,114,0.6) 0%, rgba(45,10,78,0.8) 100%);
+    border: 1px solid rgba(212,175,55,0.35);
+    border-radius: 16px;
+    padding: 18px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: cardGlow 4s ease-in-out infinite;
+  }
+  @keyframes cardGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(212,175,55,0.1), inset 0 0 30px rgba(212,175,55,0.02); }
+    50% { box-shadow: 0 0 35px rgba(212,175,55,0.2), inset 0 0 30px rgba(212,175,55,0.05); }
+  }
+  .jackpot-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+  }
+  .jackpot-amount {
+    font-family: 'Cinzel', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--gold-light);
+    line-height: 1.1;
+    margin: 4px 0 2px;
+    text-shadow: 0 0 30px rgba(212,175,55,0.4);
+    animation: jackpotPulse 3s ease-in-out infinite;
+  }
+  @keyframes jackpotPulse {
+    0%, 100% { text-shadow: 0 0 20px rgba(212,175,55,0.3); }
+    50% { text-shadow: 0 0 40px rgba(212,175,55,0.7), 0 0 60px rgba(212,175,55,0.2); }
+  }
+  .jackpot-desc {
+    font-size: 0.72rem;
+    color: var(--purple-pale);
+    letter-spacing: 0.05em;
+  }
+
+  /* Draw toggle */
+  .section-card {
+    margin: 0 16px 16px;
+    background: rgba(45,10,78,0.5);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 14px;
+    padding: 16px 20px;
+  }
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(212,175,55,0.2);
+  }
+
+  .draw-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .draw-option {
+    border: 1.5px solid rgba(212,175,55,0.25);
+    border-radius: 10px;
+    padding: 12px 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: rgba(45,10,78,0.3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .draw-option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(212,175,55,0.12), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .draw-option.active {
+    border-color: var(--gold);
+    background: rgba(212,175,55,0.1);
+  }
+  .draw-option.active::before { opacity: 1; }
+  .draw-option .draw-icon { font-size: 1.4rem; margin-bottom: 4px; }
+  .draw-option .draw-name {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+  }
+  .draw-option.active .draw-name { color: var(--gold-light); }
+  .draw-option .draw-time {
+    font-size: 0.65rem;
+    color: var(--purple-pale);
+    margin-top: 2px;
+  }
+  .draw-option .active-dot {
+    display: none;
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    margin: 6px auto 0;
+    box-shadow: 0 0 8px var(--gold);
+  }
+  .draw-option.active .active-dot { display: block; }
+
+  /* Number grid */
+  .grid-card {
+    margin: 0 16px 16px;
+    background: rgba(45,10,78,0.5);
+    border: 1px solid rgba(212,175,55,0.2);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .grid-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .selected-count {
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+  .selected-count span {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .clear-btn {
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--purple-pale);
+    cursor: pointer;
+    padding: 4px 10px;
+    border: 1px solid rgba(196,160,232,0.3);
+    border-radius: 100px;
+    background: none;
+    font-family: 'Barlow', sans-serif;
+    transition: all 0.2s;
+  }
+  .clear-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .number-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .num-btn {
+    aspect-ratio: 1;
+    border: 1.5px solid rgba(212,175,55,0.2);
+    border-radius: 8px;
+    background: rgba(45,10,78,0.4);
+    color: var(--text-light);
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .num-btn:hover:not(.selected) {
+    border-color: rgba(212,175,55,0.5);
+    background: rgba(212,175,55,0.08);
+    color: var(--gold-light);
+  }
+  .num-btn.selected {
+    background: linear-gradient(135deg, rgba(212,175,55,0.3), rgba(212,175,55,0.15));
+    border-color: var(--gold);
+    color: var(--gold-light);
+    font-weight: 700;
+    box-shadow: 0 0 14px rgba(212,175,55,0.35), inset 0 0 10px rgba(212,175,55,0.1);
+    animation: numPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes numPop {
+    0% { transform: scale(0.85); }
+    100% { transform: scale(1); }
+  }
+  .num-btn.selected::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    animation: goldRipple 0.4s ease-out forwards;
+  }
+  @keyframes goldRipple {
+    0% { box-shadow: inset 0 0 0 0 rgba(212,175,55,0.6); }
+    100% { box-shadow: inset 0 0 0 30px rgba(212,175,55,0); }
+  }
+  .num-btn.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Selected numbers display */
+  .selected-display {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    min-height: 40px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background: rgba(45,10,78,0.4);
+    border-radius: 10px;
+    border: 1px dashed rgba(212,175,55,0.2);
+  }
+  .selected-pill {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--purple);
+    font-family: 'Cinzel', serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 12px rgba(212,175,55,0.4);
+    animation: pillAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes pillAppear {
+    0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .empty-hint {
+    font-size: 0.72rem;
+    color: rgba(196,160,232,0.5);
+    letter-spacing: 0.08em;
+    font-style: italic;
+  }
+
+  /* Quick pick */
+  .quick-pick-wrap {
+    margin: 0 16px 16px;
+  }
+  .quick-pick-btn {
+    width: 100%;
+    padding: 14px;
+    background: rgba(74,18,114,0.5);
+    border: 1.5px solid rgba(212,175,55,0.35);
+    border-radius: 12px;
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .quick-pick-btn:hover {
+    background: rgba(74,18,114,0.8);
+    border-color: var(--gold);
+  }
+  .quick-pick-btn.shaking {
+    animation: shake 0.5s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0); }
+    15% { transform: translateX(-4px) rotate(-2deg); }
+    30% { transform: translateX(4px) rotate(2deg); }
+    45% { transform: translateX(-3px) rotate(-1deg); }
+    60% { transform: translateX(3px) rotate(1deg); }
+    75% { transform: translateX(-2px) rotate(0); }
+    90% { transform: translateX(2px) rotate(0); }
+  }
+  .sparkle-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .sparkle {
+    position: absolute;
+    pointer-events: none;
+    animation: sparkleAnim 0.8s ease forwards;
+  }
+  @keyframes sparkleAnim {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(0); }
+  }
+
+  /* Ticket summary */
+  .ticket-card {
+    margin: 0 16px 16px;
+    background: linear-gradient(135deg, rgba(74,18,114,0.4), rgba(45,10,78,0.6));
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 14px;
+    padding: 16px 20px;
+  }
+  .ticket-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.82rem;
+    color: var(--purple-pale);
+  }
+  .ticket-row:not(:last-child) {
+    border-bottom: 1px solid rgba(212,175,55,0.1);
+  }
+  .ticket-row .val {
+    color: var(--text-light);
+    font-weight: 500;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+  }
+  .ticket-row.total .val {
+    color: var(--gold-light);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .ticket-row.total {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* Play button */
+  .play-wrap {
+    margin: 0 16px;
+    position: relative;
+  }
+  .play-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+    border: none;
+    border-radius: 14px;
+    color: var(--purple);
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+    box-shadow: 0 6px 30px rgba(212,175,55,0.3), 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .play-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+  .play-btn:hover::before { left: 100%; }
+  .play-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 40px rgba(212,175,55,0.4), 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .play-btn:active { transform: translateY(1px); }
+  .play-btn-cost {
+    display: block;
+    font-size: 0.65rem;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    margin-top: 2px;
+    opacity: 0.75;
+  }
+
+  /* Footer note */
+  .footer-note {
+    text-align: center;
+    padding: 20px 20px 0;
+    font-size: 0.65rem;
+    color: rgba(196,160,232,0.4);
+    letter-spacing: 0.08em;
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: var(--purple);
+    font-family: 'Cinzel', serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 12px 28px;
+    border-radius: 100px;
+    letter-spacing: 0.08em;
+    z-index: 100;
+    box-shadow: 0 8px 30px rgba(212,175,55,0.4);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Jackpot Marquee -->
+<div class="marquee-wrap">
+  <div class="marquee-inner" id="marquee">
+    <!-- duplicated for seamless scroll -->
+    <span>⭐ Current Group 1 Jackpot <span class="marquee-sep">|</span> <strong>GHS 4,285,000.00</strong> <span class="marquee-sep">✦</span> Daily Draw — Every Day at 5:30 PM <span class="marquee-sep">|</span> Monthly Draw — Last Friday of the Month <span class="marquee-sep">✦</span> Pick 6 Numbers Between 1–49 <span class="marquee-sep">|</span> Min. Stake: GHS 1.00 ⭐</span>
+    <span>⭐ Current Group 1 Jackpot <span class="marquee-sep">|</span> <strong>GHS 4,285,000.00</strong> <span class="marquee-sep">✦</span> Daily Draw — Every Day at 5:30 PM <span class="marquee-sep">|</span> Monthly Draw — Last Friday of the Month <span class="marquee-sep">✦</span> Pick 6 Numbers Between 1–49 <span class="marquee-sep">|</span> Min. Stake: GHS 1.00 ⭐</span>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-badge">Ghana National Lottery Authority</div>
+    <div class="header-title">6/49</div>
+    <div class="header-sub">The Golden Draw</div>
+    <div class="header-ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line r"></div>
+    </div>
+  </div>
+
+  <!-- Jackpot Card -->
+  <div class="jackpot-card">
+    <div class="jackpot-label">✦ &nbsp; Estimated Jackpot &nbsp; ✦</div>
+    <div class="jackpot-amount" id="jackpotDisplay">GHS 4,285,000</div>
+    <div class="jackpot-desc">Group 1 Prize Pool &nbsp;·&nbsp; 38% of total sales</div>
+  </div>
+
+  <!-- Draw Selection -->
+  <div class="section-card">
+    <div class="section-label">Select Draw Type</div>
+    <div class="draw-toggle">
+      <div class="draw-option active" id="daily-opt" onclick="selectDraw('daily')">
+        <div class="draw-icon">🌅</div>
+        <div class="draw-name">Daily Draw</div>
+        <div class="draw-time">Every day · 5:30 PM</div>
+        <div class="active-dot"></div>
+      </div>
+      <div class="draw-option" id="monthly-opt" onclick="selectDraw('monthly')">
+        <div class="draw-icon">🌕</div>
+        <div class="draw-name">Monthly Draw</div>
+        <div class="draw-time">Last Friday · 5:30 PM</div>
+        <div class="active-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Number Grid -->
+  <div class="grid-card">
+    <div class="section-label">Pick Your Numbers</div>
+    <div class="grid-info">
+      <div class="selected-count">Selected: <span id="countDisplay">0</span> / 6</div>
+      <button class="clear-btn" onclick="clearAll()">Clear All</button>
+    </div>
+    <div class="number-grid" id="numGrid"></div>
+    <div class="selected-display" id="selectedDisplay">
+      <span class="empty-hint">Tap numbers above to select them</span>
+    </div>
+  </div>
+
+  <!-- Quick Pick -->
+  <div class="quick-pick-wrap">
+    <button class="quick-pick-btn" id="quickPickBtn" onclick="quickPick()">
+      <div class="sparkle-container" id="sparkleContainer"></div>
+      🎲 &nbsp; Quick Pick — Choose For Me
+    </button>
+  </div>
+
+  <!-- Ticket Summary -->
+  <div class="ticket-card">
+    <div class="section-label">Ticket Summary</div>
+    <div class="ticket-row">
+      <span>Draw Type</span>
+      <span class="val" id="summaryDraw">Daily Draw</span>
+    </div>
+    <div class="ticket-row">
+      <span>Next Draw</span>
+      <span class="val" id="summaryDate">Today, 5:30 PM</span>
+    </div>
+    <div class="ticket-row">
+      <span>Numbers</span>
+      <span class="val" id="summaryNumbers">—</span>
+    </div>
+    <div class="ticket-row total">
+      <span>Cost</span>
+      <span class="val">GHS 1.00</span>
+    </div>
+  </div>
+
+  <!-- Play Button -->
+  <div class="play-wrap">
+    <button class="play-btn" onclick="playNow()">
+      Play Now
+      <span class="play-btn-cost">Entry Fee · GHS 1.00 per ticket</span>
+    </button>
+  </div>
+
+  <div class="footer-note">
+    Must be 18+ to play &nbsp;·&nbsp; Play responsibly &nbsp;·&nbsp; NLA Licensed
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // Stars
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      top:${Math.random()*100}%;
+      left:${Math.random()*100}%;
+      --dur:${Math.random()*4+2}s;
+      --delay:${Math.random()*5}s;
+      --opacity:${Math.random()*0.5+0.2};
+    `;
+    starsEl.appendChild(s);
+  }
+
+  // State
+  let selected = new Set();
+  let currentDraw = 'daily';
+
+  // Build grid
+  const grid = document.getElementById('numGrid');
+  for (let i = 1; i <= 49; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'num-btn';
+    btn.id = `n${i}`;
+    btn.textContent = i;
+    btn.onclick = () => toggleNumber(i);
+    grid.appendChild(btn);
+  }
+
+  function toggleNumber(n) {
+    if (selected.has(n)) {
+      selected.delete(n);
+      document.getElementById(`n${n}`).classList.remove('selected');
+    } else {
+      if (selected.size >= 6) {
+        showToast('You can only pick 6 numbers!');
+        return;
+      }
+      selected.add(n);
+      document.getElementById(`n${n}`).classList.add('selected');
+    }
+    // Update disabled state
+    const allBtns = document.querySelectorAll('.num-btn');
+    allBtns.forEach(b => {
+      if (!b.classList.contains('selected')) {
+        b.classList.toggle('disabled', selected.size >= 6);
+      }
+    });
+    updateUI();
+  }
+
+  function clearAll() {
+    selected.forEach(n => document.getElementById(`n${n}`).classList.remove('selected'));
+    selected.clear();
+    document.querySelectorAll('.num-btn').forEach(b => b.classList.remove('disabled'));
+    updateUI();
+  }
+
+  function updateUI() {
+    // Count
+    document.getElementById('countDisplay').textContent = selected.size;
+    // Pills
+    const disp = document.getElementById('selectedDisplay');
+    disp.innerHTML = '';
+    if (selected.size === 0) {
+      disp.innerHTML = '<span class="empty-hint">Tap numbers above to select them</span>';
+    } else {
+      const sorted = [...selected].sort((a,b) => a-b);
+      sorted.forEach(n => {
+        const p = document.createElement('div');
+        p.className = 'selected-pill';
+        p.textContent = n;
+        disp.appendChild(p);
+      });
+    }
+    // Summary
+    const sorted = [...selected].sort((a,b) => a-b);
+    document.getElementById('summaryNumbers').textContent = sorted.length ? sorted.join(' · ') : '—';
+  }
+
+  function selectDraw(type) {
+    currentDraw = type;
+    document.getElementById('daily-opt').classList.toggle('active', type === 'daily');
+    document.getElementById('monthly-opt').classList.toggle('active', type === 'monthly');
+    document.getElementById('summaryDraw').textContent = type === 'daily' ? 'Daily Draw' : 'Monthly Draw';
+    document.getElementById('summaryDate').textContent = type === 'daily' ? 'Today, 5:30 PM' : 'Last Friday, 5:30 PM';
+  }
+
+  function quickPick() {
+    clearAll();
+    const pool = [];
+    for (let i = 1; i <= 49; i++) pool.push(i);
+    // Fisher-Yates shuffle
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    const picks = pool.slice(0, 6);
+    picks.forEach(n => {
+      selected.add(n);
+      document.getElementById(`n${n}`).classList.add('selected');
+    });
+    document.querySelectorAll('.num-btn:not(.selected)').forEach(b => b.classList.add('disabled'));
+    // Shake + sparkle
+    const btn = document.getElementById('quickPickBtn');
+    btn.classList.remove('shaking');
+    void btn.offsetWidth;
+    btn.classList.add('shaking');
+    btn.addEventListener('animationend', () => btn.classList.remove('shaking'), { once: true });
+    // Sparkles
+    triggerSparkles();
+    updateUI();
+    showToast('Lucky numbers chosen! ✨');
+  }
+
+  function triggerSparkles() {
+    const container = document.getElementById('sparkleContainer');
+    container.innerHTML = '';
+    const colors = ['#F0D060','#D4AF37','#FFFFFF','#FFF4CC','#C4A0E8'];
+    for (let i = 0; i < 18; i++) {
+      const sp = document.createElement('div');
+      sp.className = 'sparkle';
+      const x = (Math.random() * 200 - 100) + 'px';
+      const y = (Math.random() * -100 - 20) + 'px';
+      const size = Math.random() * 8 + 4;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      sp.style.cssText = `
+        left:50%; top:50%;
+        width:${size}px; height:${size}px;
+        background:${color};
+        border-radius:${Math.random() > 0.5 ? '50%' : '2px'};
+        transform: rotate(${Math.random()*360}deg);
+        --sx:${x}; --sy:${y};
+        animation-delay:${Math.random()*0.2}s;
+      `;
+      container.appendChild(sp);
+    }
+    setTimeout(() => { container.innerHTML = ''; }, 1000);
+  }
+
+  function playNow() {
+    if (selected.size < 6) {
+      showToast(`Please pick ${6 - selected.size} more number${6 - selected.size > 1 ? 's' : ''}!`);
+      return;
+    }
+    const sorted = [...selected].sort((a,b) => a-b);
+    showToast(`🎉 Ticket submitted! Numbers: ${sorted.join(', ')}`);
+    setTimeout(clearAll, 2000);
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // Animate jackpot number slowly
+  let jackpot = 4285000;
+  setInterval(() => {
+    jackpot += Math.floor(Math.random() * 500 + 100);
+    document.getElementById('jackpotDisplay').textContent = 'GHS ' + jackpot.toLocaleString();
+  }, 4000);
+</script>
+</body>
+</html>
