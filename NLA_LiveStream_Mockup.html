@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Future NLA — Live Streaming Feature Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #F5B800;
+  --gold-dim: #C49200;
+  --teal: #00C9A7;
+  --red-live: #FF3B3B;
+  --navy: #0A0F1E;
+  --navy2: #111827;
+  --navy3: #1C2540;
+  --navy4: #243055;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #E8EDF5;
+  --muted: #6B7FA3;
+  --purple: #7C3AED;
+  --green: #22C55E;
+  --chat-bg: rgba(10,15,30,0.78);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background: var(--navy);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Page Layout ──────────────────────────────── */
+.page{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  min-height:100vh;
+  padding:0 20px 40px;
+}
+
+/* ── Header ───────────────────────────────────── */
+.hdr{
+  width:100%;max-width:1200px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 0 16px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:32px;
+}
+.hdr-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;letter-spacing:2px;
+  color:var(--gold);
+}
+.hdr-logo span{color:var(--text);font-size:18px;}
+.hdr-badge{
+  font-size:11px;font-weight:600;letter-spacing:1.5px;
+  background:rgba(124,58,237,0.18);
+  border:1px solid rgba(124,58,237,0.4);
+  color:#A78BFA;border-radius:6px;padding:5px 12px;
+}
+
+/* ── Main Grid ────────────────────────────────── */
+.main{
+  width:100%;max-width:1200px;
+  display:grid;
+  grid-template-columns:1fr 320px;
+  gap:32px;
+  align-items:start;
+}
+
+/* ── Phone Frame ──────────────────────────────── */
+.phone-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:20px;
+}
+.phone{
+  width:320px;height:660px;
+  background:#060910;
+  border-radius:44px;
+  border:2.5px solid #2A3050;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.notch{
+  height:24px;background:#060910;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;flex-shrink:0;
+  position:relative;z-index:20;
+}
+.notch-l{font-size:10px;color:#3A4560;font-family:'JetBrains Mono',monospace;}
+.notch-r{font-size:10px;color:#3A4560;font-family:'JetBrains Mono',monospace;}
+
+/* ── Stream Screen ─────────────────────────────── */
+.stream-screen{
+  position:absolute;
+  top:24px;left:0;right:0;bottom:0;
+  overflow:hidden;
+}
+
+/* ── Video Background (simulated) ──────────────── */
+.video-bg{
+  position:absolute;
+  inset:0;
+  background: linear-gradient(135deg, #0D1F3C 0%, #1A0E2E 40%, #0D2B1A 70%, #1E1200 100%);
+  overflow:hidden;
+}
+.video-bg::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 40%, rgba(0,201,167,0.15) 0%, transparent 60%),
+             radial-gradient(ellipse at 70% 60%, rgba(245,184,0,0.12) 0%, transparent 55%);
+  animation:bgpulse 4s ease-in-out infinite alternate;
+}
+@keyframes bgpulse{
+  from{opacity:0.6} to{opacity:1}
+}
+.host-silhouette{
+  position:absolute;
+  bottom:0;left:50%;transform:translateX(-50%);
+  width:200px;height:340px;
+  background:linear-gradient(180deg, rgba(100,150,255,0.08) 0%, rgba(0,201,167,0.06) 100%);
+  border-radius:50% 50% 0 0 / 30% 30% 0 0;
+  animation:hostmove 6s ease-in-out infinite alternate;
+}
+@keyframes hostmove{
+  from{transform:translateX(-52%) scale(1);}
+  to{transform:translateX(-48%) scale(1.02);}
+}
+.host-head{
+  position:absolute;
+  top:20px;left:50%;transform:translateX(-50%);
+  width:70px;height:70px;
+  background:linear-gradient(135deg, #C49200, #F5B800);
+  border-radius:50%;
+  overflow:hidden;display:flex;align-items:center;justify-content:center;
+  font-size:28px;
+}
+
+/* ── Video reduction when game panel is open ───── */
+.video-area{
+  position:absolute;
+  top:0;left:0;right:0;
+  height:100%;
+  transition:height 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.video-area.shrunk{height:42%;}
+
+/* ── Top HUD ──────────────────────────────────── */
+.top-hud{
+  position:absolute;top:0;left:0;right:0;
+  padding:10px 12px 8px;
+  background:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,transparent 100%);
+  display:flex;align-items:center;justify-content:space-between;
+  z-index:10;
+}
+.live-pill{
+  display:flex;align-items:center;gap:5px;
+  background:var(--red-live);
+  border-radius:5px;padding:3px 8px;
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  color:#fff;
+}
+.live-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#fff;
+  animation:blink 1s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.host-badge{
+  flex:1;margin:0 8px;
+  font-size:11px;font-weight:600;color:#fff;
+}
+.host-badge span{color:var(--gold);font-size:10px;display:block;font-weight:400;}
+.viewer-count{
+  display:flex;align-items:center;gap:4px;
+  font-size:10px;color:rgba(255,255,255,0.7);
+}
+.viewer-count svg{width:12px;height:12px;fill:rgba(255,255,255,0.6);}
+
+/* ── Scrolling chat ───────────────────────────── */
+.chat-overlay{
+  position:absolute;
+  bottom:56px;left:0;right:0;
+  padding:0 10px 6px;
+  display:flex;flex-direction:column;gap:3px;
+  pointer-events:none;
+  z-index:10;
+  max-height:160px;
+  overflow:hidden;
+}
+.chat-msg{
+  display:inline-flex;align-items:baseline;gap:5px;
+  background:var(--chat-bg);
+  border-radius:8px;
+  padding:4px 8px;
+  max-width:85%;
+  font-size:10.5px;
+  animation:msgfade 0.3s ease;
+  backdrop-filter:blur(4px);
+}
+@keyframes msgfade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.chat-name{font-weight:700;color:var(--gold);white-space:nowrap;font-size:10px;}
+.chat-name.host{color:#00C9A7;}
+.chat-name.sys{color:#A78BFA;}
+.chat-text{color:rgba(255,255,255,0.88);line-height:1.3;}
+
+/* ── Reactions floating ───────────────────────── */
+.reactions-layer{
+  position:absolute;
+  bottom:60px;right:8px;
+  width:36px;
+  display:flex;flex-direction:column;align-items:center;
+  pointer-events:none;
+  z-index:11;
+}
+.rxn{
+  font-size:18px;
+  animation:floatup 2s ease-out forwards;
+  position:absolute;
+  bottom:0;
+}
+@keyframes floatup{
+  0%{opacity:1;transform:translateY(0) scale(0.8);}
+  20%{opacity:1;transform:translateY(-20px) scale(1.1);}
+  100%{opacity:0;transform:translateY(-120px) scale(0.9);}
+}
+
+/* ── Bottom bar ───────────────────────────────── */
+.bottom-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  height:50px;
+  background:rgba(6,9,16,0.92);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:6px;
+  padding:0 10px;
+  z-index:12;
+}
+.chat-input-fake{
+  flex:1;height:30px;
+  background:rgba(255,255,255,0.07);
+  border:1px solid var(--border);
+  border-radius:15px;
+  display:flex;align-items:center;padding:0 12px;
+  font-size:10px;color:var(--muted);
+}
+.rxn-btn{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;cursor:pointer;
+}
+.lb-btn{
+  width:30px;height:30px;border-radius:8px;
+  background:rgba(245,184,0,0.12);
+  border:1px solid rgba(245,184,0,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;cursor:pointer;
+  color:var(--gold);font-weight:700;font-size:9px;
+}
+
+/* ── Game Panel ───────────────────────────────── */
+.game-panel{
+  position:absolute;
+  bottom:50px;left:0;right:0;
+  height:0;
+  background:linear-gradient(180deg, #0E1628 0%, #0A0F1E 100%);
+  border-top:1.5px solid rgba(245,184,0,0.3);
+  overflow:hidden;
+  transition:height 0.38s cubic-bezier(0.4,0,0.2,1);
+  z-index:15;
+  display:flex;flex-direction:column;
+}
+.game-panel.open{height:57%;}
+
+.gp-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px 6px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.gp-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px;letter-spacing:1px;color:var(--gold);
+  display:flex;align-items:center;gap:8px;
+}
+.gp-title span{font-family:'DM Sans';font-size:10px;color:var(--muted);font-weight:400;letter-spacing:0;}
+.countdown-ring{
+  width:40px;height:40px;position:relative;
+  flex-shrink:0;
+}
+.countdown-ring svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+.countdown-ring .track{stroke:rgba(255,255,255,0.1);fill:none;}
+.countdown-ring .prog{
+  stroke:var(--gold);fill:none;
+  stroke-dasharray:113;
+  stroke-dashoffset:0;
+  stroke-linecap:round;
+  transition:stroke-dashoffset 1s linear;
+}
+.countdown-num{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--gold);
+}
+
+.gp-msg{
+  font-size:11px;color:rgba(255,255,255,0.7);
+  padding:6px 14px 4px;
+  font-style:italic;
+  flex-shrink:0;
+}
+
+.gp-body{
+  flex:1;overflow-y:auto;padding:8px 14px 10px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.gp-body::-webkit-scrollbar{display:none;}
+
+.stake-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0.8px;text-transform:uppercase;}
+.stake-options{display:flex;gap:7px;flex-wrap:wrap;}
+.stake-btn{
+  flex:1;min-width:56px;
+  padding:8px 4px;
+  border-radius:10px;
+  border:1.5px solid var(--border2);
+  background:rgba(255,255,255,0.04);
+  color:var(--text);font-size:12px;font-weight:600;
+  cursor:pointer;text-align:center;
+  transition:all 0.18s;
+  font-family:'DM Sans',sans-serif;
+}
+.stake-btn:hover,.stake-btn.sel{
+  background:rgba(245,184,0,0.12);
+  border-color:var(--gold);color:var(--gold);
+}
+
+/* Spin wheel in game panel */
+.wheel-wrap{
+  display:flex;justify-content:center;margin:4px 0;
+  position:relative;
+}
+.wheel-wrap svg{
+  filter:drop-shadow(0 0 12px rgba(245,184,0,0.3));
+}
+.wheel-pointer{
+  position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+  width:0;height:0;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-top:12px solid var(--gold);
+}
+
+.play-btn{
+  width:100%;padding:11px;
+  border-radius:12px;border:none;cursor:pointer;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:18px;letter-spacing:1px;
+  background:linear-gradient(135deg, #F5B800 0%, #E65100 100%);
+  color:#000;
+  transition:all 0.2s;
+  flex-shrink:0;
+}
+.play-btn:hover{transform:scale(1.02);filter:brightness(1.1);}
+.play-btn:disabled{opacity:0.4;cursor:default;transform:none;}
+
+/* Slot display */
+.slots-display{
+  display:flex;gap:6px;justify-content:center;margin:4px 0;
+}
+.slot-win{
+  background:var(--navy3);
+  border:1.5px solid var(--border2);
+  border-radius:10px;
+  width:68px;
+  overflow:hidden;
+}
+.slot-row{
+  height:36px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;color:var(--text);
+  border-bottom:1px solid var(--border);
+  transition:all 0.15s;
+}
+.slot-row:last-child{border-bottom:none;}
+.slot-row.mid{background:rgba(245,184,0,0.08);color:var(--gold);}
+.slot-row.win-row{background:rgba(34,197,94,0.15);color:var(--green);}
+
+/* ── Result overlay ───────────────────────────── */
+.result-overlay{
+  position:absolute;
+  inset:0;
+  background:rgba(6,9,16,0.88);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:20;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.3s;
+  backdrop-filter:blur(6px);
+}
+.result-overlay.show{opacity:1;pointer-events:auto;}
+.result-icon{font-size:52px;animation:popbounce 0.5s cubic-bezier(0.175,0.885,0.32,1.275);}
+@keyframes popbounce{from{transform:scale(0)}to{transform:scale(1)}}
+.result-mult{
+  font-family:'Bebas Neue',sans-serif;font-size:56px;
+  line-height:1;margin:4px 0;
+}
+.result-mult.win{color:var(--gold);}
+.result-mult.loss{color:var(--muted);}
+.result-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:4px;}
+.result-amount{font-size:22px;font-weight:700;color:var(--green);}
+.result-bal{font-size:11px;color:var(--muted);margin-top:4px;}
+.result-close{
+  margin-top:16px;
+  background:rgba(255,255,255,0.1);
+  border:1px solid var(--border2);
+  border-radius:10px;padding:8px 24px;
+  color:var(--text);font-size:12px;cursor:pointer;
+  font-family:'DM Sans',sans-serif;
+}
+
+/* Confetti particles */
+.confetti-wrap{
+  position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:19;
+}
+.confetti-p{
+  position:absolute;
+  width:8px;height:8px;
+  border-radius:2px;
+  animation:confettiFall linear forwards;
+}
+@keyframes confettiFall{
+  0%{transform:translateY(-20px) rotate(0deg);opacity:1;}
+  100%{transform:translateY(700px) rotate(720deg);opacity:0;}
+}
+
+/* Lucky draw entry */
+.lucky-info{
+  background:rgba(124,58,237,0.12);
+  border:1px solid rgba(124,58,237,0.3);
+  border-radius:10px;padding:10px 12px;
+}
+.lucky-title{font-family:'Bebas Neue',sans-serif;font-size:18px;color:#A78BFA;letter-spacing:1px;}
+.lucky-detail{font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px;}
+.lucky-stats{display:flex;gap:12px;margin-top:6px;}
+.lucky-stat{text-align:center;flex:1;}
+.lucky-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);}
+.lucky-stat-lbl{font-size:9px;color:var(--muted);}
+
+/* ── Leaderboard panel ────────────────────────── */
+.lb-panel{
+  position:absolute;
+  top:24px;right:0;
+  width:170px;
+  background:rgba(10,15,30,0.94);
+  border:1px solid var(--border2);
+  border-right:none;
+  border-radius:12px 0 0 12px;
+  padding:10px;
+  z-index:13;
+  transform:translateX(175px);
+  transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  backdrop-filter:blur(10px);
+}
+.lb-panel.open{transform:translateX(0);}
+.lb-heading{
+  font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gold);
+  letter-spacing:1px;margin-bottom:8px;display:flex;align-items:center;gap:5px;
+}
+.lb-row{
+  display:flex;align-items:center;gap:6px;
+  padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.lb-rank{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--muted);width:16px;}
+.lb-rank.top{color:var(--gold);}
+.lb-name{flex:1;font-size:9.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lb-amt{font-size:9.5px;color:var(--green);font-weight:600;}
+.lb-me{font-size:9px;color:var(--muted);text-align:center;padding-top:5px;}
+
+/* ── Host Dashboard Panel (right side) ─────────── */
+.dashboard{
+  background:var(--navy2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+}
+.dash-header{
+  background:var(--navy3);
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.dash-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--text);}
+.dash-live{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,59,59,0.15);
+  border:1px solid rgba(255,59,59,0.35);
+  border-radius:6px;padding:3px 9px;
+  font-size:9px;font-weight:700;letter-spacing:1px;color:var(--red-live);
+}
+.dash-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px;}
+
+.dash-stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dash-stat{
+  background:var(--navy3);
+  border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;
+}
+.dash-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:3px;}
+.dash-stat-val{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--text);line-height:1;}
+.dash-stat-val.green{color:var(--green);}
+.dash-stat-val.gold{color:var(--gold);}
+
+.dash-section-lbl{
+  font-size:10px;color:var(--muted);font-weight:600;
+  text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:6px;
+}
+
+.trigger-btns{display:flex;flex-direction:column;gap:6px;}
+.trig-btn{
+  width:100%;padding:11px 14px;
+  border-radius:10px;border:1.5px solid var(--border2);
+  background:rgba(255,255,255,0.03);
+  color:var(--text);font-size:12px;font-weight:600;
+  cursor:pointer;text-align:left;
+  display:flex;align-items:center;gap:10px;
+  transition:all 0.18s;
+  font-family:'DM Sans',sans-serif;
+}
+.trig-btn:hover{background:rgba(245,184,0,0.08);border-color:rgba(245,184,0,0.4);}
+.trig-btn.active-trig{
+  background:rgba(245,184,0,0.12);
+  border-color:var(--gold);
+  animation:triggerpulse 1.5s ease-in-out infinite;
+}
+@keyframes triggerpulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(245,184,0,0.3);}
+  50%{box-shadow:0 0 0 4px rgba(245,184,0,0);}
+}
+.trig-icon{font-size:18px;width:24px;text-align:center;}
+.trig-meta{flex:1;}
+.trig-name{font-size:12px;font-weight:600;}
+.trig-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.trig-badge{
+  font-size:9px;font-weight:700;
+  background:rgba(34,197,94,0.15);
+  border:1px solid rgba(34,197,94,0.3);
+  color:var(--green);
+  border-radius:5px;padding:2px 7px;
+}
+
+.chat-feed{
+  background:var(--navy3);
+  border:1px solid var(--border);
+  border-radius:10px;
+  height:130px;overflow:hidden;
+  display:flex;flex-direction:column;
+  position:relative;
+}
+.chat-feed-inner{
+  flex:1;overflow-y:auto;padding:8px 10px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.chat-feed-inner::-webkit-scrollbar{width:3px;}
+.chat-feed-inner::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+.cf-msg{font-size:10.5px;line-height:1.4;}
+.cf-name{font-weight:700;color:var(--gold);margin-right:4px;}
+.cf-mod-bar{
+  height:30px;background:var(--navy);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 10px;flex-shrink:0;
+}
+.cf-mod-note{font-size:9px;color:var(--muted);}
+.cf-mod-btn{
+  font-size:9px;color:rgba(255,100,100,0.7);cursor:pointer;
+  background:rgba(255,59,59,0.08);border:1px solid rgba(255,59,59,0.2);
+  border-radius:4px;padding:2px 7px;
+}
+
+.announce-btn{
+  width:100%;padding:11px;
+  border-radius:10px;border:1px solid rgba(167,139,250,0.3);
+  background:rgba(124,58,237,0.08);
+  color:#A78BFA;font-size:12px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:all 0.18s;font-family:'DM Sans',sans-serif;
+}
+.announce-btn:hover{background:rgba(124,58,237,0.15);}
+
+.end-btn{
+  width:100%;padding:10px;
+  border-radius:10px;border:1px solid rgba(255,59,59,0.3);
+  background:rgba(255,59,59,0.06);
+  color:rgba(255,100,100,0.8);font-size:11px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all 0.18s;font-family:'DM Sans',sans-serif;
+}
+.end-btn:hover{background:rgba(255,59,59,0.12);}
+
+/* ── Demo Controls ────────────────────────────── */
+.demo-strip{
+  width:100%;max-width:1200px;
+  margin-top:24px;
+  background:var(--navy2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 20px;
+  display:flex;align-items:center;gap:16px;
+  flex-wrap:wrap;
+}
+.demo-label{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:0.8px;text-transform:uppercase;white-space:nowrap;}
+.demo-steps{display:flex;gap:6px;flex-wrap:wrap;flex:1;}
+.demo-step{
+  padding:7px 14px;border-radius:8px;
+  border:1px solid var(--border2);
+  background:rgba(255,255,255,0.03);
+  font-size:11px;color:var(--muted);cursor:pointer;
+  transition:all 0.18s;font-family:'DM Sans',sans-serif;
+  white-space:nowrap;
+}
+.demo-step:hover{border-color:var(--gold);color:var(--gold);}
+.demo-step.active-step{
+  background:rgba(245,184,0,0.12);
+  border-color:var(--gold);color:var(--gold);font-weight:600;
+}
+.demo-auto{
+  padding:7px 16px;border-radius:8px;
+  background:var(--gold);color:#000;
+  font-size:11px;font-weight:700;cursor:pointer;
+  border:none;white-space:nowrap;
+  font-family:'DM Sans',sans-serif;
+  transition:all 0.18s;
+}
+.demo-auto:hover{background:#FFD040;}
+
+/* ── Announcement overlay ─────────────────────── */
+.announce-overlay{
+  position:absolute;
+  top:50%;left:10px;right:10px;
+  transform:translateY(-50%) scale(0.8);
+  background:linear-gradient(135deg,rgba(124,58,237,0.95),rgba(49,14,135,0.95));
+  border:1px solid rgba(167,139,250,0.5);
+  border-radius:14px;
+  padding:14px 16px;
+  text-align:center;
+  opacity:0;pointer-events:none;
+  transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+  z-index:18;
+  backdrop-filter:blur(8px);
+}
+.announce-overlay.show{
+  opacity:1;transform:translateY(-50%) scale(1);
+}
+.ann-tag{
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  color:rgba(167,139,250,0.7);text-transform:uppercase;margin-bottom:4px;
+}
+.ann-text{
+  font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;
+  color:#fff;line-height:1.1;
+}
+.ann-sub{font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;}
+
+/* ── Responsible gaming banner ─────────────────── */
+.resp-banner{
+  position:absolute;
+  bottom:50px;left:0;right:0;
+  background:rgba(0,0,0,0.85);
+  border-top:2px solid var(--gold);
+  padding:8px 12px;
+  font-size:9.5px;color:rgba(255,255,255,0.75);
+  text-align:center;line-height:1.4;
+  z-index:16;
+  transform:translateY(100%);
+  transition:transform 0.3s;
+}
+.resp-banner.show{transform:translateY(0);}
+
+/* ── Footer ───────────────────────────────────── */
+.footer{
+  margin-top:32px;text-align:center;
+  font-size:11px;color:var(--muted);
+  width:100%;max-width:1200px;
+}
+.footer span{color:rgba(255,255,255,0.4);}
+
+/* ── Sponsor scroll on stream ─────────────────── */
+.bottom-ticker{
+  position:absolute;
+  bottom:50px;left:0;right:0;height:22px;
+  background:rgba(0,0,0,0.6);
+  border-top:1px solid rgba(245,184,0,0.2);
+  overflow:hidden;
+  z-index:9;
+  display:flex;align-items:center;
+}
+.ticker-inner{
+  white-space:nowrap;
+  animation:ticker 18s linear infinite;
+  font-size:9px;color:rgba(255,255,255,0.5);
+  letter-spacing:0.5px;
+  padding-left:100%;
+}
+@keyframes ticker{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+
+@media(max-width:720px){
+  .main{grid-template-columns:1fr;}
+  .dashboard{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-logo">MY FUTURE <span>NLA LOTTERY</span></div>
+    <div style="text-align:center;flex:1;padding:0 20px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);">Live Streaming Feature — Interactive Mockup</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:2px;">TRD Addendum A · For development team reference</div>
+    </div>
+    <div class="hdr-badge">ADDENDUM A</div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main">
+
+    <!-- Phone Column -->
+    <div class="phone-wrap">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px;font-weight:500;">Viewer Experience — Mobile App</div>
+      <div class="phone">
+        <div class="notch">
+          <span class="notch-l">9:41</span>
+          <span class="notch-r">MTN ●●● 87%</span>
+        </div>
+
+        <div class="stream-screen" id="streamScreen">
+
+          <!-- Video area (shrinks when game panel opens) -->
+          <div class="video-area" id="videoArea">
+            <div class="video-bg">
+              <div class="host-silhouette">
+                <div class="host-head">🎤</div>
+              </div>
+            </div>
+
+            <!-- Top HUD -->
+            <div class="top-hud">
+              <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+              <div class="host-badge">
+                Nana Ama McBrown
+                <span>NLA Celebrity Host</span>
+              </div>
+              <div class="viewer-count">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span id="viewerCount">12,847</span>
+              </div>
+            </div>
+
+            <!-- Bottom ticker -->
+            <div class="bottom-ticker">
+              <div class="ticker-inner">🏆 Play responsibly · Must be 18+ · NLA Licensed · Tonight's Jackpot: GHS 450,000 · Daily Draw at 5:30 PM WAT · 🏆 Play responsibly · Must be 18+ · NLA Licensed · Tonight's Jackpot: GHS 450,000 · Daily Draw at 5:30 PM WAT</div>
+            </div>
+          </div>
+
+          <!-- Reactions layer -->
+          <div class="reactions-layer" id="reactionsLayer"></div>
+
+          <!-- Scrolling chat overlay -->
+          <div class="chat-overlay" id="chatOverlay"></div>
+
+          <!-- Leaderboard panel (slides in) -->
+          <div class="lb-panel" id="lbPanel">
+            <div class="lb-heading">🏆 Leaderboard</div>
+            <div id="lbRows"></div>
+            <div class="lb-me">Your rank: #347</div>
+          </div>
+
+          <!-- Announcement overlay -->
+          <div class="announce-overlay" id="announceOverlay">
+            <div class="ann-tag">🎙 Host Announcement</div>
+            <div class="ann-text" id="annText">TIME TO SPIN THE WHEEL!</div>
+            <div class="ann-sub" id="annSub">Get ready — game starting now!</div>
+          </div>
+
+          <!-- Responsible gaming banner -->
+          <div class="resp-banner" id="respBanner">
+            🎮 Play Responsibly · Gambling can be addictive · Must be 18+ · NLA Licensed & Regulated
+          </div>
+
+          <!-- Game Panel -->
+          <div class="game-panel" id="gamePanel">
+            <div class="gp-header">
+              <div class="gp-title">
+                <span id="gpIcon">🎡</span>
+                <span id="gpName">SPIN & WIN</span>
+                <span id="gpSub">Live with Nana Ama</span>
+              </div>
+              <div class="countdown-ring">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                  <circle class="track" cx="20" cy="20" r="18" stroke-width="3"/>
+                  <circle class="prog" id="countProg" cx="20" cy="20" r="18" stroke-width="3"/>
+                </svg>
+                <div class="countdown-num" id="countNum">30</div>
+              </div>
+            </div>
+            <div class="gp-msg" id="gpMsg">"Spin now and win BIG with me! Let's go Ghana! 🇬🇭"</div>
+
+            <div class="gp-body" id="gpBody">
+              <!-- Dynamic game content injected here -->
+            </div>
+          </div>
+
+          <!-- Result overlay -->
+          <div class="result-overlay" id="resultOverlay">
+            <div class="confetti-wrap" id="confettiWrap"></div>
+            <div class="result-icon" id="resIcon">🎰</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="resMult"></div>
+            <div class="result-mult" id="resMultiplier">x2</div>
+            <div class="result-sub" id="resSub">You won!</div>
+            <div class="result-amount" id="resAmount">+GHS 10.00</div>
+            <div class="result-bal" id="resBal">New balance: GHS 34.50</div>
+            <button class="result-close" onclick="closeResult()">Continue watching →</button>
+          </div>
+
+          <!-- Bottom bar -->
+          <div class="bottom-bar">
+            <div class="chat-input-fake">Say something...</div>
+            <div class="rxn-btn" onclick="sendReaction('🔥')">🔥</div>
+            <div class="rxn-btn" onclick="sendReaction('❤️')">❤️</div>
+            <div class="lb-btn" onclick="toggleLeaderboard()">🏆</div>
+          </div>
+
+        </div><!-- /stream-screen -->
+      </div><!-- /phone -->
+
+      <!-- Phone label -->
+      <div style="font-size:10px;color:var(--muted);text-align:center;max-width:300px;line-height:1.5;">
+        Tap the demo controls below to walk through each state of the live stream experience
+      </div>
+    </div>
+
+    <!-- Host Dashboard (right column) -->
+    <div class="dashboard">
+      <div class="dash-header">
+        <div class="dash-title">HOST DASHBOARD</div>
+        <div class="dash-live"><span style="width:6px;height:6px;border-radius:50%;background:var(--red-live);display:inline-block;animation:blink 1s infinite;"></span> LIVE</div>
+      </div>
+      <div class="dash-body">
+
+        <!-- Stats -->
+        <div>
+          <div class="dash-section-lbl">Stream Stats</div>
+          <div class="dash-stat-row">
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Viewers</div>
+              <div class="dash-stat-val gold" id="dashViewers">12,847</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Playing Now</div>
+              <div class="dash-stat-val" id="dashPlaying">0</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Prizes Paid</div>
+              <div class="dash-stat-val green" id="dashPrizes">GHS 0</div>
+            </div>
+            <div class="dash-stat">
+              <div class="dash-stat-lbl">Game Events</div>
+              <div class="dash-stat-val" id="dashEvents">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Game Triggers -->
+        <div>
+          <div class="dash-section-lbl">Trigger Game Event</div>
+          <div class="trigger-btns">
+            <button class="trig-btn" id="trigSpin" onclick="triggerGame('spin')">
+              <span class="trig-icon">🎡</span>
+              <span class="trig-meta">
+                <div class="trig-name">Spin & Win</div>
+                <div class="trig-sub">Stakes: GHS 1, 2, 5 · 30 sec window</div>
+              </span>
+              <span class="trig-badge">READY</span>
+            </button>
+            <button class="trig-btn" id="trigSlots" onclick="triggerGame('slots')">
+              <span class="trig-icon">🎰</span>
+              <span class="trig-meta">
+                <div class="trig-name">Number Slots</div>
+                <div class="trig-sub">Stakes: GHS 2, 5, 10 · 30 sec window</div>
+              </span>
+              <span class="trig-badge">READY</span>
+            </button>
+            <button class="trig-btn" id="trigLucky" onclick="triggerGame('lucky')">
+              <span class="trig-icon">🍀</span>
+              <span class="trig-meta">
+                <div class="trig-name">Lucky Draw</div>
+                <div class="trig-sub">3 winners · GHS 500 each · 60 sec</div>
+              </span>
+              <span class="trig-badge" style="background:rgba(167,139,250,0.15);border-color:rgba(167,139,250,0.3);color:#A78BFA;">SPECIAL</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Chat Feed -->
+        <div>
+          <div class="dash-section-lbl">Live Chat</div>
+          <div class="chat-feed">
+            <div class="chat-feed-inner" id="dashChatFeed"></div>
+            <div class="cf-mod-bar">
+              <span class="cf-mod-note">3 messages flagged</span>
+              <span class="cf-mod-btn">Moderate</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Push announcement -->
+        <button class="announce-btn" onclick="pushAnnounce()">
+          📢 Push Announcement to Viewers
+        </button>
+
+        <!-- End stream -->
+        <button class="end-btn" onclick="endStream()">
+          ⏹ End Stream
+        </button>
+
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- Demo Controls -->
+  <div class="demo-strip">
+    <span class="demo-label">Demo Flow:</span>
+    <div class="demo-steps">
+      <button class="demo-step active-step" onclick="setScene(0)">1. Live Stream</button>
+      <button class="demo-step" onclick="setScene(1)">2. Announcement</button>
+      <button class="demo-step" onclick="setScene(2)">3. Spin & Win</button>
+      <button class="demo-step" onclick="setScene(3)">4. Game Result</button>
+      <button class="demo-step" onclick="setScene(4)">5. Number Slots</button>
+      <button class="demo-step" onclick="setScene(5)">6. Lucky Draw</button>
+      <button class="demo-step" onclick="setScene(6)">7. Leaderboard</button>
+      <button class="demo-step" onclick="setScene(7)">8. Stream End</button>
+    </div>
+    <button class="demo-auto" id="autoBtn" onclick="toggleAuto()">▶ Auto Demo</button>
+  </div>
+
+  <div class="footer">
+    My Future NLA Lottery Platform · Live Streaming Feature Mockup · TRD Addendum A · v1.0 · March 2026
+    <br><span>Aliska Business Advisory and Research · Confidential</span>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+let currentScene = 0;
+let autoMode = false;
+let autoTimer = null;
+let countdownInterval = null;
+let chatInterval = null;
+let viewerInterval = null;
+let rxnInterval = null;
+let lbOpen = false;
+let gameActive = false;
+let totalPrizes = 0;
+let eventCount = 0;
+let selectedStake = 2;
+let gameType = 'spin';
+
+// ── Leaderboard data ───────────────────────────────────────────
+const lbData = [
+  {name:"Kofi A.", amt:"GHS 45.00"},
+  {name:"Ama B.", amt:"GHS 30.00"},
+  {name:"Kwame D.", amt:"GHS 22.50"},
+  {name:"Akua F.", amt:"GHS 20.00"},
+  {name:"Nana K.", amt:"GHS 15.00"},
+];
+function renderLeaderboard(){
+  const el = document.getElementById('lbRows');
+  el.innerHTML = lbData.map((r,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank ${i<3?'top':''}">${i+1}</div>
+      <div class="lb-name">${r.name}</div>
+      <div class="lb-amt">${r.amt}</div>
+    </div>`).join('');
+}
+renderLeaderboard();
+
+// ── Chat messages pool ─────────────────────────────────────────
+const chatMsgs = [
+  {name:"Kofi", text:"Let's go!! 🔥🔥🔥"},
+  {name:"Ama Sey", text:"Nana Ama is the best host!"},
+  {name:"Kwame D.", text:"I'm spinning 5 cedis!"},
+  {name:"Abena", text:"Won GHS 10!! So happy 🎉"},
+  {name:"Bernard", text:"Come on come on come on"},
+  {name:"Akosua T.", text:"This is my lucky day 🍀"},
+  {name:"Yaw F.", text:"x5 please 🙏🙏"},
+  {name:"Maame", text:"First time watching — how do I play?"},
+  {name:"Kojo A.", text:"Just deposited GHS 20 to join!"},
+  {name:"Efua M.", text:"❤️❤️❤️❤️"},
+  {name:"Nii L.", text:"GHS 1 stake, big dreams 😂"},
+  {name:"Esi D.", text:"JACKPOT JACKPOT JACKPOT"},
+  {name:"Frank B.", text:"Ghana represent!! 🇬🇭"},
+  {name:"Adwoa", text:"I love this show so much"},
+  {name:"Mensah K.", text:"x10 pleaseeeee 🙏"},
+];
+let chatIdx = 0;
+
+function addChatMsg(name, text, role='viewer'){
+  const overlay = document.getElementById('chatOverlay');
+  const dashFeed = document.getElementById('dashChatFeed');
+  const div = document.createElement('div');
+  div.className = 'chat-msg';
+  const cls = role === 'host' ? 'host' : role === 'sys' ? 'sys' : '';
+  div.innerHTML = `<span class="chat-name ${cls}">${name}</span><span class="chat-text">${text}</span>`;
+  overlay.appendChild(div);
+  while(overlay.children.length > 4) overlay.removeChild(overlay.firstChild);
+
+  const df = document.createElement('div');
+  df.className = 'cf-msg';
+  df.innerHTML = `<span class="cf-name">${name}</span>${text}`;
+  dashFeed.appendChild(df);
+  while(dashFeed.children.length > 20) dashFeed.removeChild(dashFeed.firstChild);
+  dashFeed.scrollTop = dashFeed.scrollHeight;
+}
+
+function startChatLoop(){
+  if(chatInterval) clearInterval(chatInterval);
+  chatInterval = setInterval(()=>{
+    const m = chatMsgs[chatIdx % chatMsgs.length];
+    addChatMsg(m.name, m.text);
+    chatIdx++;
+  }, 1800);
+}
+
+// ── Viewer count animation ─────────────────────────────────────
+let vc = 12847;
+function startViewerAnim(){
+  if(viewerInterval) clearInterval(viewerInterval);
+  viewerInterval = setInterval(()=>{
+    vc += Math.floor(Math.random()*12) - 3;
+    if(vc < 10000) vc = 10000;
+    document.getElementById('viewerCount').textContent = vc.toLocaleString();
+    document.getElementById('dashViewers').textContent = vc.toLocaleString();
+  }, 3000);
+}
+
+// ── Reactions ─────────────────────────────────────────────────
+const rxnSet = ['🔥','❤️','🏆','⭐','💰'];
+function sendReaction(r){
+  const layer = document.getElementById('reactionsLayer');
+  const el = document.createElement('div');
+  el.className = 'rxn';
+  el.textContent = r;
+  el.style.bottom = '0px';
+  el.style.right = (Math.random()*20)+'px';
+  el.style.animationDuration = (1.5+Math.random())+'s';
+  layer.appendChild(el);
+  setTimeout(()=>el.remove(), 2500);
+}
+function startRxnLoop(){
+  if(rxnInterval) clearInterval(rxnInterval);
+  rxnInterval = setInterval(()=>{
+    if(Math.random()>0.5) sendReaction(rxnSet[Math.floor(Math.random()*rxnSet.length)]);
+  }, 1200);
+}
+
+// ── Leaderboard toggle ─────────────────────────────────────────
+function toggleLeaderboard(){
+  lbOpen = !lbOpen;
+  document.getElementById('lbPanel').classList.toggle('open', lbOpen);
+}
+
+// ── Countdown ─────────────────────────────────────────────────
+let countdownSecs = 30;
+const circumference = 2 * Math.PI * 18; // r=18
+
+function startCountdown(secs, onEnd){
+  if(countdownInterval) clearInterval(countdownInterval);
+  countdownSecs = secs;
+  const prog = document.getElementById('countProg');
+  const num = document.getElementById('countNum');
+  prog.style.strokeDasharray = circumference;
+  prog.style.strokeDashoffset = 0;
+
+  function tick(){
+    const ratio = countdownSecs / secs;
+    prog.style.strokeDashoffset = circumference * (1 - ratio);
+    num.textContent = countdownSecs;
+    if(countdownSecs <= 5){
+      prog.style.stroke = '#FF3B3B';
+      num.style.color = '#FF3B3B';
+    } else {
+      prog.style.stroke = 'var(--gold)';
+      num.style.color = 'var(--gold)';
+    }
+    if(countdownSecs <= 0){
+      clearInterval(countdownInterval);
+      if(onEnd) onEnd();
+      return;
+    }
+    countdownSecs--;
+  }
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+// ── Spin Wheel ─────────────────────────────────────────────────
+const WHEEL_SEGS = [
+  {lbl:'x0',col:'#8B1A1A'},{lbl:'x0',col:'#6B1540'},
+  {lbl:'x0.25',col:'#8B4000'},{lbl:'x0.5',col:'#7A5500'},
+  {lbl:'x0.5',col:'#6B5E00'},{lbl:'x1',col:'#0F3D6E'},
+  {lbl:'x1',col:'#1A2F6E'},{lbl:'x2',col:'#0A4A3C'},
+  {lbl:'x2',col:'#0A3A50'},{lbl:'x3',col:'#4A1A8A'},
+  {lbl:'x5',col:'#8A6000'},{lbl:'x10',col:'#6A2000'},
+];
+let wheelAngle = 0;
+let spinning = false;
+
+function buildWheel(svgEl, size){
+  svgEl.innerHTML = '';
+  const cx=size/2, cy=size/2, r=size/2-4;
+  WHEEL_SEGS.forEach((seg,i)=>{
+    const a1=(-90+i*30)*Math.PI/180, a2=(-90+(i+1)*30)*Math.PI/180;
+    const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+    const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d',`M${cx},${cy}L${x1.toFixed(1)},${y1.toFixed(1)}A${r},${r} 0 0,1 ${x2.toFixed(1)},${y2.toFixed(1)}Z`);
+    path.setAttribute('fill',seg.col);
+    path.setAttribute('stroke','#0A0F1E');
+    path.setAttribute('stroke-width','1.5');
+    svgEl.appendChild(path);
+    const ma=(-90+(i+0.5)*30)*Math.PI/180;
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x',(cx+(r*0.68)*Math.cos(ma)).toFixed(1));
+    txt.setAttribute('y',(cy+(r*0.68)*Math.sin(ma)).toFixed(1));
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('dominant-baseline','middle');
+    txt.setAttribute('font-size', size < 100 ? '7' : '9');
+    txt.setAttribute('font-weight','700');
+    txt.setAttribute('fill','rgba(255,255,255,0.9)');
+    txt.setAttribute('font-family','DM Sans, sans-serif');
+    txt.textContent=seg.lbl;
+    svgEl.appendChild(txt);
+  });
+}
+
+function doSpinAnim(svgEl, targetIdx, onDone){
+  if(spinning) return;
+  spinning = true;
+  const stop = wheelAngle + 1080 + (330 - targetIdx*30);
+  let start = null, dur = 2600;
+  function step(ts){
+    if(!start) start=ts;
+    const p = Math.min((ts-start)/dur,1);
+    const e = 1-Math.pow(1-p,4);
+    const ang = wheelAngle + (stop-wheelAngle)*e;
+    svgEl.style.transform = `rotate(${ang}deg)`;
+    svgEl.style.transformOrigin = '50% 50%';
+    if(p<1){ requestAnimationFrame(step); }
+    else{ wheelAngle = stop%360; spinning=false; if(onDone) onDone(); }
+  }
+  requestAnimationFrame(step);
+}
+
+// ── Slot machine ───────────────────────────────────────────────
+function buildSlots(container, vals, winRow){
+  // vals: [[w1t,w1m,w1b],[w2t,w2m,w2b],[w3t,w3m,w3b]]
+  const rowNames = ['top','mid','bottom'];
+  container.innerHTML = vals.map((win,wi)=>`
+    <div class="slot-win">
+      ${win.map((n,ri)=>`<div class="slot-row ${ri===1?'mid':''} ${rowNames[ri]===winRow?'win-row':''}">${n}</div>`).join('')}
+    </div>`).join('');
+}
+
+// ── Confetti ───────────────────────────────────────────────────
+function spawnConfetti(){
+  const wrap = document.getElementById('confettiWrap');
+  wrap.innerHTML = '';
+  const colors = ['#F5B800','#00C9A7','#FF3B3B','#A78BFA','#22C55E','#fff'];
+  for(let i=0;i<40;i++){
+    const p = document.createElement('div');
+    p.className='confetti-p';
+    p.style.left = (Math.random()*100)+'%';
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    p.style.animationDuration = (1.5+Math.random()*2)+'s';
+    p.style.animationDelay = (Math.random()*0.5)+'s';
+    p.style.width = p.style.height = (6+Math.random()*8)+'px';
+    p.style.borderRadius = Math.random()>0.5?'50%':'2px';
+    wrap.appendChild(p);
+  }
+}
+
+// ── Show result ────────────────────────────────────────────────
+function showResult(type, mult, stake){
+  const payout = (stake * mult).toFixed(2);
+  const newBal = (24.50 - stake + parseFloat(payout)).toFixed(2);
+  const ro = document.getElementById('resultOverlay');
+  const icons = {0:'😔', 0.25:'😐', 0.5:'🙂', 1:'😊', 1.5:'😃', 2:'🤑', 3:'💰', 5:'🎉', 10:'🔥', 100:'🏆'};
+  document.getElementById('resIcon').textContent = icons[mult] || '🎰';
+  document.getElementById('resMult').textContent = type === 'slots' ? '' : 'Multiplier';
+  document.getElementById('resMultiplier').textContent = 'x' + mult;
+  document.getElementById('resMultiplier').className = 'result-mult ' + (mult > 0 ? 'win' : 'loss');
+  document.getElementById('resSub').textContent = mult > 0 ? 'You won!' : 'No win this time';
+  document.getElementById('resAmount').textContent = mult > 0 ? '+GHS ' + payout : 'GHS 0.00';
+  document.getElementById('resAmount').style.color = mult > 0 ? 'var(--green)' : 'var(--muted)';
+  document.getElementById('resBal').textContent = 'New balance: GHS ' + newBal;
+  ro.classList.add('show');
+  if(mult >= 2) spawnConfetti();
+
+  // Update leaderboard
+  if(mult > 0){
+    totalPrizes += parseFloat(payout);
+    document.getElementById('dashPrizes').textContent = 'GHS ' + totalPrizes.toFixed(0);
+    lbData[Math.floor(Math.random()*3)].amt = 'GHS ' + (Math.random()*60+10).toFixed(2);
+    renderLeaderboard();
+  }
+}
+
+function closeResult(){
+  document.getElementById('resultOverlay').classList.remove('show');
+  document.getElementById('confettiWrap').innerHTML = '';
+  closeGamePanel();
+}
+
+// ── Game Panel ─────────────────────────────────────────────────
+function openGamePanel(type){
+  gameType = type;
+  gameActive = true;
+  document.getElementById('gamePanel').classList.add('open');
+  document.getElementById('videoArea').classList.add('shrunk');
+
+  // Update dashboard
+  eventCount++;
+  document.getElementById('dashEvents').textContent = eventCount;
+
+  // Highlight trigger button
+  ['trigSpin','trigSlots','trigLucky'].forEach(id=>{
+    document.getElementById(id).classList.remove('active-trig');
+  });
+  const map = {spin:'trigSpin', slots:'trigSlots', lucky:'trigLucky'};
+  if(map[type]) document.getElementById(map[type]).classList.add('active-trig');
+
+  if(type==='spin') buildSpinPanel();
+  else if(type==='slots') buildSlotsPanel();
+  else if(type==='lucky') buildLuckyPanel();
+}
+
+function closeGamePanel(){
+  document.getElementById('gamePanel').classList.remove('open');
+  document.getElementById('videoArea').classList.remove('shrunk');
+  gameActive = false;
+  if(countdownInterval) clearInterval(countdownInterval);
+  ['trigSpin','trigSlots','trigLucky'].forEach(id=>{
+    document.getElementById(id).classList.remove('active-trig');
+  });
+}
+
+function buildSpinPanel(){
+  document.getElementById('gpIcon').textContent = '🎡';
+  document.getElementById('gpName').textContent = 'SPIN & WIN';
+  document.getElementById('gpMsg').textContent = '"Spin now and win BIG with me! Let\'s go Ghana! 🇬🇭"';
+  selectedStake = 2;
+
+  const svgSize = 160;
+  document.getElementById('gpBody').innerHTML = `
+    <div class="stake-label">Choose your stake</div>
+    <div class="stake-options">
+      <button class="stake-btn" onclick="selStake(1,this)">GHS 1</button>
+      <button class="stake-btn sel" onclick="selStake(2,this)">GHS 2</button>
+      <button class="stake-btn" onclick="selStake(5,this)">GHS 5</button>
+    </div>
+    <div class="wheel-wrap">
+      <svg id="spinWheel" width="${svgSize}" height="${svgSize}" viewBox="0 0 ${svgSize} ${svgSize}"></svg>
+      <div class="wheel-pointer"></div>
+    </div>
+    <button class="play-btn" id="spinPlayBtn" onclick="doSpinPlay()">SPIN NOW — GHS 2.00</button>
+  `;
+  buildWheel(document.getElementById('spinWheel'), svgSize);
+  startCountdown(30, ()=>{ if(gameActive && gameType==='spin') closeGamePanel(); });
+
+  addChatMsg('Nana Ama', 'Spin with me now! 🎡', 'host');
+  document.getElementById('dashPlaying').textContent = Math.floor(Math.random()*500+200);
+}
+
+function selStake(amt, btn){
+  selectedStake = amt;
+  document.querySelectorAll('.stake-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const pb = document.getElementById('spinPlayBtn');
+  if(pb) pb.textContent = `SPIN NOW — GHS ${amt}.00`;
+  const sb = document.getElementById('slotsPlayBtn');
+  if(sb) sb.textContent = `SPIN NOW — GHS ${amt}.00`;
+  const lb2 = document.getElementById('luckyEnterBtn');
+  if(lb2) lb2.textContent = `ENTER LUCKY DRAW — GHS ${amt}.00`;
+}
+
+function doSpinPlay(){
+  const btn = document.getElementById('spinPlayBtn');
+  if(!btn) return;
+  btn.disabled = true;
+  btn.textContent = 'Spinning...';
+  clearInterval(countdownInterval);
+  document.getElementById('countNum').textContent = '';
+  document.getElementById('countProg').style.strokeDashoffset = circumference;
+
+  const outcomes = [
+    {idx:7, mult:2},{idx:8, mult:2},{idx:9, mult:3},
+    {idx:10, mult:5},{idx:6, mult:1},{idx:5, mult:1},{idx:11, mult:10}
+  ];
+  const pick = outcomes[Math.floor(Math.random()*outcomes.length)];
+  doSpinAnim(document.getElementById('spinWheel'), pick.idx, ()=>{
+    setTimeout(()=>showResult('spin', pick.mult, selectedStake), 400);
+  });
+}
+
+function buildSlotsPanel(){
+  document.getElementById('gpIcon').textContent = '🎰';
+  document.getElementById('gpName').textContent = 'NUMBER SLOTS';
+  document.getElementById('gpMsg').textContent = '"Get 7-7-7 in the middle row for x100 jackpot! 🎰"';
+  selectedStake = 2;
+
+  document.getElementById('gpBody').innerHTML = `
+    <div class="stake-label">Choose your stake</div>
+    <div class="stake-options">
+      <button class="stake-btn" onclick="selStake(2,this)">GHS 2</button>
+      <button class="stake-btn sel" onclick="selStake(5,this)">GHS 5</button>
+      <button class="stake-btn" onclick="selStake(10,this)">GHS 10</button>
+    </div>
+    <div class="slots-display" id="slotsDisplay"></div>
+    <button class="play-btn" id="slotsPlayBtn" onclick="doSlotsPlay()">SPIN NOW — GHS 5.00</button>
+  `;
+  selectedStake = 5;
+  buildSlots(document.getElementById('slotsDisplay'),
+    [[3,7,1],[5,2,8],[4,6,0]], null);
+  startCountdown(30, ()=>{ if(gameActive && gameType==='slots') closeGamePanel(); });
+  addChatMsg('Nana Ama', '777 jackpot is GHS 500! 🎰', 'host');
+  document.getElementById('dashPlaying').textContent = Math.floor(Math.random()*400+150);
+}
+
+function doSlotsPlay(){
+  const btn = document.getElementById('slotsPlayBtn');
+  if(!btn) return;
+  btn.disabled = true;
+  btn.textContent = 'Spinning...';
+  clearInterval(countdownInterval);
+
+  // Animate slot spin
+  let ticks = 0;
+  const spinInt = setInterval(()=>{
+    ticks++;
+    buildSlots(document.getElementById('slotsDisplay'),
+      [[Math.floor(Math.random()*10),Math.floor(Math.random()*10),Math.floor(Math.random()*10)],
+       [Math.floor(Math.random()*10),Math.floor(Math.random()*10),Math.floor(Math.random()*10)],
+       [Math.floor(Math.random()*10),Math.floor(Math.random()*10),Math.floor(Math.random()*10)]],
+      null);
+    if(ticks > 10) {
+      clearInterval(spinInt);
+      // Show winning result (x1.5 — two same position)
+      buildSlots(document.getElementById('slotsDisplay'),
+        [[3,7,4],[3,2,1],[5,9,0]], 'top');
+      setTimeout(()=>showResult('slots', 1.5, selectedStake), 600);
+    }
+  }, 100);
+}
+
+function buildLuckyPanel(){
+  document.getElementById('gpIcon').textContent = '🍀';
+  document.getElementById('gpName').textContent = 'LUCKY DRAW';
+  document.getElementById('gpMsg').textContent = '"3 lucky winners take home GHS 500 each! Enter NOW!"';
+  selectedStake = 5;
+
+  document.getElementById('gpBody').innerHTML = `
+    <div class="lucky-info">
+      <div class="lucky-title">LUCKY DRAW</div>
+      <div class="lucky-detail">3 winners drawn at random after the window closes</div>
+      <div class="lucky-stats">
+        <div class="lucky-stat">
+          <div class="lucky-stat-val" id="ldParticipants">0</div>
+          <div class="lucky-stat-lbl">Entered</div>
+        </div>
+        <div class="lucky-stat">
+          <div class="lucky-stat-val">3</div>
+          <div class="lucky-stat-lbl">Winners</div>
+        </div>
+        <div class="lucky-stat">
+          <div class="lucky-stat-val">500</div>
+          <div class="lucky-stat-lbl">GHS Each</div>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:10px;color:var(--muted);text-align:center;">Fixed entry: GHS 5.00 · Non-refundable</div>
+    <button class="play-btn" id="luckyEnterBtn" onclick="doLuckyEnter()">ENTER LUCKY DRAW — GHS 5.00</button>
+  `;
+
+  // Simulate others entering
+  let entrants = 0;
+  const entryInt = setInterval(()=>{
+    entrants += Math.floor(Math.random()*15+5);
+    const el = document.getElementById('ldParticipants');
+    if(el) el.textContent = entrants;
+    else clearInterval(entryInt);
+  }, 800);
+
+  startCountdown(60, ()=>{
+    clearInterval(entryInt);
+    if(gameActive && gameType==='lucky') announceLuckyWinners();
+  });
+  addChatMsg('System', '🍀 Lucky Draw is LIVE — GHS 500 per winner!', 'sys');
+  document.getElementById('dashPlaying').textContent = Math.floor(Math.random()*800+300);
+}
+
+function doLuckyEnter(){
+  const btn = document.getElementById('luckyEnterBtn');
+  if(!btn) return;
+  btn.disabled = true;
+  btn.textContent = 'Entered! ✓ Waiting for draw...';
+  btn.style.background = 'rgba(34,197,94,0.2)';
+  btn.style.color = 'var(--green)';
+  btn.style.border = '1px solid rgba(34,197,94,0.4)';
+  addChatMsg('You', 'I\'m in! 🍀 GHS 5 entered', 'viewer');
+}
+
+function announceLuckyWinners(){
+  const ro = document.getElementById('resultOverlay');
+  document.getElementById('resIcon').textContent = '🍀';
+  document.getElementById('resMult').textContent = 'LUCKY DRAW COMPLETE';
+  document.getElementById('resMultiplier').textContent = '3 Winners!';
+  document.getElementById('resMultiplier').className = 'result-mult win';
+  document.getElementById('resSub').textContent = 'Winners: Kofi A., Ama B., You!';
+  document.getElementById('resAmount').textContent = '+GHS 500.00';
+  document.getElementById('resAmount').style.color = 'var(--green)';
+  document.getElementById('resBal').textContent = 'New balance: GHS 519.50';
+  ro.classList.add('show');
+  spawnConfetti();
+  totalPrizes += 1500;
+  document.getElementById('dashPrizes').textContent = 'GHS ' + totalPrizes.toFixed(0);
+}
+
+// ── Trigger from dashboard ─────────────────────────────────────
+function triggerGame(type){
+  if(gameActive) return;
+  openGamePanel(type);
+}
+
+// ── Push announcement ──────────────────────────────────────────
+function pushAnnounce(){
+  const msgs = [
+    {text:"6/49 DRAW IN 5 MINUTES!", sub:"Enter your numbers before 5:15 PM"},
+    {text:"JACKPOT: GHS 450,000!", sub:"Daily draw happening TONIGHT"},
+    {text:"NEXT GAME: LUCKY DRAW", sub:"GHS 500 per winner — get ready!"},
+  ];
+  const m = msgs[Math.floor(Math.random()*msgs.length)];
+  document.getElementById('annText').textContent = m.text;
+  document.getElementById('annSub').textContent = m.sub;
+  const ao = document.getElementById('announceOverlay');
+  ao.classList.add('show');
+  setTimeout(()=>ao.classList.remove('show'), 3500);
+  addChatMsg('Nana Ama', m.text + ' ' + m.sub, 'host');
+}
+
+// ── End stream ─────────────────────────────────────────────────
+function endStream(){
+  closeGamePanel();
+  document.getElementById('resultOverlay').classList.remove('show');
+  document.getElementById('announceOverlay').classList.remove('show');
+  const ao = document.getElementById('announceOverlay');
+  document.getElementById('annText').textContent = 'STREAM ENDED';
+  document.getElementById('annSub').textContent = 'Thanks for watching! Replay available soon. 👋';
+  ao.classList.add('show');
+  document.querySelector('.live-pill').style.background = '#555';
+  addChatMsg('System', '👋 Stream has ended. VOD replay available shortly.', 'sys');
+  setScene(7);
+}
+
+// ── Scenes ─────────────────────────────────────────────────────
+const scenes = [
+  // 0: Live Stream
+  ()=>{
+    closeGamePanel();
+    document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('announceOverlay').classList.remove('show');
+    document.getElementById('respBanner').classList.add('show');
+    document.getElementById('lbPanel').classList.remove('open');
+    lbOpen = false;
+    document.querySelector('.live-pill').style.background = 'var(--red-live)';
+    setTimeout(()=>document.getElementById('respBanner').classList.remove('show'), 4000);
+    addChatMsg('System', '▶ Stream started — Play responsibly 18+', 'sys');
+  },
+  // 1: Announcement
+  ()=>{
+    closeGamePanel();
+    document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('annText').textContent = 'TIME TO SPIN THE WHEEL!';
+    document.getElementById('annSub').textContent = 'Get ready — game starting NOW!';
+    document.getElementById('announceOverlay').classList.add('show');
+    addChatMsg('Nana Ama', 'Are you ready to WIN?? 🎉🔥', 'host');
+    setTimeout(()=>document.getElementById('announceOverlay').classList.remove('show'), 3000);
+  },
+  // 2: Spin & Win triggered
+  ()=>{
+    document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('announceOverlay').classList.remove('show');
+    openGamePanel('spin');
+  },
+  // 3: Game result (win)
+  ()=>{
+    document.getElementById('gamePanel').classList.add('open');
+    document.getElementById('videoArea').classList.add('shrunk');
+    showResult('spin', 2, 2);
+    addChatMsg('You', 'x2! GHS 4 won! 🤑', 'viewer');
+  },
+  // 4: Number Slots triggered
+  ()=>{
+    document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('announceOverlay').classList.remove('show');
+    openGamePanel('slots');
+  },
+  // 5: Lucky Draw
+  ()=>{
+    document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('announceOverlay').classList.remove('show');
+    openGamePanel('lucky');
+  },
+  // 6: Leaderboard open
+  ()=>{
+    closeGamePanel();
+    document.getElementById('resultOverlay').classList.remove('show');
+    // Update leaderboard with fresh data
+    lbData[0] = {name:"Kofi A.", amt:"GHS 145.00"};
+    lbData[1] = {name:"You 🏆", amt:"GHS 104.00"};
+    lbData[2] = {name:"Ama B.", amt:"GHS 82.50"};
+    renderLeaderboard();
+    document.getElementById('lbPanel').classList.add('open');
+    lbOpen = true;
+    addChatMsg('System', '🏆 Leaderboard updated! You are #2!', 'sys');
+  },
+  // 7: End
+  ()=>{
+    closeGamePanel();
+    document.getElementById('resultOverlay').classList.remove('show');
+    document.getElementById('lbPanel').classList.remove('open');
+    lbOpen = false;
+    document.getElementById('annText').textContent = 'THANK YOU FOR WATCHING!';
+    document.getElementById('annSub').textContent = 'Replay available in My Future app. See you next time! 🇬🇭';
+    document.getElementById('announceOverlay').classList.add('show');
+    document.querySelector('.live-pill').style.background = '#555';
+    addChatMsg('Nana Ama', 'Ghana — you are amazing!! See you Friday! 🇬🇭❤️', 'host');
+  },
+];
+
+function setScene(idx){
+  currentScene = idx;
+  document.querySelectorAll('.demo-step').forEach((b,i)=>b.classList.toggle('active-step', i===idx));
+  scenes[idx]();
+}
+
+// ── Auto Demo ──────────────────────────────────────────────────
+const sceneTimings = [4000, 3500, 5000, 4000, 6000, 8000, 5000, 5000];
+
+function runAutoStep(){
+  if(!autoMode) return;
+  const next = (currentScene + 1) % scenes.length;
+  setScene(next);
+  autoTimer = setTimeout(runAutoStep, sceneTimings[next] || 4000);
+}
+
+function toggleAuto(){
+  autoMode = !autoMode;
+  const btn = document.getElementById('autoBtn');
+  if(autoMode){
+    btn.textContent = '⏸ Stop Auto';
+    btn.style.background = '#555';
+    autoTimer = setTimeout(runAutoStep, sceneTimings[currentScene] || 4000);
+  } else {
+    btn.textContent = '▶ Auto Demo';
+    btn.style.background = 'var(--gold)';
+    btn.style.color = '#000';
+    clearTimeout(autoTimer);
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────
+startChatLoop();
+startViewerAnim();
+startRxnLoop();
+setScene(0);
+</script>
+</body>
+</html>
