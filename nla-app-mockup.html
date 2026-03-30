@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>My Future — NLA App Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  /* Primary Palette */
+  --gold:       #D4AF37;
+  --gold-light: #FFD700;
+  --gold-pale:  #FFF3B0;
+  --gold-dark:  #9A7B1C;
+  --red:        #CF0921;
+  --red-bright: #FF2244;
+  --green:      #00A651;
+  --green-bright:#00FF87;
+
+  /* NLA Blacks */
+  --bg:         #07070F;
+  --bg2:        #0D0D1A;
+  --surface:    #12121E;
+  --surface2:   #1A1A2E;
+  --surface3:   #232338;
+  --border:     rgba(212,175,55,0.15);
+  --border2:    rgba(255,255,255,0.06);
+
+  /* Text */
+  --text:       #F0EAD6;
+  --text-sub:   rgba(240,234,214,0.55);
+  --text-muted: rgba(240,234,214,0.3);
+
+  /* Shadows */
+  --shadow-gold: 0 0 30px rgba(212,175,55,0.25);
+  --shadow-red:  0 0 30px rgba(207,9,33,0.25);
+  --shadow-card: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Syne',sans-serif;
+}
+
+/* ═══════════════════════════════════════════
+   PHONE SHELL
+═══════════════════════════════════════════ */
+.phone-shell{
+  width:390px;
+  height:844px;
+  background:var(--bg);
+  border-radius:44px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:
+    0 0 0 2px #1a1a2e,
+    0 0 0 4px #0a0a14,
+    0 40px 120px rgba(0,0,0,0.8),
+    0 0 80px rgba(212,175,55,0.05);
+}
+
+/* Notch */
+.notch{
+  position:absolute;
+  top:0;left:50%;
+  transform:translateX(-50%);
+  width:120px;height:32px;
+  background:#000;
+  border-radius:0 0 20px 20px;
+  z-index:1000;
+}
+
+/* Status bar */
+.status-bar{
+  position:absolute;
+  top:0;left:0;right:0;
+  height:44px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  padding:0 24px 6px;
+  z-index:999;
+  font-size:0.7rem;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:0.05em;
+}
+.status-time{ font-family:'Space Mono',monospace;font-size:0.68rem; }
+.status-icons{ display:flex;gap:5px;align-items:center;font-size:0.6rem; }
+
+/* ═══════════════════════════════════════════
+   SCREEN SYSTEM
+═══════════════════════════════════════════ */
+.screen{
+  position:absolute;
+  inset:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:none;
+  display:none;
+  flex-direction:column;
+  padding-bottom:80px;
+}
+.screen::-webkit-scrollbar{display:none;}
+.screen.active{display:flex;}
+.screen.slide-in{animation:slideIn 0.35s cubic-bezier(0.25,0.46,0.45,0.94) both;}
+.screen.slide-out{animation:slideOut 0.35s cubic-bezier(0.25,0.46,0.45,0.94) both;}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes slideOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(-30%);opacity:0;}}
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV
+═══════════════════════════════════════════ */
+.bottom-nav{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  height:78px;
+  background:rgba(10,10,20,0.97);
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  padding:0 4px 12px;
+  z-index:500;
+}
+.nav-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  cursor:pointer;
+  padding:7px 8px;
+  border-radius:12px;
+  transition:all 0.2s;
+  flex:1;
+  min-width:0;
+}
+.nav-item.active .nav-icon{ color:var(--gold); }
+.nav-item.active .nav-label{ color:var(--gold); }
+.nav-item.active{ background:rgba(212,175,55,0.08); }
+.nav-icon{ font-size:1.15rem;color:var(--text-muted);transition:all 0.2s; }
+.nav-label{ font-size:0.5rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);font-weight:700;transition:all 0.2s;white-space:nowrap; }
+
+/* Back button — shown on all non-home screens */
+.back-btn{
+  position:absolute;
+  top:46px;
+  left:16px;
+  z-index:100;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  font-size:1rem;
+  transition:all 0.2s;
+  color:var(--text-sub);
+}
+.back-btn:hover{ background:rgba(212,175,55,0.1);border-color:var(--border);color:var(--gold); }
+
+/* Design Guide floating pill — visible from any screen */
+.design-fab{
+  position:absolute;
+  bottom:88px;
+  right:14px;
+  z-index:490;
+  background:linear-gradient(135deg,var(--gold-dark),var(--gold));
+  border:none;
+  border-radius:100px;
+  padding:8px 14px;
+  display:flex;align-items:center;gap:6px;
+  cursor:pointer;
+  font-family:'Syne',sans-serif;
+  font-size:0.58rem;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:#07070F;
+  box-shadow:0 4px 20px rgba(212,175,55,0.35);
+  transition:all 0.2s;
+}
+.design-fab:hover{ transform:scale(1.05);box-shadow:0 6px 28px rgba(212,175,55,0.5); }
+.design-fab.hidden{ display:none; }
+
+/* ═══════════════════════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════════════════════ */
+.screen-header{
+  padding:52px 22px 16px;
+  position:relative;
+}
+.screen-title{
+  font-family:'Cinzel',serif;
+  font-size:1.5rem;
+  font-weight:700;
+  color:var(--text);
+  letter-spacing:0.04em;
+}
+.screen-sub{
+  font-size:0.7rem;
+  color:var(--text-sub);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-top:2px;
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:18px;
+  overflow:hidden;
+}
+.card.gold-border{ border-color:var(--border); }
+
+.section-label{
+  font-size:0.6rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-weight:700;
+  display:flex;align-items:center;gap:8px;
+  margin-bottom:12px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ═══════════════════════════════════════════
+   KENTE PATTERN UTILITY
+═══════════════════════════════════════════ */
+.kente-strip{
+  height:5px;
+  background:repeating-linear-gradient(
+    90deg,
+    #CF0921 0px, #CF0921 14px,
+    #D4AF37 14px, #D4AF37 28px,
+    #00A651 28px, #00A651 42px,
+    #000 42px, #000 56px
+  );
+  opacity:0.8;
+}
+
+/* ═══════════════════════════════════════════
+   ██ SCREEN 1: HOME
+═══════════════════════════════════════════ */
+#screen-home .hero{
+  position:relative;
+  padding:50px 22px 24px;
+  overflow:hidden;
+  min-height:260px;
+}
+#screen-home .hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 80% -10%, rgba(207,9,33,0.4) 0%, transparent 55%),
+    radial-gradient(ellipse at 0% 100%, rgba(0,166,81,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.06) 0%, transparent 70%);
+}
+/* Geometric bg pattern */
+#screen-home .hero::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(212,175,55,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(212,175,55,0.04) 1px,transparent 1px);
+  background-size:30px 30px;
+}
+
+.hero-content{ position:relative;z-index:1; }
+.hero-greeting{
+  font-size:0.75rem;
+  color:rgba(240,234,214,0.6);
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  margin-bottom:2px;
+}
+.hero-name{
+  font-family:'Cinzel',serif;
+  font-size:2rem;
+  font-weight:900;
+  color:var(--text);
+  line-height:1.05;
+  letter-spacing:0.02em;
+}
+.hero-name span{
+  background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+/* Balance card in hero */
+.balance-card{
+  margin-top:18px;
+  background:rgba(255,255,255,0.04);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(212,175,55,0.2);
+  border-radius:20px;
+  padding:18px 20px;
+  position:relative;
+  overflow:hidden;
+}
+.balance-card::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.5),transparent);
+}
+.balance-label{
+  font-size:0.6rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--text-sub);
+  margin-bottom:6px;
+}
+.balance-amount{
+  font-family:'Cinzel',serif;
+  font-size:2.4rem;
+  font-weight:700;
+  color:var(--gold-light);
+  line-height:1;
+  text-shadow:0 0 30px rgba(255,215,0,0.3);
+  animation:balancePulse 4s ease-in-out infinite;
+}
+@keyframes balancePulse{
+  0%,100%{text-shadow:0 0 20px rgba(255,215,0,0.2);}
+  50%{text-shadow:0 0 40px rgba(255,215,0,0.5);}
+}
+.balance-sub{
+  font-size:0.65rem;
+  color:var(--green-bright);
+  margin-top:4px;
+  display:flex;align-items:center;gap:4px;
+}
+.balance-actions{
+  display:flex;gap:8px;margin-top:14px;
+}
+.bal-action{
+  flex:1;
+  padding:10px 8px;
+  border-radius:12px;
+  border:1px solid var(--border2);
+  background:rgba(255,255,255,0.04);
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;transition:all 0.2s;
+}
+.bal-action:hover{ border-color:var(--gold);background:rgba(212,175,55,0.08); }
+.bal-action-icon{ font-size:1.1rem; }
+.bal-action-label{ font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sub);font-weight:600; }
+
+/* Live ticker */
+.live-ticker{
+  margin:0 16px;
+  background:linear-gradient(135deg,rgba(207,9,33,0.15),rgba(207,9,33,0.05));
+  border:1px solid rgba(207,9,33,0.3);
+  border-radius:12px;
+  padding:10px 14px;
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:16px;
+  min-width:0;
+}
+.ticker-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--red-bright);
+  box-shadow:0 0 8px var(--red-bright);
+  animation:tickerPulse 1s ease-in-out infinite;
+  flex-shrink:0;
+}
+@keyframes tickerPulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.ticker-body{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.ticker-text{ font-size:0.64rem;color:var(--text-sub);letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.ticker-amount{
+  font-family:'Space Mono',monospace;
+  font-size:0.88rem;
+  font-weight:700;
+  color:var(--gold-light);
+  text-shadow:0 0 10px rgba(255,215,0,0.5);
+  animation:tickerNum 3s ease-in-out infinite;
+  letter-spacing:0.02em;
+}
+@keyframes tickerNum{0%,100%{opacity:1;}50%{opacity:0.7;}}
+
+/* Game cards row */
+.games-section{ padding:0 16px; }
+.games-grid{ display:flex;flex-direction:column;gap:12px; }
+
+.game-card{
+  border-radius:18px;
+  overflow:hidden;
+  cursor:pointer;
+  position:relative;
+  height:120px;
+  transition:transform 0.2s,box-shadow 0.2s;
+}
+.game-card:hover{ transform:scale(0.98); }
+.game-card-bg{
+  position:absolute;inset:0;
+  display:flex;align-items:center;
+}
+.game-card-content{
+  position:relative;z-index:2;
+  padding:18px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;height:100%;
+}
+.game-card-info{ flex:1; }
+.game-card-tag{
+  font-size:0.55rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  font-weight:700;
+  opacity:0.7;
+  margin-bottom:4px;
+}
+.game-card-title{
+  font-family:'Cinzel',serif;
+  font-size:1.2rem;
+  font-weight:700;
+  letter-spacing:0.04em;
+  line-height:1.1;
+}
+.game-card-desc{
+  font-size:0.62rem;
+  opacity:0.65;
+  margin-top:4px;
+  letter-spacing:0.04em;
+}
+.game-card-prize{
+  text-align:right;
+}
+.game-card-prize-label{ font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.6;margin-bottom:2px; }
+.game-card-prize-amt{
+  font-family:'Space Mono',monospace;
+  font-size:1rem;
+  font-weight:700;
+}
+.game-card-arrow{
+  margin-left:10px;
+  font-size:1.2rem;
+  opacity:0.7;
+}
+
+/* Card 1: 6/49 Golden Draw */
+.gc-649 .game-card-bg{
+  background:linear-gradient(135deg,#1a0a35 0%,#2D0A4E 40%,#4A1272 100%);
+}
+.gc-649::before{
+  content:'';position:absolute;
+  top:-30px;right:-30px;
+  width:120px;height:120px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(212,175,55,0.3),transparent 70%);
+  z-index:1;
+}
+.gc-649 .game-card-title{ color:var(--gold-light); }
+.gc-649 .game-card-tag{ color:var(--gold); }
+.gc-649 .game-card-prize-amt{ color:var(--gold-light); }
+
+/* Card 2: Spin & Win */
+.gc-spin .game-card-bg{
+  background:linear-gradient(135deg,#0a1a00 0%,#0D2010 40%,#1a3800 100%);
+}
+.gc-spin::before{
+  content:'';position:absolute;
+  top:-20px;right:-20px;
+  width:100px;height:100px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(207,9,33,0.35),transparent 70%);
+  z-index:1;
+}
+.gc-spin .game-card-title{ color:var(--green-bright); }
+.gc-spin .game-card-tag{ color:var(--green-bright); }
+.gc-spin .game-card-prize-amt{ color:var(--red-bright); }
+
+/* Card 3: 777 Jackpot */
+.gc-777 .game-card-bg{
+  background:linear-gradient(135deg,#1a0008 0%,#2D000E 40%,#500010 100%);
+}
+.gc-777::before{
+  content:'';position:absolute;
+  top:-20px;right:-20px;
+  width:110px;height:110px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,215,0,0.25),transparent 70%);
+  z-index:1;
+}
+.gc-777 .game-card-title{ color:var(--gold-light); }
+.gc-777 .game-card-tag{ color:var(--red-bright); }
+.gc-777 .game-card-prize-amt{ color:var(--gold-light); }
+
+/* Home quick stats */
+.quick-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:0 16px 16px;
+}
+.stat-card{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:14px;
+}
+.stat-card-icon{ font-size:1.4rem;margin-bottom:6px; }
+.stat-card-val{
+  font-family:'Cinzel',serif;
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--text);
+}
+.stat-card-label{
+  font-size:0.58rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-top:2px;
+}
+.stat-card.wins .stat-card-val{ color:var(--green-bright); }
+.stat-card.jackpot .stat-card-val{ color:var(--gold-light); }
+
+/* ═══════════════════════════════════════════
+   ██ SCREEN 2: GAMES HUB
+═══════════════════════════════════════════ */
+#screen-games .games-hub-hero{
+  padding:52px 22px 20px;
+  position:relative;
+  overflow:hidden;
+}
+#screen-games .games-hub-hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(212,175,55,0.15),transparent 65%);
+}
+.games-hub-title{
+  font-family:'Cinzel',serif;
+  font-size:1.8rem;
+  font-weight:900;
+  color:var(--text);
+  position:relative;
+}
+.games-hub-title span{
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.game-full-card{
+  margin:0 16px 14px;
+  border-radius:20px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform 0.2s;
+}
+.game-full-card:hover{ transform:scale(0.98); }
+
+/* 6/49 full card */
+.gfc-649{
+  background:linear-gradient(135deg,#1a0a35,#2D0A4E,#4A1272);
+  border:1px solid rgba(212,175,55,0.25);
+}
+.gfc-spin{
+  background:linear-gradient(135deg,#080e00,#0D2010,#163a00);
+  border:1px solid rgba(0,166,81,0.25);
+}
+.gfc-777{
+  background:linear-gradient(135deg,#180008,#2D000E,#4a0018);
+  border:1px solid rgba(207,9,33,0.3);
+}
+
+.gfc-header{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:20px 20px 0;
+}
+.gfc-badge{
+  font-size:0.55rem;letter-spacing:0.18em;text-transform:uppercase;
+  padding:4px 10px;border-radius:100px;font-weight:700;
+}
+.gfc-badge.live{ background:rgba(207,9,33,0.3);color:var(--red-bright);border:1px solid rgba(207,9,33,0.4); }
+.gfc-badge.draw{ background:rgba(212,175,55,0.15);color:var(--gold);border:1px solid rgba(212,175,55,0.3); }
+.gfc-badge.instant{ background:rgba(107,0,255,0.2);color:#9B30FF;border:1px solid rgba(107,0,255,0.3); }
+.gfc-countdown{
+  font-family:'Space Mono',monospace;
+  font-size:0.62rem;
+  color:var(--text-sub);
+  letter-spacing:0.08em;
+}
+
+.gfc-body{ padding:14px 20px 20px; }
+.gfc-tag{ font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;opacity:0.6;margin-bottom:4px;font-weight:700; }
+.gfc-title{
+  font-family:'Cinzel',serif;
+  font-size:1.55rem;
+  font-weight:700;
+  line-height:1.05;
+  letter-spacing:0.04em;
+  margin-bottom:8px;
+}
+.gfc-desc{font-size:0.68rem;opacity:0.55;line-height:1.5;margin-bottom:14px;letter-spacing:0.02em;}
+
+.gfc-stats{ display:flex;gap:16px;margin-bottom:14px; }
+.gfc-stat{ flex:1; }
+.gfc-stat-val{
+  font-family:'Space Mono',monospace;
+  font-size:0.82rem;font-weight:700;
+  margin-bottom:2px;
+}
+.gfc-stat-label{ font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;opacity:0.5; }
+
+.play-btn{
+  width:100%;padding:14px;
+  border:none;border-radius:12px;
+  font-family:'Cinzel',serif;
+  font-size:0.9rem;font-weight:700;
+  letter-spacing:0.1em;cursor:pointer;
+  transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.play-btn.gold-btn{
+  background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));
+  color:#1a0a35;
+  box-shadow:0 6px 25px rgba(212,175,55,0.3);
+}
+.play-btn.green-btn{
+  background:linear-gradient(135deg,#00FF87,#00A651);
+  color:#080e00;
+  box-shadow:0 6px 25px rgba(0,166,81,0.3);
+}
+.play-btn.red-btn{
+  background:linear-gradient(135deg,#FF2244,var(--red));
+  color:#fff;
+  box-shadow:0 6px 25px rgba(207,9,33,0.35);
+}
+
+/* ═══════════════════════════════════════════
+   ██ SCREEN 3: WALLET
+═══════════════════════════════════════════ */
+#screen-wallet .wallet-hero{
+  padding:50px 22px 22px;
+  background:linear-gradient(180deg,rgba(212,175,55,0.08) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);
+}
+.wallet-balance-label{
+  font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--text-sub);margin-bottom:8px;
+}
+.wallet-balance{
+  font-family:'Cinzel',serif;
+  font-size:3rem;font-weight:700;
+  color:var(--gold-light);
+  line-height:1;
+  text-shadow:0 0 40px rgba(255,215,0,0.3);
+}
+.wallet-balance-sub{
+  font-size:0.68rem;color:var(--green-bright);
+  margin-top:6px;display:flex;align-items:center;gap:5px;
+}
+
+.wallet-actions-row{
+  display:flex;gap:10px;margin-top:18px;
+}
+.wallet-action-btn{
+  flex:1;padding:14px 10px;
+  border-radius:14px;border:none;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  font-family:'Syne',sans-serif;
+  font-size:0.65rem;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  transition:all 0.2s;
+}
+.wallet-action-btn.topup{
+  background:linear-gradient(135deg,var(--green),#005a2e);
+  color:#fff;box-shadow:0 6px 20px rgba(0,166,81,0.3);
+}
+.wallet-action-btn.withdraw{
+  background:linear-gradient(135deg,var(--red),#7a0010);
+  color:#fff;box-shadow:0 6px 20px rgba(207,9,33,0.3);
+}
+.wallet-action-btn.transfer{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--gold);
+}
+.wallet-action-icon{ font-size:1.3rem; }
+
+/* Payment method cards */
+.payment-methods{ padding:16px; }
+.method-card{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:10px;
+  cursor:pointer;transition:all 0.2s;
+}
+.method-card:hover{ border-color:var(--gold);background:rgba(212,175,55,0.04); }
+.method-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;flex-shrink:0;
+}
+.method-icon.momo{ background:linear-gradient(135deg,#FFD700,#FFA500); }
+.method-icon.bank{ background:linear-gradient(135deg,#0066FF,#0033AA); }
+.method-icon.card{ background:linear-gradient(135deg,#6B00FF,#4400AA); }
+.method-info{ flex:1; }
+.method-name{ font-size:0.82rem;font-weight:600;color:var(--text); }
+.method-desc{ font-size:0.62rem;color:var(--text-sub);margin-top:2px; }
+.method-arrow{ color:var(--text-muted);font-size:0.9rem; }
+
+/* Transaction history */
+.tx-list{ padding:0 16px; }
+.tx-item{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:8px;
+}
+.tx-icon{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.tx-icon.in{ background:rgba(0,166,81,0.15);border:1px solid rgba(0,166,81,0.2); }
+.tx-icon.out{ background:rgba(207,9,33,0.15);border:1px solid rgba(207,9,33,0.2); }
+.tx-info{ flex:1; }
+.tx-name{ font-size:0.78rem;font-weight:600;color:var(--text); }
+.tx-meta{ font-size:0.6rem;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:6px; }
+.tx-badge{
+  font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:2px 7px;border-radius:100px;font-weight:700;
+}
+.tx-badge.topup{ background:rgba(0,166,81,0.2);color:var(--green); }
+.tx-badge.withdraw{ background:rgba(207,9,33,0.2);color:var(--red-bright); }
+.tx-badge.transfer-out{ background:rgba(255,100,0,0.2);color:#FF6400; }
+.tx-badge.transfer-in{ background:rgba(107,0,255,0.2);color:#9B30FF; }
+.tx-amount{ font-family:'Space Mono',monospace;font-size:0.85rem;font-weight:700; }
+.tx-amount.pos{ color:var(--green-bright); }
+.tx-amount.neg{ color:var(--red-bright); }
+
+/* ═══════════════════════════════════════════
+   ██ SCREEN 4: PROFILE
+═══════════════════════════════════════════ */
+#screen-profile .profile-hero{
+  padding:50px 22px 22px;
+  background:linear-gradient(180deg,rgba(107,0,255,0.1) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+}
+.avatar-ring{
+  width:80px;height:80px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark),#9B30FF);
+  padding:2px;
+  margin-bottom:14px;
+  animation:avatarSpin 8s linear infinite;
+}
+@keyframes avatarSpin{from{filter:hue-rotate(0deg);}to{filter:hue-rotate(360deg);}}
+.avatar-inner{
+  width:100%;height:100%;
+  border-radius:50%;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2rem;
+}
+.profile-name{
+  font-family:'Cinzel',serif;
+  font-size:1.6rem;font-weight:700;
+  color:var(--text);
+}
+.profile-id{
+  font-family:'Space Mono',monospace;
+  font-size:0.62rem;color:var(--text-muted);
+  margin-top:4px;letter-spacing:0.1em;
+}
+.profile-tier{
+  margin-top:10px;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(212,175,55,0.1);
+  border:1px solid rgba(212,175,55,0.25);
+  padding:5px 14px;border-radius:100px;
+}
+.tier-icon{ font-size:0.9rem; }
+.tier-label{ font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:700; }
+
+/* Profile stats grid */
+.profile-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border2);
+  margin:16px 16px 0;
+  border-radius:16px;overflow:hidden;
+}
+.profile-stat{
+  background:var(--surface);
+  padding:16px 12px;
+  text-align:center;
+}
+.profile-stat-val{
+  font-family:'Cinzel',serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--text);
+}
+.profile-stat-val.gold{ color:var(--gold-light); }
+.profile-stat-val.green{ color:var(--green-bright); }
+.profile-stat-val.red{ color:var(--red-bright); }
+.profile-stat-label{ font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-top:4px; }
+
+/* Game performance bars */
+.game-perf{ padding:16px; }
+.perf-item{ margin-bottom:14px; }
+.perf-header{ display:flex;justify-content:space-between;align-items:center;margin-bottom:6px; }
+.perf-name{ font-size:0.72rem;font-weight:600;color:var(--text); }
+.perf-val{ font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--text-sub); }
+.perf-bar{
+  height:6px;background:var(--surface3);
+  border-radius:100px;overflow:hidden;
+}
+.perf-fill{
+  height:100%;border-radius:100px;
+  transition:width 1s ease;
+}
+
+/* Profile menu */
+.profile-menu{ padding:0 16px 16px; }
+.menu-item{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;align-items:center;gap:14px;
+  margin-bottom:8px;
+  cursor:pointer;transition:all 0.2s;
+}
+.menu-item:hover{ border-color:var(--border);background:rgba(212,175,55,0.04); }
+.menu-item-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.menu-item-label{ flex:1;font-size:0.78rem;font-weight:600;color:var(--text); }
+.menu-item-arrow{ color:var(--text-muted);font-size:0.8rem; }
+
+/* ═══════════════════════════════════════════
+   ██ SCREEN 5: COLOR GUIDE
+═══════════════════════════════════════════ */
+#screen-colors .colors-hero{
+  padding:52px 22px 18px;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+}
+.colors-hero-title{
+  font-family:'Cinzel',serif;
+  font-size:1.6rem;font-weight:700;
+  color:var(--text);
+}
+.colors-hero-sub{ font-size:0.65rem;color:var(--text-sub);margin-top:4px;letter-spacing:0.08em; }
+
+.color-section{ padding:16px; }
+.color-group{ margin-bottom:20px; }
+.color-group-title{
+  font-size:0.58rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);font-weight:700;
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.color-group-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.color-swatch{
+  border-radius:14px;overflow:hidden;
+  margin-bottom:8px;
+  border:1px solid rgba(255,255,255,0.06);
+}
+.swatch-preview{
+  height:52px;position:relative;
+  display:flex;align-items:flex-end;
+  padding:8px 12px;
+}
+.swatch-hex{
+  font-family:'Space Mono',monospace;
+  font-size:0.6rem;letter-spacing:0.08em;
+  font-weight:700;
+  mix-blend-mode:difference;
+  color:#fff;
+  opacity:0.85;
+}
+.swatch-info{
+  background:var(--surface);
+  padding:10px 12px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.swatch-name{ font-size:0.72rem;font-weight:600;color:var(--text); }
+.swatch-usage{ font-size:0.58rem;color:var(--text-sub);text-align:right; }
+
+/* Typography specimen */
+.type-section{ padding:0 16px 16px; }
+.type-specimen{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:10px;
+}
+.type-sample-name{font-size:0.58rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.type-cinzel{ font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--text); }
+.type-syne{ font-family:'Syne',sans-serif;font-size:1rem;font-weight:600;color:var(--text); }
+.type-mono{ font-family:'Space Mono',monospace;font-size:0.9rem;color:var(--gold); }
+
+/* Spacing guide */
+.spacing-section{ padding:0 16px 16px; }
+.spacing-item{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:8px;
+}
+.spacing-bar{
+  height:10px;border-radius:4px;
+  background:linear-gradient(90deg,var(--gold),var(--gold-dark));
+}
+.spacing-label{ font-family:'Space Mono',monospace;font-size:0.62rem;color:var(--text-sub); }
+.spacing-use{ font-size:0.6rem;color:var(--text-muted);margin-left:auto; }
+
+/* Component specimens */
+.comp-section{ padding:0 16px 16px; }
+
+/* ═══════════════════════════════════════════
+   NOTIFICATION TOAST
+═══════════════════════════════════════════ */
+.toast{
+  position:absolute;
+  top:60px;left:16px;right:16px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+  z-index:800;
+  transform:translateY(-20px);opacity:0;
+  transition:all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast-icon{font-size:1.1rem;}
+.toast-text{font-size:0.72rem;color:var(--text);letter-spacing:0.02em;}
+
+/* ═══════════════════════════════════════════
+   FILTER TABS
+═══════════════════════════════════════════ */
+.filter-tabs{
+  display:flex;gap:6px;
+  padding:12px 16px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.filter-tabs::-webkit-scrollbar{display:none;}
+.filter-tab{
+  flex-shrink:0;
+  padding:7px 16px;
+  border-radius:100px;
+  font-size:0.65rem;
+  font-weight:700;
+  letter-spacing:0.08em;
+  cursor:pointer;
+  transition:all 0.2s;
+  border:1px solid var(--border2);
+  background:var(--surface);
+  color:var(--text-sub);
+}
+.filter-tab.active{
+  background:rgba(212,175,55,0.15);
+  border-color:rgba(212,175,55,0.4);
+  color:var(--gold-light);
+}
+</style>
+</head>
+<body>
+
+<div class="phone-shell">
+
+  <!-- Notch -->
+  <div class="notch"></div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <span class="status-icons">▲ ◀ ▐▐ 🔋</span>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon">🎰</span>
+    <span class="toast-text" id="toastText">Opening game…</span>
+  </div>
+
+  <!-- ╔══════════════════════════════╗
+       ║  SCREEN: HOME               ║
+       ╚══════════════════════════════╝ -->
+  <div class="screen active" id="screen-home">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-content">
+        <div class="hero-greeting">Welcome back,</div>
+        <div class="hero-name">Kofi <span>Mensah!</span></div>
+
+        <!-- Balance card -->
+        <div class="balance-card">
+          <div class="balance-label">✦ &nbsp; Wallet Balance</div>
+          <div class="balance-amount">GH₵ 450.00</div>
+          <div class="balance-sub">↑ +GH₵ 120.00 today</div>
+          <div class="balance-actions">
+            <div class="bal-action" onclick="goToScreen('screen-wallet');showToast('💳','Opening wallet…')">
+              <span class="bal-action-icon">⬇</span>
+              <span class="bal-action-label">Top Up</span>
+            </div>
+            <div class="bal-action" onclick="goToScreen('screen-wallet');showToast('💸','Opening withdraw…')">
+              <span class="bal-action-icon">⬆</span>
+              <span class="bal-action-label">Withdraw</span>
+            </div>
+            <div class="bal-action" onclick="goToScreen('screen-wallet');showToast('📊','Opening history…')">
+              <span class="bal-action-icon">📋</span>
+              <span class="bal-action-label">History</span>
+            </div>
+            <div class="bal-action" onclick="goToScreen('screen-profile')">
+              <span class="bal-action-icon">👤</span>
+              <span class="bal-action-label">Profile</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kente strip -->
+    <div class="kente-strip"></div>
+
+    <!-- Live Jackpot Ticker -->
+    <div style="padding:14px 16px 0">
+      <div class="live-ticker">
+        <div class="ticker-dot"></div>
+        <div class="ticker-body">
+          <div class="ticker-text">🏆 &nbsp; Golden Draw Jackpot — Group 1</div>
+          <div class="ticker-amount" id="homeJackpot">GH₵ 4,285,000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div style="padding:14px 16px 0">
+      <div class="section-label">March Performance</div>
+      <div class="quick-stats">
+        <div class="stat-card wins">
+          <div class="stat-card-icon">🏆</div>
+          <div class="stat-card-val">GH₵ 120</div>
+          <div class="stat-card-label">Total Winnings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">🎮</div>
+          <div class="stat-card-val">14</div>
+          <div class="stat-card-label">Games Played</div>
+        </div>
+        <div class="stat-card jackpot">
+          <div class="stat-card-icon">⚡</div>
+          <div class="stat-card-val">x5</div>
+          <div class="stat-card-label">Best Multiplier</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-icon">🔥</div>
+          <div class="stat-card-val">7</div>
+          <div class="stat-card-label">Day Streak</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Games section -->
+    <div class="games-section" style="padding:14px 16px 0">
+      <div class="section-label">Play Now</div>
+      <div class="games-grid">
+
+        <div class="game-card gc-649" onclick="openGame('649')">
+          <div class="game-card-bg"></div>
+          <div class="game-card-content">
+            <div class="game-card-info">
+              <div class="game-card-tag">Daily & Monthly Draw</div>
+              <div class="game-card-title">6/49<br>Golden Draw</div>
+              <div class="game-card-desc">Pick 6 numbers · Draw at 5:30 PM</div>
+            </div>
+            <div class="game-card-prize">
+              <div class="game-card-prize-label">Jackpot</div>
+              <div class="game-card-prize-amt">GH₵ 4.28M</div>
+            </div>
+            <span class="game-card-arrow">›</span>
+          </div>
+        </div>
+
+        <div class="game-card gc-spin" onclick="openGame('spin')">
+          <div class="game-card-bg"></div>
+          <div class="game-card-content">
+            <div class="game-card-info">
+              <div class="game-card-tag" style="color:var(--red-bright)">Live Virtual Game</div>
+              <div class="game-card-title">Spin & Win<br><span style="font-size:0.85rem">Virtual Wheel</span></div>
+              <div class="game-card-desc">12-segment Kente wheel · Instant payout</div>
+            </div>
+            <div class="game-card-prize">
+              <div class="game-card-prize-label">Max Mult.</div>
+              <div class="game-card-prize-amt" style="color:var(--red-bright)">x5 🎯</div>
+            </div>
+            <span class="game-card-arrow" style="color:var(--green-bright)">›</span>
+          </div>
+        </div>
+
+        <div class="game-card gc-777" onclick="openGame('777')">
+          <div class="game-card-bg"></div>
+          <div class="game-card-content">
+            <div class="game-card-info">
+              <div class="game-card-tag">Instant Jackpot</div>
+              <div class="game-card-title">777<br>Jackpot Slots</div>
+              <div class="game-card-desc">3 reels · 777 = x100 your stake</div>
+            </div>
+            <div class="game-card-prize">
+              <div class="game-card-prize-label">777 Prize</div>
+              <div class="game-card-prize-amt">x100 🎰</div>
+            </div>
+            <span class="game-card-arrow">›</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ╔══════════════════════════════╗
+       ║  SCREEN: GAMES HUB          ║
+       ╚══════════════════════════════╝ -->
+  <div class="screen" id="screen-games">
+    <div class="games-hub-hero">
+      <div class="back-btn" onclick="goToScreen('screen-home')" title="Back to Home">‹</div>
+      <div style="padding-left:44px">
+        <div class="games-hub-title">NLA <span>Games</span></div>
+        <div style="font-size:0.7rem;color:var(--text-sub);margin-top:4px;letter-spacing:0.08em;">Play. Win. Instantly.</div>
+      </div>
+    </div>
+    <div class="kente-strip"></div>
+
+    <!-- Live jackpot -->
+    <div style="padding:14px 16px 0">
+      <div class="live-ticker">
+        <div class="ticker-dot"></div>
+        <div class="ticker-body">
+          <div class="ticker-text">🏆 &nbsp; Live Jackpot Pool</div>
+          <div class="ticker-amount" id="gamesJackpot">GH₵ 4,285,000</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:14px 0 0">
+
+      <!-- 6/49 -->
+      <div class="game-full-card gfc-649" onclick="openGame('649')">
+        <div class="gfc-header">
+          <span class="gfc-badge draw">📅 Daily Draw</span>
+          <span class="gfc-countdown">Next: 5:30 PM today</span>
+        </div>
+        <div class="gfc-body">
+          <div class="gfc-tag" style="color:var(--gold)">Lottery · Pick 6 of 49</div>
+          <div class="gfc-title" style="color:var(--gold-light)">6/49 — The Golden Draw</div>
+          <div class="gfc-desc">Ghana's premier lottery. Pick 6 numbers between 1–49. Match 3 or more to win. Daily draws at 5:30 PM. Monthly mega-draw on the last Friday of each month.</div>
+          <div class="gfc-stats">
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--gold-light)">GH₵ 4.28M</div>
+              <div class="gfc-stat-label">Group 1 Jackpot</div>
+            </div>
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--text)">GH₵ 1.00</div>
+              <div class="gfc-stat-label">Min Stake</div>
+            </div>
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--text)">38%</div>
+              <div class="gfc-stat-label">Prize Pool</div>
+            </div>
+          </div>
+          <button class="play-btn gold-btn" onclick="openGame('649')">⭐ &nbsp; Play Now &nbsp; ⭐</button>
+        </div>
+      </div>
+
+      <!-- Spin & Win -->
+      <div class="game-full-card gfc-spin" onclick="openGame('spin')">
+        <div class="gfc-header">
+          <span class="gfc-badge live">🔴 Live Virtual</span>
+          <span class="gfc-countdown" style="color:rgba(0,255,135,0.6)">Always Open</span>
+        </div>
+        <div class="gfc-body">
+          <div class="gfc-tag" style="color:var(--green-bright)">Instant Win · 12-Segment Wheel</div>
+          <div class="gfc-title" style="color:var(--green-bright)">Spin & Win — Virtual Wheel</div>
+          <div class="gfc-desc">A live virtual wheel game with Kente-pattern segments. Stake GH₵1–100, spin the wheel and win up to x5 your stake instantly. Winnings go straight to your wallet.</div>
+          <div class="gfc-stats">
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--red-bright)">x5</div>
+              <div class="gfc-stat-label">Max Win</div>
+            </div>
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--text)">GH₵ 1</div>
+              <div class="gfc-stat-label">Min Stake</div>
+            </div>
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--text)">Instant</div>
+              <div class="gfc-stat-label">Payout</div>
+            </div>
+          </div>
+          <button class="play-btn green-btn" onclick="openGame('spin')">🎡 &nbsp; Spin to Win</button>
+        </div>
+      </div>
+
+      <!-- 777 Jackpot -->
+      <div class="game-full-card gfc-777" onclick="openGame('777')">
+        <div class="gfc-header">
+          <span class="gfc-badge instant">⚡ Instant Jackpot</span>
+          <span class="gfc-countdown" style="color:rgba(255,215,0,0.6)">Always Open</span>
+        </div>
+        <div class="gfc-body">
+          <div class="gfc-tag" style="color:var(--red-bright)">Slots · 3 Reels · 777 Jackpot</div>
+          <div class="gfc-title" style="color:var(--gold-light)">777 Jackpot — Number Slots</div>
+          <div class="gfc-desc">A high-energy virtual slot machine. Three reels, each showing 0–9. Land 7-7-7 in the middle row for the x100 Special Jackpot. All winnings credited instantly.</div>
+          <div class="gfc-stats">
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--gold-light)">x100</div>
+              <div class="gfc-stat-label">777 Jackpot</div>
+            </div>
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--text)">GH₵ 1</div>
+              <div class="gfc-stat-label">Min Stake</div>
+            </div>
+            <div class="gfc-stat">
+              <div class="gfc-stat-val" style="color:var(--text)">Instant</div>
+              <div class="gfc-stat-label">Payout</div>
+            </div>
+          </div>
+          <button class="play-btn red-btn" onclick="openGame('777')">🎰 &nbsp; Spin the Reels</button>
+        </div>
+      </div>
+
+    </div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ╔══════════════════════════════╗
+       ║  SCREEN: WALLET             ║
+       ╚══════════════════════════════╝ -->
+  <div class="screen" id="screen-wallet">
+    <div class="wallet-hero">
+      <div class="back-btn" onclick="goToScreen('screen-home')" title="Back to Home">‹</div>
+      <div style="padding-left:44px">
+        <div class="wallet-balance-label">✦ &nbsp; Total Wallet Balance</div>
+        <div class="wallet-balance">GH₵ 450.00</div>
+        <div class="wallet-balance-sub">↑ &nbsp; +GH₵ 120.00 from games today</div>
+      </div>
+      <div class="wallet-actions-row">
+        <button class="wallet-action-btn topup">
+          <span class="wallet-action-icon">⬇</span>Top Up
+        </button>
+        <button class="wallet-action-btn withdraw">
+          <span class="wallet-action-icon">⬆</span>Withdraw
+        </button>
+        <button class="wallet-action-btn transfer">
+          <span class="wallet-action-icon">↔</span>Transfer
+        </button>
+      </div>
+    </div>
+    <div class="kente-strip"></div>
+
+    <!-- Payment methods -->
+    <div class="payment-methods">
+      <div class="section-label">Top Up Via</div>
+      <div class="method-card">
+        <div class="method-icon momo">📱</div>
+        <div class="method-info">
+          <div class="method-name">Mobile Money</div>
+          <div class="method-desc">MTN · Telecel · AirtelTigo — Instant</div>
+        </div>
+        <span class="method-arrow">›</span>
+      </div>
+      <div class="method-card">
+        <div class="method-icon bank">🏦</div>
+        <div class="method-info">
+          <div class="method-name">Bank Transfer</div>
+          <div class="method-desc">All Ghanaian banks · 1–2 hours</div>
+        </div>
+        <span class="method-arrow">›</span>
+      </div>
+      <div class="method-card">
+        <div class="method-icon card">💳</div>
+        <div class="method-info">
+          <div class="method-name">Debit / Credit Card</div>
+          <div class="method-desc">Visa · Mastercard · Instant</div>
+        </div>
+        <span class="method-arrow">›</span>
+      </div>
+    </div>
+
+    <!-- Transaction history -->
+    <div class="tx-list">
+      <div class="section-label">Recent Transactions</div>
+      <div class="filter-tabs" style="padding:0 0 12px">
+        <div class="filter-tab active">All</div>
+        <div class="filter-tab">Top Up</div>
+        <div class="filter-tab">Withdraw</div>
+        <div class="filter-tab">In</div>
+        <div class="filter-tab">Out</div>
+      </div>
+
+      <div class="tx-item">
+        <div class="tx-icon in">🏆</div>
+        <div class="tx-info">
+          <div class="tx-name">Win — Spin & Win (x5)</div>
+          <div class="tx-meta">
+            <span class="tx-badge transfer-in">Game Win</span>
+            Mar 29, 2026 · 3:15 PM
+          </div>
+        </div>
+        <div class="tx-amount pos">+120.00</div>
+      </div>
+
+      <div class="tx-item">
+        <div class="tx-icon out">🎰</div>
+        <div class="tx-info">
+          <div class="tx-name">Stake — 777 Jackpot</div>
+          <div class="tx-meta">
+            <span class="tx-badge transfer-out">Game Stake</span>
+            Mar 29, 2026 · 2:50 PM
+          </div>
+        </div>
+        <div class="tx-amount neg">-20.00</div>
+      </div>
+
+      <div class="tx-item">
+        <div class="tx-icon in">⬇</div>
+        <div class="tx-info">
+          <div class="tx-name">Top up via Bank Transfer</div>
+          <div class="tx-meta">
+            <span class="tx-badge topup">Top Up</span>
+            Mar 28, 2026 · 10:30 AM
+          </div>
+        </div>
+        <div class="tx-amount pos">+300.00</div>
+      </div>
+
+      <div class="tx-item">
+        <div class="tx-icon in">⬇</div>
+        <div class="tx-info">
+          <div class="tx-name">Top up via Mobile Money</div>
+          <div class="tx-meta">
+            <span class="tx-badge topup">Top Up</span>
+            Mar 27, 2026 · 9:15 AM
+          </div>
+        </div>
+        <div class="tx-amount pos">+200.00</div>
+      </div>
+
+      <div class="tx-item">
+        <div class="tx-icon out">⬆</div>
+        <div class="tx-info">
+          <div class="tx-name">Withdraw to MoMo</div>
+          <div class="tx-meta">
+            <span class="tx-badge withdraw">Withdraw</span>
+            Mar 26, 2026 · 2:20 PM
+          </div>
+        </div>
+        <div class="tx-amount neg">-50.00</div>
+      </div>
+
+      <div class="tx-item">
+        <div class="tx-icon out">⭐</div>
+        <div class="tx-info">
+          <div class="tx-name">6/49 Golden Draw — 5 tickets</div>
+          <div class="tx-meta">
+            <span class="tx-badge transfer-out">Game Stake</span>
+            Mar 25, 2026 · 4:00 PM
+          </div>
+        </div>
+        <div class="tx-amount neg">-5.00</div>
+      </div>
+
+    </div>
+    <div style="height:16px"></div>
+  </div>
+
+  <!-- ╔══════════════════════════════╗
+       ║  SCREEN: PROFILE            ║
+       ╚══════════════════════════════╝ -->
+  <div class="screen" id="screen-profile">
+    <div class="profile-hero">
+      <div class="back-btn" onclick="goToScreen('screen-home')" title="Back to Home">‹</div>
+      <div class="avatar-ring">
+        <div class="avatar-inner">👤</div>
+      </div>
+      <div class="profile-name">Kofi Mensah</div>
+      <div class="profile-id">NLA-ID · GHA-483920291-7</div>
+      <div class="profile-tier">
+        <span class="tier-icon">🥇</span>
+        <span class="tier-label">Gold Member</span>
+      </div>
+    </div>
+    <div class="kente-strip"></div>
+
+    <!-- Stats grid -->
+    <div class="profile-stats">
+      <div class="profile-stat">
+        <div class="profile-stat-val gold">GH₵ 450</div>
+        <div class="profile-stat-label">Balance</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val green">GH₵ 820</div>
+        <div class="profile-stat-label">Total Won</div>
+      </div>
+      <div class="profile-stat">
+        <div class="profile-stat-val red">58</div>
+        <div class="profile-stat-label">Games Played</div>
+      </div>
+    </div>
+
+    <!-- Game performance -->
+    <div class="game-perf" style="padding:16px">
+      <div class="section-label">Game Performance</div>
+      <div class="perf-item">
+        <div class="perf-header">
+          <span class="perf-name">⭐ 6/49 Golden Draw</span>
+          <span class="perf-val">GH₵ 400 won</span>
+        </div>
+        <div class="perf-bar">
+          <div class="perf-fill" style="width:72%;background:linear-gradient(90deg,var(--gold),var(--gold-dark))"></div>
+        </div>
+      </div>
+      <div class="perf-item">
+        <div class="perf-header">
+          <span class="perf-name">🎡 Spin & Win</span>
+          <span class="perf-val">GH₵ 280 won</span>
+        </div>
+        <div class="perf-bar">
+          <div class="perf-fill" style="width:50%;background:linear-gradient(90deg,var(--green),var(--green-bright))"></div>
+        </div>
+      </div>
+      <div class="perf-item">
+        <div class="perf-header">
+          <span class="perf-name">🎰 777 Jackpot</span>
+          <span class="perf-val">GH₵ 140 won</span>
+        </div>
+        <div class="perf-bar">
+          <div class="perf-fill" style="width:25%;background:linear-gradient(90deg,var(--red),var(--red-bright))"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu -->
+    <div class="profile-menu">
+      <div class="section-label">Account</div>
+      <div class="menu-item">
+        <div class="menu-item-icon" style="background:rgba(212,175,55,0.1)">🪪</div>
+        <span class="menu-item-label">KYC Verification</span>
+        <span style="font-size:0.55rem;background:rgba(0,166,81,0.15);color:var(--green);padding:2px 8px;border-radius:100px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">Verified</span>
+        <span class="menu-item-arrow">›</span>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-icon" style="background:rgba(107,0,255,0.1)">🔔</div>
+        <span class="menu-item-label">Notifications</span>
+        <span class="menu-item-arrow">›</span>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-icon" style="background:rgba(0,102,255,0.1)">🔒</div>
+        <span class="menu-item-label">Security & PIN</span>
+        <span class="menu-item-arrow">›</span>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-icon" style="background:rgba(0,166,81,0.1)">📜</div>
+        <span class="menu-item-label">Responsible Gaming</span>
+        <span class="menu-item-arrow">›</span>
+      </div>
+      <div class="menu-item">
+        <div class="menu-item-icon" style="background:rgba(207,9,33,0.1)">🚪</div>
+        <span class="menu-item-label">Sign Out</span>
+        <span class="menu-item-arrow">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════════════════════╗
+       ║  SCREEN: COLOR GUIDE        ║
+       ╚══════════════════════════════╝ -->
+  <div class="screen" id="screen-colors">
+    <div class="colors-hero">
+      <div class="back-btn" onclick="goToScreen('screen-home')" title="Back to Home">‹</div>
+      <div style="padding-left:44px">
+        <div style="font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;">Developer Reference</div>
+        <div class="colors-hero-title">Design System</div>
+        <div class="colors-hero-sub">My Future · NLA · v1.0 — Color & Typography Guide</div>
+      </div>
+    </div>
+    <div class="kente-strip"></div>
+
+    <div class="color-section">
+
+      <!-- Primary Colors -->
+      <div class="color-group">
+        <div class="color-group-title">Primary Palette</div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#D4AF37;">
+            <span class="swatch-hex">#D4AF37</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">NLA Gold</span>
+            <span class="swatch-usage">Borders · Accents · Icons</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#FFD700;">
+            <span class="swatch-hex">#FFD700</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Gold Light</span>
+            <span class="swatch-usage">Hero Text · Jackpot Amounts</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#CF0921;">
+            <span class="swatch-hex">#CF0921</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Ghana Red</span>
+            <span class="swatch-usage">Alerts · Live Badge · Kente</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#00A651;">
+            <span class="swatch-hex">#00A651</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Ghana Green</span>
+            <span class="swatch-usage">Success · Wins · Kente</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#00FF87;">
+            <span class="swatch-hex">#00FF87</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Win Green</span>
+            <span class="swatch-usage">Win Amounts · Positive Values</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Background Colors -->
+      <div class="color-group">
+        <div class="color-group-title">Background Layers</div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#07070F;border:1px solid #222;">
+            <span class="swatch-hex">#07070F</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Base Background</span>
+            <span class="swatch-usage">App background — deepest layer</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#12121E;border:1px solid #222;">
+            <span class="swatch-hex">#12121E</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Surface</span>
+            <span class="swatch-usage">Cards · Modals · Bottom Nav</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#1A1A2E;border:1px solid #222;">
+            <span class="swatch-hex">#1A1A2E</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Surface 2</span>
+            <span class="swatch-usage">Elevated cards · Inputs</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:#232338;border:1px solid #222;">
+            <span class="swatch-hex">#232338</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Surface 3</span>
+            <span class="swatch-usage">Progress bars · Inactive states</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Theme Colors -->
+      <div class="color-group">
+        <div class="color-group-title">Game Theme Colors</div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:linear-gradient(135deg,#1a0a35,#4A1272);">
+            <span class="swatch-hex">Purple Gradient</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">6/49 Golden Draw</span>
+            <span class="swatch-usage">#1a0a35 → #4A1272</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:linear-gradient(135deg,#080e00,#163a00);">
+            <span class="swatch-hex">Forest Gradient</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">Spin & Win</span>
+            <span class="swatch-usage">#080e00 → #163a00</span>
+          </div>
+        </div>
+
+        <div class="color-swatch">
+          <div class="swatch-preview" style="background:linear-gradient(135deg,#180008,#4a0018);">
+            <span class="swatch-hex">Deep Red Gradient</span>
+          </div>
+          <div class="swatch-info">
+            <span class="swatch-name">777 Jackpot</span>
+            <span class="swatch-usage">#180008 → #4a0018</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Border / Overlay rules -->
+      <div class="color-group">
+        <div class="color-group-title">Borders & Overlays</div>
+        <div style="background:var(--surface);border-radius:12px;padding:14px;font-size:0.68rem;line-height:1.8;color:var(--text-sub);">
+          <span style="color:var(--gold);font-weight:600;">Gold border:</span> rgba(212,175,55, 0.15)<br>
+          <span style="color:var(--gold);font-weight:600;">Gold border active:</span> rgba(212,175,55, 0.40)<br>
+          <span style="color:var(--gold);font-weight:600;">White border subtle:</span> rgba(255,255,255, 0.06)<br>
+          <span style="color:var(--gold);font-weight:600;">Red glow:</span> rgba(207,9,33, 0.25)<br>
+          <span style="color:var(--gold);font-weight:600;">Gold glow:</span> rgba(212,175,55, 0.25)<br>
+          <span style="color:var(--gold);font-weight:600;">Nav blur:</span> backdrop-filter: blur(20px)
+        </div>
+      </div>
+
+      <!-- Typography -->
+      <div class="color-group">
+        <div class="color-group-title">Typography</div>
+      </div>
+    </div>
+
+    <div class="type-section">
+      <div class="type-specimen">
+        <div class="type-sample-name">Display — Cinzel Serif (Google Fonts)</div>
+        <div class="type-cinzel">The Golden Draw</div>
+        <div style="font-size:0.6rem;color:var(--text-muted);margin-top:6px;">Weights: 400 · 600 · 700 · 900 &nbsp;·&nbsp; Use for: Game titles, hero headings, jackpot amounts</div>
+      </div>
+      <div class="type-specimen">
+        <div class="type-sample-name">Body — Syne Sans (Google Fonts)</div>
+        <div class="type-syne">Pick 6 numbers between 1 and 49</div>
+        <div style="font-size:0.6rem;color:var(--text-muted);margin-top:6px;">Weights: 400 · 500 · 600 · 700 · 800 &nbsp;·&nbsp; Use for: Body text, labels, buttons, UI copy</div>
+      </div>
+      <div class="type-specimen">
+        <div class="type-sample-name">Data — Space Mono (Google Fonts)</div>
+        <div class="type-mono">GH₵ 4,285,000.00 · x100</div>
+        <div style="font-size:0.6rem;color:var(--text-muted);margin-top:6px;">Weights: 400 · 700 &nbsp;·&nbsp; Use for: Amounts, multipliers, IDs, countdown timers</div>
+      </div>
+    </div>
+
+    <!-- Spacing -->
+    <div class="spacing-section">
+      <div class="section-label" style="padding:0 0 10px">Spacing Scale (4px base)</div>
+      <div class="spacing-item">
+        <div class="spacing-bar" style="width:8px;height:8px;border-radius:2px;"></div>
+        <span class="spacing-label">4px</span>
+        <span class="spacing-use">Inline gaps, icon spacing</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-bar" style="width:16px;"></div>
+        <span class="spacing-label">8px</span>
+        <span class="spacing-use">Button padding, small gaps</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-bar" style="width:32px;"></div>
+        <span class="spacing-label">16px</span>
+        <span class="spacing-use">Screen margins, card padding</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-bar" style="width:48px;"></div>
+        <span class="spacing-label">24px</span>
+        <span class="spacing-use">Section spacing, hero padding</span>
+      </div>
+      <div class="spacing-item">
+        <div class="spacing-bar" style="width:64px;"></div>
+        <span class="spacing-label">32px</span>
+        <span class="spacing-use">Large section breaks</span>
+      </div>
+    </div>
+
+    <!-- Border radius -->
+    <div class="spacing-section">
+      <div class="section-label" style="padding:0 0 10px">Border Radius</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <div style="text-align:center;">
+          <div style="width:40px;height:40px;background:var(--surface2);border-radius:8px;margin:0 auto 4px;"></div>
+          <span style="font-size:0.58rem;color:var(--text-muted);">8px<br>Inputs</span>
+        </div>
+        <div style="text-align:center;">
+          <div style="width:40px;height:40px;background:var(--surface2);border-radius:12px;margin:0 auto 4px;"></div>
+          <span style="font-size:0.58rem;color:var(--text-muted);">12px<br>Buttons</span>
+        </div>
+        <div style="text-align:center;">
+          <div style="width:40px;height:40px;background:var(--surface2);border-radius:16px;margin:0 auto 4px;"></div>
+          <span style="font-size:0.58rem;color:var(--text-muted);">16px<br>Cards</span>
+        </div>
+        <div style="text-align:center;">
+          <div style="width:40px;height:40px;background:var(--surface2);border-radius:20px;margin:0 auto 4px;"></div>
+          <span style="font-size:0.58rem;color:var(--text-muted);">20px<br>Game Cards</span>
+        </div>
+        <div style="text-align:center;">
+          <div style="width:40px;height:40px;background:var(--surface2);border-radius:100px;margin:0 auto 4px;"></div>
+          <span style="font-size:0.58rem;color:var(--text-muted);">100px<br>Pills</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kente pattern spec -->
+    <div class="spacing-section">
+      <div class="section-label" style="padding:0 0 10px">Kente Accent Strip</div>
+      <div class="kente-strip" style="height:12px;border-radius:6px;"></div>
+      <div style="margin-top:8px;font-size:0.62rem;color:var(--text-sub);line-height:1.7;background:var(--surface);padding:10px 12px;border-radius:10px;">
+        Pattern: 14px segments, repeating<br>
+        Red (#CF0921) · Gold (#D4AF37) · Green (#00A651) · Black (#000)<br>
+        Used as section dividers and decorative accents throughout the app.
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+
+  <!-- ═══ DESIGN GUIDE FAB ═══ -->
+  <div class="design-fab" id="designFab" onclick="goToScreen('screen-colors')">
+    🎨 &nbsp; Design Guide
+  </div>
+
+  <!-- ═══ BOTTOM NAV (4 items) ═══ -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="goToScreen('screen-home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item" id="nav-games" onclick="goToScreen('screen-games')">
+      <span class="nav-icon">🎮</span>
+      <span class="nav-label">Games</span>
+    </div>
+    <div class="nav-item" id="nav-wallet" onclick="goToScreen('screen-wallet')">
+      <span class="nav-icon">💳</span>
+      <span class="nav-label">Wallet</span>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="goToScreen('screen-profile')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">Profile</span>
+    </div>
+  </div>
+
+</div><!-- /phone-shell -->
+
+<script>
+// ── Navigation ─────────────────────────────────────────
+const screens = ['screen-home','screen-games','screen-wallet','screen-profile','screen-colors'];
+const navIds   = ['nav-home','nav-games','nav-wallet','nav-profile'];
+let currentScreen = 'screen-home';
+
+function goToScreen(id) {
+  if (id === currentScreen) return;
+  const prev = document.getElementById(currentScreen);
+  const next = document.getElementById(id);
+  prev.style.display = 'none';
+  next.style.display = 'flex';
+  next.classList.add('slide-in');
+  setTimeout(()=>next.classList.remove('slide-in'), 400);
+  currentScreen = id;
+  // Update 4-tab nav
+  navIds.forEach((nid,i) => {
+    const el = document.getElementById(nid);
+    const isActive = screens[i] === id;
+    el.classList.toggle('active', isActive);
+  });
+  // Hide the Design FAB when viewing the design screen
+  const fab = document.getElementById('designFab');
+  fab.classList.toggle('hidden', id === 'screen-colors');
+}
+
+// ── Open game in new tab ─────────────────────────────────
+function openGame(type) {
+  const files = {
+    '649': 'golden-draw-649.html',
+    'spin': 'spin-and-win.html',
+    '777': '777-jackpot-slots.html'
+  };
+  const labels = {
+    '649': '⭐ Opening Golden Draw…',
+    'spin': '🎡 Opening Spin & Win…',
+    '777': '🎰 Opening 777 Jackpot…'
+  };
+  showToast(type === '649' ? '⭐' : type === 'spin' ? '🎡' : '🎰', labels[type]);
+  setTimeout(()=>{
+    if (files[type]) window.open(files[type], '_blank');
+  }, 600);
+}
+
+// ── Toast ─────────────────────────────────────────────────
+let toastTimer;
+function showToast(icon, text) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastText').textContent = text;
+  toast.querySelector('.toast-icon').textContent = icon;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove('show'), 2500);
+}
+
+// ── Live jackpot ticker ────────────────────────────────────
+let jackpot = 4285000;
+function tickJackpot() {
+  jackpot += Math.floor(Math.random()*450+100);
+  const fmt = 'GH₵ ' + jackpot.toLocaleString();
+  const els = ['homeJackpot','gamesJackpot'];
+  els.forEach(id => { const el=document.getElementById(id); if(el) el.textContent=fmt; });
+}
+setInterval(tickJackpot, 4000);
+
+// ── Filter tabs (wallet) ───────────────────────────────────
+document.querySelectorAll('.filter-tab').forEach(tab => {
+  tab.addEventListener('click', function(){
+    this.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
