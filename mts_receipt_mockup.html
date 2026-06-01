@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow — Updated Receipt Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: #f4f6f9;
+  color: #0d1b3e;
+  padding: 40px 24px 60px;
+  min-height: 100vh;
+}
+.page { max-width: 760px; margin: 0 auto; }
+.page-header { margin-bottom: 28px; }
+.page-header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
+.page-header p { font-size: 13px; color: #607191; }
+.meta { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+.meta span { font-size: 11px; font-family: 'DM Mono', monospace; background: #fff; border: 0.5px solid #d4dce8; padding: 3px 9px; border-radius: 4px; color: #607191; }
+.hint-bar { background: #e6f7f0; border: 0.5px solid #9ed8bf; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #1a5c3a; margin-bottom: 28px; display: flex; gap: 8px; align-items: center; }
+
+.layout { display: grid; grid-template-columns: 340px 1fr; gap: 32px; align-items: start; }
+
+/* RECEIPT */
+.receipt-card {
+  background: #fff;
+  border: 0.5px solid #d4dce8;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+.rec-header {
+  background: #1c3660;
+  padding: 16px 20px;
+  text-align: center;
+}
+.rec-header h2 { color: #fff; font-size: 17px; font-weight: 500; margin-bottom: 4px; }
+.rec-header .ref { font-size: 11px; color: rgba(255,255,255,0.55); font-family: 'DM Mono', monospace; }
+
+.rec-body { padding: 16px 20px; }
+
+.rec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  font-size: 13px;
+  border-bottom: 0.5px solid #e2e8f0;
+}
+.rec-row:last-child { border-bottom: none; }
+.rec-row .rl { color: #607191; }
+.rec-row .rv { font-weight: 500; color: #0d1b3e; }
+.rec-row.total { padding: 10px 0 7px; }
+.rec-row.total .rl { font-size: 15px; font-weight: 500; color: #0d1b3e; }
+.rec-row.total .rv { font-size: 18px; font-weight: 600; }
+
+.rec-divider { border: none; border-top: 1px dashed #d4dce8; margin: 8px 0; }
+
+.tax-box {
+  background: #f8fafc;
+  border: 0.5px solid #d4dce8;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.tax-box-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mts-badge {
+  font-size: 9px;
+  font-weight: 500;
+  background: #e6f7f0;
+  color: #1a5c3a;
+  border: 0.5px solid #9ed8bf;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace;
+}
+.tax-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+}
+.tax-row .tr { color: #607191; }
+.tax-row .tv { font-family: 'DM Mono', monospace; font-size: 11px; color: #0d1b3e; }
+.tax-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0 0;
+  margin-top: 4px;
+  border-top: 0.5px solid #d4dce8;
+  font-size: 12px;
+  font-weight: 500;
+}
+.tax-total .tr { color: #607191; }
+.tax-total .tv { font-family: 'DM Mono', monospace; font-size: 11px; color: #0d1b3e; }
+
+.net-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #e6f7f0;
+  border-radius: 8px;
+  margin: 8px 0 0;
+  font-size: 12px;
+}
+.net-row .nl { color: #1a5c3a; font-weight: 500; }
+.net-row .nv { color: #1a5c3a; font-weight: 500; font-family: 'DM Mono', monospace; }
+
+.rec-footer {
+  padding: 12px 20px 16px;
+  text-align: center;
+  border-top: 0.5px solid #e2e8f0;
+}
+.thank { font-size: 13px; font-weight: 500; color: #0d1b3e; margin-bottom: 6px; }
+.footnote { font-size: 10px; color: #94a3b8; line-height: 1.6; }
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+.dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f4f6f9;
+  border: 0.5px solid #d4dce8;
+}
+
+/* STATUS */
+.status-confirmed { color: #1aaa6b; font-weight: 500; }
+
+/* RIGHT PANEL */
+.right-panel { display: flex; flex-direction: column; gap: 24px; }
+
+.section-title { font-size: 15px; font-weight: 500; color: #0d1b3e; margin-bottom: 12px; }
+
+/* COMPARE TABLE */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.compare-table thead th {
+  text-align: left;
+  padding: 8px 10px;
+  background: #f8fafc;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 0.5px solid #d4dce8;
+}
+.compare-table tbody td {
+  padding: 9px 10px;
+  border-bottom: 0.5px solid #f1f5f9;
+  color: #0d1b3e;
+  vertical-align: top;
+}
+.compare-table tbody tr:last-child td { border-bottom: none; }
+.old { color: #e53935; text-decoration: line-through; text-decoration-color: rgba(229,57,53,0.5); }
+.new { color: #1aaa6b; font-weight: 500; }
+
+/* FORMULA BOX */
+.formula-box {
+  background: #1c3660;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.formula-box .fb-title { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.formula-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 12px;
+  border-bottom: 0.5px solid rgba(255,255,255,0.08);
+}
+.formula-row:last-child { border-bottom: none; }
+.formula-row .fl { color: rgba(255,255,255,0.7); }
+.formula-row .fv { color: #3DD68C; font-family: 'DM Mono', monospace; font-size: 11px; }
+.formula-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0 0;
+  margin-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  font-size: 13px;
+  font-weight: 500;
+}
+.formula-total .fl { color: #fff; }
+.formula-total .fv { color: #3DD68C; font-family: 'DM Mono', monospace; font-size: 13px; }
+
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <h1>Updated Receipt (MTS Tax Split)</h1>
+    <p>How the POS receipt changes under the real-time MTS collection model</p>
+    <div class="meta">
+      <span>Aliska</span>
+      <span>31st May 2026</span>
+      <span>CONFIDENTIAL</span>
+    </div>
+  </div>
+
+  <div class="hint-bar">
+    💡 Open this file in any browser to view. Use File → Print → Save as PDF to export.
+  </div>
+
+  <div class="layout">
+
+    <!-- RECEIPT -->
+    <div class="receipt-card">
+      <div class="rec-header">
+        <h2>Receipt</h2>
+        <div class="ref">INV-MOMO-8a72c3f1 · 27 May 2026</div>
+      </div>
+      <div class="rec-body">
+        <div class="rec-row">
+          <span class="rl">x5 Bottled water</span>
+          <span class="rv">GHS 10.00</span>
+        </div>
+        <hr class="rec-divider">
+        <div class="rec-row">
+          <span class="rl">Subtotal</span>
+          <span class="rv">GHS 10.00</span>
+        </div>
+
+        <div class="tax-box">
+          <div class="tax-box-label">Taxes collected <span class="mts-badge">MTS Agent</span></div>
+          <div class="tax-row"><span class="tr">MTS (3%)</span><span class="tv">GHS 0.30</span></div>
+          <div class="tax-row"><span class="tr">NHIL (2.5%)</span><span class="tv">GHS 0.25</span></div>
+          <div class="tax-row"><span class="tr">GETFund (2.5%)</span><span class="tv">GHS 0.25</span></div>
+          <div class="tax-total"><span class="tr">Total tax</span><span class="tv">GHS 0.80</span></div>
+        </div>
+
+        <div class="rec-row total">
+          <span class="rl">Grand total</span>
+          <span class="rv">GHS 10.80</span>
+        </div>
+
+        <hr class="rec-divider">
+
+        <div class="rec-row"><span class="rl">Payment</span><span class="rv">MTN MoMo</span></div>
+        <div class="rec-row"><span class="rl">Reference</span><span class="rv" style="font-family:'DM Mono',monospace;font-size:11px;">XXX-2026-88127</span></div>
+        <div class="rec-row"><span class="rl">Status</span><span class="rv status-confirmed">✓ Confirmed</span></div>
+
+        <div class="net-row">
+          <span class="nl">MSME net revenue</span>
+          <span class="nv">GHS 10.00</span>
+        </div>
+      </div>
+
+      <div class="dots">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+
+      <div class="rec-footer">
+        <div class="thank">Thank you!</div>
+        <div class="footnote">
+          Taxes collected on behalf of GRA under the Modified Tax System.<br>
+          Reference: SKF-ACC-8271 · sikaflow.app
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+
+      <!-- FORMULA -->
+      <div class="formula-box">
+        <div class="fb-title">Tax calculation — GHS 10.00 sale</div>
+        <div class="formula-row"><span class="fl">Selling price</span><span class="fv">GHS 10.00</span></div>
+        <div class="formula-row"><span class="fl">MTS (3%)</span><span class="fv">+ GHS 0.30</span></div>
+        <div class="formula-row"><span class="fl">NHIL (2.5%)</span><span class="fv">+ GHS 0.25</span></div>
+        <div class="formula-row"><span class="fl">GETFund (2.5%)</span><span class="fv">+ GHS 0.25</span></div>
+        <div class="formula-total"><span class="fl">Customer pays</span><span class="fv">GHS 10.80</span></div>
+      </div>
+
+      <!-- COMPARE TABLE -->
+      <div>
+        <div class="section-title">What changes vs current receipt</div>
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Line item</th>
+              <th>Current</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Grand total</td>
+              <td><span class="old">GHS 10.00</span></td>
+              <td><span class="new">GHS 10.80 (incl. tax)</span></td>
+            </tr>
+            <tr>
+              <td>Tax display</td>
+              <td><span class="old">Not shown</span></td>
+              <td><span class="new">MTS / NHIL / GETFund itemised</span></td>
+            </tr>
+            <tr>
+              <td>Tax timing</td>
+              <td><span class="old">Periodic remittance</span></td>
+              <td><span class="new">Real-time split at payment</span></td>
+            </tr>
+            <tr>
+              <td>MoMo reference</td>
+              <td><span class="old">Not stored</span></td>
+              <td><span class="new">Printed + stored on sale record</span></td>
+            </tr>
+            <tr>
+              <td>MSME net</td>
+              <td><span class="old">Not shown</span></td>
+              <td><span class="new">GHS 10.00 explicitly shown</span></td>
+            </tr>
+            <tr>
+              <td>GRA footnote</td>
+              <td><span class="old">Not present</span></td>
+              <td><span class="new">MTS programme reference on receipt</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- WALLET SPLIT NOTE -->
+      <div style="background:#f8fafc;border:0.5px solid #d4dce8;border-radius:10px;padding:14px 16px;">
+        <div style="font-size:12px;font-weight:500;color:#0d1b3e;margin-bottom:8px;">Wallet routing after this receipt</div>
+        <div style="font-size:12px;color:#607191;line-height:1.7;">
+          <div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid #e2e8f0;">
+            <span>→ MSME wallet</span><span style="font-family:'DM Mono',monospace;color:#1aaa6b;">GHS 10.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0;">
+            <span>→ Aliska collection wallet</span><span style="font-family:'DM Mono',monospace;color:#534AB7;">GHS 0.80</span>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:8px;line-height:1.5;">Split performed by middleware. MSME never holds tax funds.</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

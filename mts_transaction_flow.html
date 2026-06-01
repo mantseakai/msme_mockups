@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow (MTS Real-Time Transaction Flow)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Sora', sans-serif;
+  background: #f4f6f9;
+  color: #0d1b3e;
+  padding: 40px 24px 60px;
+  min-height: 100vh;
+}
+.page { max-width: 860px; margin: 0 auto; }
+
+/* header */
+.page-header { margin-bottom: 32px; }
+.page-header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
+.page-header p { font-size: 13px; color: #607191; }
+.meta { display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+.meta span { font-size: 11px; font-family: 'DM Mono', monospace; background: #fff; border: 0.5px solid #d4dce8; padding: 3px 9px; border-radius: 4px; color: #607191; }
+
+/* legend */
+.legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; padding: 12px 16px; background: #fff; border: 0.5px solid #d4dce8; border-radius: 10px; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #607191; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+/* step sections */
+.step-section { margin-bottom: 28px; }
+.step-label { font-size: 11px; color: #94a3b8; font-weight: 500; letter-spacing: 0.3px; margin-bottom: 10px; }
+
+/* flow rows */
+.flow-row { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+.flow-row.spaced { gap: 8px; }
+.arrow { font-size: 18px; color: #94a3b8; padding: 0 6px; flex-shrink: 0; }
+.arrow-down { text-align: center; font-size: 18px; color: #94a3b8; line-height: 1; margin: 6px 0; }
+
+/* nodes */
+.node {
+  border-radius: 10px;
+  padding: 12px 16px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.node h4 { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+.node p { font-size: 11px; line-height: 1.5; }
+
+.node-teal { background: #e1f5ee; border-color: #5DCAA5; }
+.node-teal h4 { color: #085041; }
+.node-teal p { color: #0F6E56; }
+
+.node-purple { background: #EEEDFE; border-color: #AFA9EC; }
+.node-purple h4 { color: #26215C; }
+.node-purple p { color: #3C3489; }
+
+.node-amber { background: #FAEEDA; border-color: #EF9F27; }
+.node-amber h4 { color: #412402; }
+.node-amber p { color: #633806; }
+
+.node-blue { background: #E6F1FB; border-color: #85B7EB; }
+.node-blue h4 { color: #042C53; }
+.node-blue p { color: #0C447C; }
+
+.node-gray { background: #F1EFE8; border-color: #B4B2A9; }
+.node-gray h4 { color: #2C2C2A; }
+.node-gray p { color: #5F5E5A; }
+
+/* split layout */
+.split-row { display: flex; gap: 16px; }
+.split-row .col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.split-line { width: 100%; height: 1px; background: #d4dce8; margin: 8px 0; }
+.split-connector { display: flex; align-items: flex-start; gap: 0; width: 100%; justify-content: center; margin: 6px 0 10px; }
+.split-h-line { height: 1px; background: #d4dce8; flex: 1; margin-top: 12px; }
+.split-down { width: 1px; height: 24px; background: #d4dce8; }
+
+/* center node wrapper */
+.center-node { display: flex; justify-content: center; }
+.center-node .node { max-width: 420px; width: 100%; text-align: center; }
+
+/* phase 2 deferred */
+.deferred-section { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #d4dce8; }
+.deferred-label { font-size: 11px; color: #94a3b8; text-align: center; margin-bottom: 12px; }
+.deferred-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.deferred-node { background: #F1EFE8; border: 0.5px solid #B4B2A9; border-radius: 8px; padding: 8px 16px; font-size: 12px; color: #5F5E5A; }
+
+/* NEW badge */
+.badge-new { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; background: #1c3660; color: #fff; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+.badge-p2 { display: inline-block; font-size: 9px; font-family: 'DM Mono', monospace; background: #F1EFE8; color: #5F5E5A; border: 0.5px solid #B4B2A9; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+
+/* download hint */
+.hint-bar { background: #e6f7f0; border: 0.5px solid #9ed8bf; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #1a5c3a; margin-bottom: 28px; display: flex; gap: 8px; align-items: center; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <h1>MTS Real-Time Transaction Flow</h1>
+    <p>How a sale at the POS becomes a real-time tax collection-payment split model</p>
+    <div class="meta">
+      <span>Aliska</span>
+      <span>31st May 2026</span>
+      <span>CONFIDENTIAL</span>
+    </div>
+  </div>
+
+  <div class="hint-bar">
+    💡 Open this file in any browser to view. Use File → Print → Save as PDF to export.
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#5DCAA5;"></div>MSME / POS</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#AFA9EC;"></div>Middleware (Aliska)</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#EF9F27;"></div>Payment gateway</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#85B7EB;"></div>Wallets / settlement</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-section">
+    <div class="step-label">Step 1: Sale at point of sale</div>
+    <div class="flow-row">
+      <div class="node node-teal" style="min-width:180px;">
+        <h4>POS records sale</h4>
+        <p>Selling price GHS 10.00</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node node-teal" style="min-width:220px;">
+        <h4>Tax engine computes</h4>
+        <p>MTS 3% + NHIL 2.5% + GETFund 2.5%</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node node-amber" style="min-width:200px;">
+        <h4>Tax breakdown</h4>
+        <p>MTS 3% = GHS 0.30<br>NHIL 2.5% = GHS 0.25<br>GETFund 2.5% = GHS 0.25</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-section">
+    <div class="step-label">Step 2: Customer is charged the gross amount</div>
+    <div class="flow-row">
+      <div class="node node-teal" style="min-width:200px;">
+        <h4>Cart total shown</h4>
+        <p>GHS 10.00 + GHS 0.80 = GHS 10.80</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node node-amber" style="min-width:200px;">
+        <h4>Payment initiated</h4>
+        <p>MoMo / Vodafone / AirtelTigo / Cash</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="node node-amber" style="min-width:200px;">
+        <h4>GCB gateway</h4>
+        <p>Collects GHS 10.80 gross</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-section">
+    <div class="step-label">Step 3: Middleware performs the split <span class="badge-new">NEW — not yet implemented</span></div>
+    <div class="center-node">
+      <div class="node node-purple">
+        <h4>Middleware: POST /internal/payments/split</h4>
+        <p>Receives GHS 10.80 · calculates split · routes funds to correct wallets</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step-section">
+    <div class="step-label">Step 4: Funds routed to correct wallets</div>
+    <div class="split-row">
+      <div class="col">
+        <div class="node node-teal" style="width:100%;text-align:center;">
+          <h4>MSME wallet</h4>
+          <p>GHS 10.00 credited<br>Net revenue to trader</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="node node-purple" style="width:100%;text-align:center;">
+          <h4>Aliska collection wallet</h4>
+          <p>GHS 0.80 credited<br>MTS + NHIL + GETFund held</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step-section">
+    <div class="step-label">Step 5: Downstream settlement and records</div>
+    <div class="split-row">
+      <div class="col">
+        <div class="node node-teal" style="width:100%;text-align:center;">
+          <h4>Backend accounting</h4>
+          <p>GL journal + COGS + tax payable ledger</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="node node-purple" style="width:100%;text-align:center;">
+          <h4>Aliska → GRA settlement</h4>
+          <p>Batch remittance on schedule</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step-section">
+    <div class="step-label">Step 6: Audit trail and annual MTS obligation tracking</div>
+    <div class="split-row">
+      <div class="col">
+        <div class="node node-blue" style="width:100%;text-align:center;">
+          <h4>Annual MTS tracker</h4>
+          <p>Cumulative remitted vs GHS 15,000 target per MSME</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="node node-blue" style="width:100%;text-align:center;">
+          <h4>Immutable audit log</h4>
+          <p>Every transaction · split · wallet credit</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEFERRED -->
+  <div class="deferred-section">
+    <div class="deferred-label">Items below are deferred to Phase 2 <span class="badge-p2">Phase 2</span></div>
+    <div class="deferred-row">
+      <div class="deferred-node">Tax Points incentive</div>
+      <div class="deferred-node">Offline MoMo queue</div>
+      <div class="deferred-node">Inventory variance alerts</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
