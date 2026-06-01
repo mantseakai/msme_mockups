@@ -6,212 +6,179 @@
 <title>Sikaflow POS — Onboarding Mockup</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-:root {
-  --navy: #1c3660; --green: #1aaa6b; --green-light: #e6f7f0;
-  --blue-tile: #dce9f5; --blue-icon: #2a6aaa;
-  --bg: #f0f4f8; --white: #ffffff; --text: #0d1b3e;
-  --muted: #607191; --border: #d4dce8; --input-bg: #f5f7fa;
-  --red: #d93025; --amber: #c47f00; --amber-bg: #fef9e7;
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --navy:#1c3660;--green:#1aaa6b;--green-light:#e6f7f0;
+  --blue-tile:#dce9f5;--blue-icon:#2a6aaa;
+  --bg:#f0f4f8;--white:#ffffff;--text:#0d1b3e;
+  --muted:#607191;--border:#d4dce8;--input-bg:#f5f7fa;
+  --red:#d93025;--amber:#c47f00;--amber-bg:#fef9e7;
 }
-body { font-family: 'Sora', sans-serif; background: #e8edf4; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 40px; min-height: 100vh; }
-h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; letter-spacing: 0.3px; }
-
-.phone {
-  width: 300px; background: var(--bg); border-radius: 32px;
-  border: 2.5px solid #aab4c4; overflow: hidden; display: flex; flex-direction: column;
-  box-shadow: 0 0 0 4px #e4e9f0, 0 0 0 6px #aab4c4; min-height: 580px;
-}
-.sbar { background: var(--navy); padding: 7px 16px 5px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-.sbar .t { color: #fff; font-size: 12px; font-weight: 500; }
-.sbar .ic { display: flex; gap: 5px; }
-.sbar .ic svg { width: 14px; height: 14px; fill: #fff; }
-.sync-strip { background: var(--green-light); padding: 3px 12px; display: flex; align-items: center; justify-content: flex-end; gap: 4px; flex-shrink: 0; }
-.sync-strip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-.sync-strip span { font-size: 10px; font-weight: 500; color: var(--green); }
-
-.screen { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-.screen.active { display: flex; }
-.scroller { flex: 1; overflow-y: auto; overflow-x: hidden; }
-.scroller::-webkit-scrollbar { display: none; }
-
-.progress-bar-wrap { height: 3px; background: #d4dce8; flex-shrink: 0; }
-.progress-bar-fill { height: 100%; background: var(--green); transition: width 0.35s ease; }
-.step-dots { display: flex; justify-content: center; gap: 6px; padding: 10px 0 4px; flex-shrink: 0; background: var(--white); }
-.step-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
-.step-dot.active { background: var(--navy); }
-.step-dot.done { background: var(--green); }
-
-.screen-head { background: var(--white); padding: 10px 14px 12px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
-.screen-head .step-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.5px; margin-bottom: 3px; }
-.screen-head h2 { font-size: 16px; font-weight: 500; color: var(--text); }
-.screen-head p { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-.form-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
-.field { display: flex; flex-direction: column; gap: 4px; }
-.field label { font-size: 11px; font-weight: 500; color: var(--muted); display: flex; align-items: center; gap: 5px; }
-.field label .req { color: var(--green); }
-.field label .auto-tag { font-size: 9px; background: var(--green-light); color: #1a5c3a; border: 0.5px solid #9ed8bf; padding: 1px 5px; border-radius: 3px; font-weight: 500; }
-.field label .opt-tag { font-size: 9px; background: #f0f4f8; color: var(--muted); border: 0.5px solid var(--border); padding: 1px 5px; border-radius: 3px; }
-.field input, .field select {
-  background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px;
-  padding: 9px 12px; font-size: 13px; color: var(--text); width: 100%; outline: none;
-  -webkit-appearance: none; font-family: 'Sora', sans-serif;
-}
-.field input:focus, .field select:focus { border-color: var(--green); }
-.field .field-note { font-size: 10px; color: var(--muted); margin-top: 2px; }
-.field select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23607191' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px;
-}
-.input-group { position: relative; }
-.input-group input { padding-right: 68px; }
-.input-suffix { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10px; color: var(--green); font-weight: 500; background: var(--green-light); padding: 2px 6px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
-.input-filled { background: #f0fbf6 !important; border-color: #9ed8bf !important; color: #1a5c3a !important; }
-
-.type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.type-opt { position: relative; cursor: pointer; }
-.type-opt input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
-.type-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 10px; background: var(--input-bg); text-align: center; cursor: pointer; transition: all 0.15s; }
-.type-opt input:checked + .type-card { border-color: var(--green); background: var(--green-light); }
-.type-card .tc-name { font-size: 12px; font-weight: 500; color: var(--text); }
-.type-card .tc-hint { font-size: 10px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
-.type-opt input:checked + .type-card .tc-name { color: var(--green); }
-
-.cond-field { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 0.3s ease, opacity 0.2s; }
-.cond-field.open { max-height: 300px; opacity: 1; }
-.cond-inner { padding-top: 12px; display: flex; flex-direction: column; gap: 12px; }
-
-.hint-box { background: var(--green-light); border: 0.5px solid #9ed8bf; border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #1a5c3a; line-height: 1.5; display: flex; gap: 6px; }
-.hint-box.yellow { background: var(--amber-bg); border-color: #e8c96a; color: #7a5000; }
-.hint-box.blue { background: #eef4fb; border-color: #b5d4f4; color: #0c447c; }
-
-.gps-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
-.gps-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-.gps-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--green-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.gps-icon svg { width: 14px; height: 14px; fill: var(--green); }
-.gps-title { font-size: 12px; font-weight: 500; color: var(--text); }
-.gps-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
-.gps-btn { width: 100%; background: var(--navy); color: #fff; border: none; border-radius: 8px; padding: 9px; font-size: 12px; font-weight: 500; cursor: pointer; font-family: 'Sora', sans-serif; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.gps-result { margin-top: 8px; background: #f0fbf6; border: 0.5px solid #9ed8bf; border-radius: 6px; padding: 6px 10px; font-size: 10px; color: #1a5c3a; font-family: 'DM Mono', monospace; display: none; }
-.gps-result.show { display: block; }
-
-.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-.form-footer { background: var(--white); border-top: 0.5px solid var(--border); padding: 10px 14px; display: flex; gap: 8px; flex-shrink: 0; }
-.btn-back { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; flex-shrink: 0; font-family: 'Sora', sans-serif; }
-.btn-next { flex: 1; background: var(--navy); border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 500; color: #fff; cursor: pointer; font-family: 'Sora', sans-serif; }
-.btn-next.green { background: var(--green); }
-.btn-next:active { opacity: 0.85; }
-
+body{font-family:'Sora',sans-serif;background:#e8edf4;display:flex;flex-direction:column;align-items:center;padding:20px 16px 40px;min-height:100vh;}
+h1{font-size:13px;font-weight:500;color:#607191;margin-bottom:14px;letter-spacing:.3px;}
+.phone{width:300px;background:var(--bg);border-radius:32px;border:2.5px solid #aab4c4;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 0 4px #e4e9f0,0 0 0 6px #aab4c4;min-height:580px;}
+.sbar{background:var(--navy);padding:7px 16px 5px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.sbar .t{color:#fff;font-size:12px;font-weight:500;}
+.sbar .ic{display:flex;gap:5px;}
+.sbar .ic span{color:#fff;font-size:11px;}
+.sync-strip{background:var(--green-light);padding:3px 12px;display:flex;align-items:center;justify-content:flex-end;gap:4px;flex-shrink:0;}
+.sync-strip .dot{width:6px;height:6px;border-radius:50%;background:var(--green);}
+.sync-strip span{font-size:10px;font-weight:500;color:var(--green);}
+.screen{display:none;flex:1;flex-direction:column;overflow:hidden;}
+.screen.active{display:flex;}
+.scroller{flex:1;overflow-y:auto;overflow-x:hidden;}
+.scroller::-webkit-scrollbar{display:none;}
+.progress-bar-wrap{height:3px;background:#d4dce8;flex-shrink:0;}
+.progress-bar-fill{height:100%;background:var(--green);transition:width .35s ease;}
+.step-dots{display:flex;justify-content:center;gap:6px;padding:10px 0 4px;flex-shrink:0;background:var(--white);}
+.step-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.step-dot.active{background:var(--navy);}
+.step-dot.done{background:var(--green);}
+.screen-head{background:var(--white);padding:10px 14px 12px;border-bottom:.5px solid var(--border);flex-shrink:0;}
+.screen-head .step-label{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.5px;margin-bottom:3px;}
+.screen-head h2{font-size:15px;font-weight:500;color:var(--text);}
+.screen-head p{font-size:11px;color:var(--muted);margin-top:2px;}
+.form-body{padding:12px 14px;display:flex;flex-direction:column;gap:12px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11px;font-weight:500;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.field label .req{color:var(--green);}
+.field label .auto-tag{font-size:9px;background:var(--green-light);color:#1a5c3a;border:.5px solid #9ed8bf;padding:1px 5px;border-radius:3px;font-weight:500;}
+.field label .opt-tag{font-size:9px;background:#f0f4f8;color:var(--muted);border:.5px solid var(--border);padding:1px 5px;border-radius:3px;}
+.field input,.field select{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);width:100%;outline:none;-webkit-appearance:none;font-family:'Sora',sans-serif;}
+.field input:focus,.field select:focus{border-color:var(--green);}
+.field .field-note{font-size:10px;color:var(--muted);margin-top:2px;}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23607191' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;}
+.input-filled{background:#f0fbf6!important;border-color:#9ed8bf!important;color:#1a5c3a!important;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.type-opt{position:relative;cursor:pointer;}
+.type-opt input[type=radio]{position:absolute;opacity:0;width:0;height:0;}
+.type-card{border:1.5px solid var(--border);border-radius:10px;padding:10px;background:var(--input-bg);text-align:center;cursor:pointer;transition:all .15s;}
+.type-opt input:checked+.type-card{border-color:var(--green);background:var(--green-light);}
+.type-card .tc-name{font-size:12px;font-weight:500;color:var(--text);}
+.type-card .tc-hint{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.type-opt input:checked+.type-card .tc-name{color:var(--green);}
+.cond-field{overflow:hidden;max-height:0;opacity:0;transition:max-height .3s ease,opacity .2s;}
+.cond-field.open{max-height:300px;opacity:1;}
+.cond-inner{padding-top:12px;display:flex;flex-direction:column;gap:12px;}
+.hint-box{background:var(--green-light);border:.5px solid #9ed8bf;border-radius:8px;padding:8px 10px;font-size:11px;color:#1a5c3a;line-height:1.5;display:flex;gap:6px;}
+.hint-box.yellow{background:var(--amber-bg);border-color:#e8c96a;color:#7a5000;}
+.hint-box.blue{background:#eef4fb;border-color:#b5d4f4;color:#0c447c;}
+.gps-card{background:var(--white);border:1.5px solid #9ed8bf;border-radius:10px;padding:10px 12px;background:#f0fbf6;}
+.gps-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.gps-icon{width:28px;height:28px;border-radius:8px;background:var(--green-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.gps-title{font-size:12px;font-weight:500;color:#1a5c3a;}
+.gps-sub{font-size:10px;color:#3a7a5a;margin-top:1px;}
+.gps-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Sora',sans-serif;display:flex;align-items:center;justify-content:center;gap:5px;}
+.gps-result{margin-top:7px;background:#fff;border:.5px solid #9ed8bf;border-radius:6px;padding:6px 10px;font-size:10px;color:#1a5c3a;font-family:'DM Mono',monospace;display:none;}
+.gps-result.show{display:block;}
+.divider{height:.5px;background:var(--border);margin:4px 0;}
+.form-footer{background:var(--white);border-top:.5px solid var(--border);padding:10px 14px;display:flex;gap:8px;flex-shrink:0;}
+.btn-back{background:none;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;flex-shrink:0;font-family:'Sora',sans-serif;}
+.btn-next{flex:1;background:var(--navy);border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:500;color:#fff;cursor:pointer;font-family:'Sora',sans-serif;}
+.btn-next.green{background:var(--green);}
+.btn-next:active{opacity:.85;}
+/* PIN DOTS */
+.pin-display{display:flex;justify-content:center;gap:10px;padding:16px 0 8px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);background:transparent;transition:all .15s;}
+.pin-dot.filled{background:var(--navy);border-color:var(--navy);}
+.pin-pad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:4px 8px;}
+.pin-key{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:16px;font-weight:500;color:var(--text);cursor:pointer;text-align:center;font-family:'Sora',sans-serif;}
+.pin-key:active{background:var(--blue-tile);}
+.pin-key.del{font-size:13px;color:var(--muted);}
 /* SPLASH */
-.splash { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px 16px; background: var(--white); }
-.splash .logo { font-size: 22px; font-weight: 700; color: var(--green); letter-spacing: -0.5px; margin-bottom: 4px; }
-.splash .logo-sub { font-size: 11px; color: var(--muted); margin-bottom: 28px; }
-.splash .illus { width: 80px; height: 80px; border-radius: 20px; background: var(--blue-tile); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-.splash .illus svg { width: 40px; height: 40px; fill: var(--blue-icon); }
-.splash h1 { font-size: 18px; font-weight: 500; color: var(--text); text-align: center; line-height: 1.3; margin-bottom: 8px; }
-.splash p { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; margin-bottom: 28px; }
-.btn-reg { width: 100%; background: var(--navy); color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 500; cursor: pointer; margin-bottom: 10px; font-family: 'Sora', sans-serif; }
-.btn-login { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px; font-size: 13px; font-weight: 500; color: var(--navy); cursor: pointer; font-family: 'Sora', sans-serif; }
-
-/* NSP HOME SCREEN */
-.nsp-home { flex: 1; display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
-.nsp-header { background: var(--navy); padding: 12px 14px 14px; flex-shrink: 0; }
-.nsp-header .nh-label { font-size: 10px; color: rgba(255,255,255,0.55); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px; }
-.nsp-header .nh-name { font-size: 15px; font-weight: 500; color: #fff; }
-.nsp-header .nh-zone { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 2px; }
-.nsp-header .nh-badge { display: inline-block; background: rgba(26,170,107,0.25); border: 0.5px solid var(--green); color: var(--green); font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 20px; margin-top: 5px; }
-.nsp-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 10px 0; flex-shrink: 0; }
-.nsp-action-btn { background: var(--white); border: 0.5px solid var(--border); border-radius: 12px; padding: 14px 10px; text-align: left; cursor: pointer; transition: border-color 0.15s; display: flex; flex-direction: column; gap: 8px; }
-.nsp-action-btn:active { border-color: var(--navy); }
-.nsp-action-btn .ab-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-.nsp-action-btn .ab-icon svg { width: 16px; height: 16px; }
-.nsp-action-btn .ab-name { font-size: 12px; font-weight: 500; color: var(--text); }
-.nsp-action-btn .ab-sub { font-size: 10px; color: var(--muted); }
-.nsp-section-label { padding: 10px 12px 4px; font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; }
-.nsp-msme-row { background: var(--white); margin: 0 10px 6px; border-radius: 10px; padding: 10px 12px; border: 0.5px solid var(--border); cursor: pointer; }
-.nsp-msme-row .mr-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-.nsp-msme-row .mr-name { font-size: 13px; font-weight: 500; color: var(--text); }
-.mr-badge { font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 20px; }
-.mr-badge.verified { background: var(--green-light); color: #1a5c3a; border: 0.5px solid #9ed8bf; }
-.mr-badge.pending { background: var(--amber-bg); color: #7a5000; border: 0.5px solid #e8c96a; }
-.mr-badge.new { background: #eef4fb; color: #0c447c; border: 0.5px solid #b5d4f4; }
-.mr-meta { font-size: 10px; color: var(--muted); }
-.mr-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-.mr-bar { height: 100%; background: var(--green); border-radius: 2px; }
-
+.splash{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px 16px;background:var(--white);}
+.splash .logo{font-size:22px;font-weight:700;color:var(--green);letter-spacing:-.5px;margin-bottom:4px;}
+.splash .logo-sub{font-size:11px;color:var(--muted);margin-bottom:28px;}
+.splash .illus{width:80px;height:80px;border-radius:20px;background:var(--blue-tile);display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:36px;}
+.splash h1{font-size:18px;font-weight:500;color:var(--text);text-align:center;line-height:1.3;margin-bottom:8px;}
+.splash p{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:28px;}
+.btn-reg{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:500;cursor:pointer;margin-bottom:10px;font-family:'Sora',sans-serif;}
+.btn-login{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:11px;font-size:13px;font-weight:500;color:var(--navy);cursor:pointer;font-family:'Sora',sans-serif;}
 /* LOGIN */
-.login-screen { flex: 1; display: flex; flex-direction: column; background: var(--white); }
-.login-header { background: var(--navy); padding: 16px 14px 18px; display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
-.login-header .lh-logo { font-size: 20px; font-weight: 700; color: var(--green); letter-spacing: -0.5px; }
-.login-header .lh-sub { font-size: 11px; color: rgba(255,255,255,0.6); }
-.login-body { flex: 1; padding: 24px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
-.login-title { font-size: 17px; font-weight: 500; color: var(--text); }
-.login-subtitle { font-size: 12px; color: var(--muted); }
-.btn-login-full { width: 100%; background: var(--navy); color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 500; cursor: pointer; font-family: 'Sora', sans-serif; }
-.forgot-link { text-align: center; font-size: 12px; color: var(--blue-icon); cursor: pointer; text-decoration: underline; }
-.login-footer-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: auto; padding-top: 12px; }
-.login-footer-row span { font-size: 12px; color: var(--muted); }
-.login-footer-row button { background: none; border: none; font-size: 12px; font-weight: 500; color: var(--navy); cursor: pointer; text-decoration: underline; font-family: 'Sora', sans-serif; padding: 0; }
-.otp-note { background: #eef4fb; border: 0.5px solid #b5d4f4; border-radius: 8px; padding: 8px 10px; font-size: 11px; color: #0c447c; line-height: 1.5; display: flex; gap: 6px; }
-.otp-note svg { width: 13px; height: 13px; fill: #185FA5; flex-shrink: 0; margin-top: 1px; }
-.remember-row { display: flex; align-items: center; gap: 8px; }
-.remember-row input[type="checkbox"] { width: 15px; height: 15px; accent-color: var(--navy); cursor: pointer; }
-.remember-row span { font-size: 12px; color: var(--muted); }
-
+.login-screen{flex:1;display:flex;flex-direction:column;background:var(--white);}
+.login-header{background:var(--navy);padding:16px 14px 18px;display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.login-header .lh-logo{font-size:20px;font-weight:700;color:var(--green);letter-spacing:-.5px;}
+.login-header .lh-sub{font-size:11px;color:rgba(255,255,255,.6);}
+.login-body{flex:1;padding:20px 16px 16px;display:flex;flex-direction:column;gap:12px;}
+.login-title{font-size:17px;font-weight:500;color:var(--text);}
+.login-subtitle{font-size:12px;color:var(--muted);}
+.btn-login-full{width:100%;background:var(--navy);color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:500;cursor:pointer;font-family:'Sora',sans-serif;margin-top:4px;}
+.forgot-link{text-align:center;font-size:12px;color:#2a6aaa;cursor:pointer;text-decoration:underline;}
+.login-footer-row{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:auto;padding-top:10px;}
+.login-footer-row span{font-size:12px;color:var(--muted);}
+.login-footer-row button{background:none;border:none;font-size:12px;font-weight:500;color:var(--navy);cursor:pointer;text-decoration:underline;font-family:'Sora',sans-serif;padding:0;}
+.otp-note{background:#eef4fb;border:.5px solid #b5d4f4;border-radius:8px;padding:8px 10px;font-size:11px;color:#0c447c;line-height:1.5;}
+.remember-row{display:flex;align-items:center;gap:8px;}
+.remember-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--navy);cursor:pointer;}
+.remember-row span{font-size:12px;color:var(--muted);}
+/* FIELD AGENT HOME */
+.fa-home{flex:1;display:flex;flex-direction:column;background:var(--bg);overflow:hidden;}
+.fa-header{background:var(--navy);padding:12px 14px 14px;flex-shrink:0;position:relative;}
+.fa-header .fah-label{font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;}
+.fa-header .fah-name{font-size:15px;font-weight:500;color:#fff;}
+.fa-header .fah-zone{font-size:11px;color:rgba(255,255,255,.65);margin-top:2px;}
+.fa-badge{display:inline-block;background:rgba(26,170,107,.25);border:.5px solid var(--green);color:var(--green);font-size:9px;font-weight:500;padding:2px 7px;border-radius:20px;margin-top:5px;}
+.fa-id-badge{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.12);border:.5px solid rgba(255,255,255,.25);border-radius:8px;padding:4px 10px;text-align:center;}
+.fa-id-badge .faid-label{font-size:8px;color:rgba(255,255,255,.55);letter-spacing:.5px;text-transform:uppercase;}
+.fa-id-badge .faid-num{font-size:13px;font-weight:600;color:#fff;font-family:'DM Mono',monospace;letter-spacing:1px;}
+.fa-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 10px 0;flex-shrink:0;}
+.fa-action-btn{background:var(--white);border:.5px solid var(--border);border-radius:12px;padding:14px 10px;text-align:left;cursor:pointer;transition:border-color .15s;display:flex;flex-direction:column;gap:8px;}
+.fa-action-btn .ab-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.fa-action-btn .ab-name{font-size:12px;font-weight:500;color:var(--text);}
+.fa-action-btn .ab-sub{font-size:10px;color:var(--muted);}
+.fa-section-label{padding:10px 12px 4px;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;}
+.fa-msme-row{background:var(--white);margin:0 10px 6px;border-radius:10px;padding:10px 12px;border:.5px solid var(--border);cursor:pointer;}
+.fa-msme-row .mr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+.fa-msme-row .mr-name{font-size:13px;font-weight:500;color:var(--text);}
+.mr-badge{font-size:9px;font-weight:500;padding:2px 7px;border-radius:20px;}
+.mr-badge.verified{background:var(--green-light);color:#1a5c3a;border:.5px solid #9ed8bf;}
+.mr-badge.pending{background:var(--amber-bg);color:#7a5000;border:.5px solid #e8c96a;}
+.mr-badge.new{background:#eef4fb;color:#0c447c;border:.5px solid #b5d4f4;}
+.mr-meta{font-size:10px;color:var(--muted);}
+.mr-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-top:6px;overflow:hidden;}
+.mr-bar{height:100%;background:var(--green);border-radius:2px;}
 /* SUCCESS */
-.success-screen { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 16px; background: var(--white); gap: 12px; overflow-y: auto; }
-.success-screen::-webkit-scrollbar { display: none; }
-.check-circle { width: 60px; height: 60px; border-radius: 50%; background: var(--green-light); border: 2px solid var(--green); display: flex; align-items: center; justify-content: center; }
-.check-circle svg { width: 28px; height: 28px; fill: var(--green); }
-.success-screen h2 { font-size: 18px; font-weight: 500; color: var(--text); text-align: center; }
-.success-screen .sub { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; }
-.ref-box { width: 100%; background: var(--navy); border-radius: 12px; padding: 12px 16px; text-align: center; }
-.ref-box .ref-lbl { font-size: 10px; color: rgba(255,255,255,0.55); letter-spacing: 0.5px; margin-bottom: 4px; }
-.ref-box .ref-num { font-size: 20px; font-weight: 500; color: var(--green); letter-spacing: 1px; font-family: 'DM Mono', monospace; }
-.sms-box { width: 100%; background: #f0f4f8; border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 14px; }
-.sms-box .sb-label { font-size: 10px; color: var(--muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-.sms-box .sb-preview { font-size: 11px; color: var(--text); line-height: 1.6; background: var(--white); border-radius: 8px; padding: 8px 10px; border: 0.5px solid var(--border); }
-.creds-box { width: 100%; background: #f8fafc; border: 0.5px solid var(--border); border-radius: 10px; padding: 10px 14px; }
-.cred-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 0.5px solid var(--border); font-size: 12px; }
-.cred-row:last-child { border-bottom: none; }
-.cred-row .ck { color: var(--muted); }
-.cred-row .cv { font-weight: 500; color: var(--text); font-family: 'DM Mono', monospace; }
-.completion-wrap { width: 100%; }
-.completion-top { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; }
-.completion-top .cl { color: var(--muted); }
-.completion-top .cv { font-weight: 500; color: var(--green); }
-.completion-track { height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
-.completion-fill { height: 100%; width: 20%; background: var(--green); border-radius: 4px; }
-.next-steps { width: 100%; }
-.ns-label { font-size: 10px; font-weight: 500; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
-.ns-item { display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 0.5px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
-.ns-item svg { width: 13px; height: 13px; fill: var(--green); flex-shrink: 0; }
-.start-btn { width: 100%; background: var(--green); border: none; border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 500; color: #fff; cursor: pointer; font-family: 'Sora', sans-serif; margin-top: 4px; }
-.start-hint { font-size: 10px; color: var(--muted); text-align: center; }
-
-/* nav pills */
-.nav-pills { display: flex; gap: 7px; margin-top: 14px; flex-wrap: wrap; justify-content: center; }
-.nav-pill { font-size: 11px; padding: 4px 12px; border-radius: 20px; border: 0.5px solid #b0bac8; background: #fff; cursor: pointer; color: #607191; font-family: 'Sora', sans-serif; }
-.nav-pill:hover { background: #f0f4f8; }
-.divider { height: 0.5px; background: var(--border); margin: 4px 0; }
-.pw-bars { display: flex; gap: 3px; margin-top: 5px; }
-.pw-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.25s; }
-.pw-lbl { font-size: 10px; color: var(--muted); margin-top: 3px; }
+.success-screen{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;background:var(--white);gap:12px;overflow-y:auto;}
+.success-screen::-webkit-scrollbar{display:none;}
+.check-circle{width:60px;height:60px;border-radius:50%;background:var(--green-light);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:26px;}
+.success-screen h2{font-size:18px;font-weight:500;color:var(--text);text-align:center;}
+.success-screen .sub{font-size:12px;color:var(--muted);text-align:center;line-height:1.6;}
+.ref-box{width:100%;background:var(--navy);border-radius:12px;padding:12px 16px;text-align:center;}
+.ref-box .ref-lbl{font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.5px;margin-bottom:4px;}
+.ref-box .ref-num{font-size:20px;font-weight:500;color:var(--green);letter-spacing:1px;font-family:'DM Mono',monospace;}
+.sms-box{width:100%;background:#f0f4f8;border:.5px solid var(--border);border-radius:10px;padding:10px 14px;}
+.sms-box .sb-label{font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.sms-box .sb-preview{font-size:11px;color:var(--text);line-height:1.6;background:var(--white);border-radius:8px;padding:8px 10px;border:.5px solid var(--border);}
+.creds-box{width:100%;background:#f8fafc;border:.5px solid var(--border);border-radius:10px;padding:10px 14px;}
+.cred-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:.5px solid var(--border);font-size:12px;}
+.cred-row:last-child{border-bottom:none;}
+.cred-row .ck{color:var(--muted);}
+.cred-row .cv{font-weight:500;color:var(--text);font-family:'DM Mono',monospace;}
+.completion-wrap{width:100%;}
+.completion-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;}
+.completion-top .cl{color:var(--muted);}
+.completion-top .cv{font-weight:500;color:var(--green);}
+.completion-track{height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+.completion-fill{height:100%;width:20%;background:var(--green);border-radius:4px;}
+.next-steps{width:100%;}
+.ns-label{font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;}
+.ns-item{display:flex;align-items:center;gap:8px;background:#f8fafc;border:.5px solid var(--border);border-radius:8px;padding:7px 10px;font-size:12px;color:var(--muted);margin-bottom:5px;}
+.start-btn{width:100%;background:var(--green);border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:500;color:#fff;cursor:pointer;font-family:'Sora',sans-serif;margin-top:4px;}
+.start-hint{font-size:10px;color:var(--muted);text-align:center;}
+.nav-pills{display:flex;gap:7px;margin-top:14px;flex-wrap:wrap;justify-content:center;}
+.nav-pill{font-size:11px;padding:4px 12px;border-radius:20px;border:.5px solid #b0bac8;background:#fff;cursor:pointer;color:#607191;font-family:'Sora',sans-serif;}
+.pw-bars{display:flex;gap:3px;margin-top:5px;}
+.pw-bar{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .25s;}
+.pw-lbl{font-size:10px;color:var(--muted);margin-top:3px;}
 </style>
 </head>
 <body>
-
-<h1>Sikaflow POS Onboarding Mockup</h1>
-
+<h1>Sikaflow POS — Onboarding Mockup (Field Agent)</h1>
 <div class="phone">
   <div class="sbar">
     <span class="t">17:15</span>
-    <div class="ic">
-      <svg viewBox="0 0 24 24"><path d="M1 6l5.5 5.5L12 6l5.5 5.5L23 6"/></svg>
-      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="11" rx="2"/><path d="M22 11h2v4h-2"/></svg>
-    </div>
+    <div class="ic"><span>WiFi</span><span>▐</span></div>
   </div>
   <div class="sync-strip"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
   <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog" style="width:0%"></div></div>
@@ -222,22 +189,20 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
     <div class="step-dot" id="dot-3"></div>
   </div>
 
-  <!-- SCREEN: Splash -->
+  <!-- SPLASH -->
   <div class="screen active" id="s-splash">
     <div class="splash">
       <div class="logo">sikaflow™</div>
       <div class="logo-sub">Business Management Tools</div>
-      <div class="illus">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      </div>
+      <div class="illus">🏪</div>
       <h1>Register your business with Sikaflow</h1>
-      <p>Join the programme and start selling in minutes. No paperwork required.</p>
-      <button class="btn-reg" onclick="go('reg1')">[ Register My Business ]</button>
-      <button class="btn-login" onclick="go('login')">[ I already have an account -> Log In ]</button>
+      <p>Join the programme and start selling in minutes.</p>
+      <button class="btn-reg" onclick="go('reg1')">Register My Business</button>
+      <button class="btn-login" onclick="go('login')">Login</button>
     </div>
   </div>
 
-  <!-- SCREEN: Login -->
+  <!-- LOGIN -->
   <div class="screen" id="s-login">
     <div class="login-screen">
       <div class="login-header">
@@ -250,80 +215,85 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
         <div class="divider"></div>
         <div class="field"><label>Username <span class="req">*</span></label><input type="text" placeholder="Enter your username"></div>
         <div class="field">
-          <label>Password / PIN <span class="req">*</span></label>
-          <input type="password" placeholder="Enter your password or PIN">
+          <label>PIN <span class="req">*</span></label>
+          <div class="pin-display">
+            <div class="pin-dot" id="pd1"></div>
+            <div class="pin-dot" id="pd2"></div>
+            <div class="pin-dot" id="pd3"></div>
+            <div class="pin-dot" id="pd4"></div>
+          </div>
+          <div class="pin-pad">
+            <button class="pin-key" onclick="pinTap(1)">1</button>
+            <button class="pin-key" onclick="pinTap(2)">2</button>
+            <button class="pin-key" onclick="pinTap(3)">3</button>
+            <button class="pin-key" onclick="pinTap(4)">4</button>
+            <button class="pin-key" onclick="pinTap(5)">5</button>
+            <button class="pin-key" onclick="pinTap(6)">6</button>
+            <button class="pin-key" onclick="pinTap(7)">7</button>
+            <button class="pin-key" onclick="pinTap(8)">8</button>
+            <button class="pin-key" onclick="pinTap(9)">9</button>
+            <button class="pin-key"></button>
+            <button class="pin-key" onclick="pinTap(0)">0</button>
+            <button class="pin-key del" onclick="pinDel()">⌫</button>
+          </div>
         </div>
-        <div class="field">
-          <label>OTP <span class="req">*</span></label>
-          <input type="text" placeholder="6-digit code sent to your phone">
-        </div>
-        <div class="otp-note">
-          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm0 9v5m0-8h.01"/></svg>
-          <span>An OTP has been sent to your registered phone number for additional security.</span>
-        </div>
+        <div class="otp-note">🔒 An OTP has been sent to your registered phone for additional security.</div>
         <div class="remember-row"><input type="checkbox" checked><span>Remember me on this device</span></div>
         <button class="btn-login-full" onclick="loginRoute()">Log In</button>
-        <div class="forgot-link">Forgot password / PIN?</div>
-        <div class="login-footer-row">
-          <span>Don't have an account?</span>
-          <button onclick="go('reg1')">Register here</button>
-        </div>
+        <div class="forgot-link">Forgot PIN?</div>
+        <div class="login-footer-row"><span>Don't have an account?</span><button onclick="go('reg1')">Register here</button></div>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN: NSP Home -->
-  <div class="screen" id="s-nsp">
-    <div class="nsp-home">
-      <div class="nsp-header">
-        <div class="nh-label">Logged in as</div>
-        <div class="nh-name">Kofi Mensah</div>
-        <div class="nh-zone">Makola Zone B · Accra Central</div>
-        <span class="nh-badge">NSP Programme Staff</span>
+  <!-- FIELD AGENT HOME -->
+  <div class="screen" id="s-fa">
+    <div class="fa-home">
+      <div class="fa-header">
+        <div class="fa-id-badge">
+          <div class="faid-label">Agent ID</div>
+          <div class="faid-num">FA-0047</div>
+        </div>
+        <div class="fah-label">Logged in as</div>
+        <div class="fah-name">Kofi Mensah</div>
+        <div class="fah-zone">Makola Zone B · Accra Central</div>
+        <span class="fa-badge">Field Agent</span>
       </div>
-      <div class="nsp-actions">
-        <button class="nsp-action-btn" onclick="go('reg1')">
-          <div class="ab-icon" style="background:#e8f0fb">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-          </div>
+      <div class="fa-actions">
+        <button class="fa-action-btn" onclick="go('reg1')">
+          <div class="ab-icon" style="background:#e8f0fb;">➕</div>
           <div class="ab-name">Register New MSME</div>
           <div class="ab-sub">Add a new business</div>
         </button>
-        <button class="nsp-action-btn">
-          <div class="ab-icon" style="background:#e6f7f0">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#1aaa6b" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-          </div>
+        <button class="fa-action-btn">
+          <div class="ab-icon" style="background:#e6f7f0;">👥</div>
           <div class="ab-name">My Assigned MSMEs</div>
           <div class="ab-sub">12 businesses</div>
         </button>
-        <button class="nsp-action-btn">
-          <div class="ab-icon" style="background:#fef9e7">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#854F0B" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
+        <button class="fa-action-btn">
+          <div class="ab-icon" style="background:#fef9e7;">📊</div>
           <div class="ab-name">My Performance</div>
           <div class="ab-sub">Weekly report</div>
         </button>
-        <button class="nsp-action-btn">
-          <div class="ab-icon" style="background:#f3f0fd">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          </div>
+        <button class="fa-action-btn">
+          <div class="ab-icon" style="background:#f3f0fd;">📅</div>
           <div class="ab-name">Visit Log</div>
           <div class="ab-sub">Record a visit</div>
         </button>
       </div>
-      <div class="nsp-section-label">Recently Registered</div>
+      <div class="fa-section-label">Recently Registered</div>
       <div class="scroller">
-        <div class="nsp-msme-row">
+        <div class="fa-msme-row">
           <div class="mr-top"><span class="mr-name">Ama's Fresh Foods</span><span class="mr-badge verified">Verified</span></div>
           <div class="mr-meta">Registered 27 May 2026 · SKF-ACC-8271</div>
           <div class="mr-bar-wrap"><div class="mr-bar" style="width:65%"></div></div>
         </div>
-        <div class="nsp-msme-row">
+        <div class="fa-msme-row">
           <div class="mr-top"><span class="mr-name">Kojo Provisions Store</span><span class="mr-badge pending">Pending</span></div>
           <div class="mr-meta">Registered 26 May 2026 · SKF-ACC-8265</div>
           <div class="mr-bar-wrap"><div class="mr-bar" style="width:20%"></div></div>
         </div>
-        <div class="nsp-msme-row">
+        <div class="fa-msme-row">
           <div class="mr-top"><span class="mr-name">Abena Textiles Enterprise</span><span class="mr-badge new">New</span></div>
           <div class="mr-meta">Registered 25 May 2026 · SKF-ACC-8258</div>
           <div class="mr-bar-wrap"><div class="mr-bar" style="width:20%"></div></div>
@@ -332,15 +302,27 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
     </div>
   </div>
 
-  <!-- SCREEN REG1: Business Details -->
+  <!-- STEP 1: GPS + Business Type -->
   <div class="screen" id="s-reg1">
     <div class="screen-head">
-      <div class="step-label">STEP 1 OF 4 · BUSINESS DETAILS</div>
-      <h2>Business Details</h2>
-      <p>Tell us about this business</p>
+      <div class="step-label">STEP 1 OF 4 · LOCATION &amp; BUSINESS TYPE</div>
+      <h2>Business Location &amp; Type</h2>
+      <p>Capture GPS then enter business details</p>
     </div>
     <div class="scroller">
       <div class="form-body">
+        <!-- GPS FIRST -->
+        <div class="gps-card">
+          <div class="gps-top">
+            <div class="gps-icon">📍</div>
+            <div>
+              <div class="gps-title">GPS Location <span style="font-size:9px;background:#1aaa6b;color:#fff;padding:2px 6px;border-radius:4px;margin-left:4px;font-family:'DM Mono',monospace;">Required</span></div>
+              <div class="gps-sub">Capture before entering details</div>
+            </div>
+          </div>
+          <button class="gps-btn" id="gps-btn" onclick="captureGPS()">📡 Capture GPS Location</button>
+          <div class="gps-result" id="gps-result">✓ Lat: 5.5502°N · Lng: -0.2174°W<br>Accuracy: ±4m · Captured 17:15</div>
+        </div>
         <div class="field">
           <label>Business name <span class="req">*</span></label>
           <input type="text" placeholder="e.g. Ama's Fresh Foods">
@@ -358,8 +340,14 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
             </label>
           </div>
         </div>
+        <!-- Registered fields: reg number FIRST, then sub-type -->
         <div class="cond-field" id="reg-fields">
           <div class="cond-inner">
+            <div class="field">
+              <label>Registration number <span class="opt-tag">Optional</span></label>
+              <input type="text" placeholder="e.g. CS-123456">
+              <div class="field-note">Can be added later</div>
+            </div>
             <div class="field">
               <label>Registration sub-type <span class="req">*</span></label>
               <select>
@@ -372,10 +360,18 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
                 <option>Other Registered Entity</option>
               </select>
             </div>
-            <div class="field">
-              <label>Registration number <span class="req">*</span></label>
-              <input type="text" placeholder="e.g. CS-123456">
-            </div>
+          </div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label>District <span class="auto-tag">Auto</span></label>
+            <input type="text" class="input-filled" value="Accra Central" readonly>
+            <div class="field-note">From your account</div>
+          </div>
+          <div class="field">
+            <label>Zone <span class="auto-tag">Auto</span></label>
+            <input type="text" class="input-filled" value="Makola Zone B" readonly>
+            <div class="field-note">From your account</div>
           </div>
         </div>
         <div class="field">
@@ -389,39 +385,26 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
             <option>Agriculture</option>
             <option>Transport</option>
             <option>Hospitality</option>
-            <option>Pharmaceuticals</option>
           </select>
         </div>
-        <div class="row2">
-          <div class="field">
-            <label>District <span class="auto-tag">Auto</span></label>
-            <input id="inp-district" type="text" class="input-filled" value="Accra Central" readonly>
-            <div class="field-note">Pre-filled from your account</div>
-          </div>
-          <div class="field">
-            <label>Zone <span class="auto-tag">Auto</span></label>
-            <input id="inp-zone" type="text" class="input-filled" value="Makola Zone B" readonly>
-            <div class="field-note">Pre-filled from your account</div>
-          </div>
-        </div>
         <div class="hint-box">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1aaa6b" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>District and zone are auto-filled from your NSP account. Unregistered businesses are fully eligible for the programme.</span>
+          <span>ℹ️</span>
+          <span>GPS must be captured before proceeding. District &amp; Zone are pre-filled from your Field Agent account.</span>
         </div>
       </div>
     </div>
     <div class="form-footer">
-      <button class="btn-back" onclick="go('nsp')">← Back</button>
+      <button class="btn-back" onclick="go('fa')">← Back</button>
       <button class="btn-next" onclick="go('reg2')">Next →</button>
     </div>
   </div>
 
-  <!-- SCREEN REG2: Owner + GPS -->
+  <!-- STEP 2: Owner Details -->
   <div class="screen" id="s-reg2">
     <div class="screen-head">
-      <div class="step-label">STEP 2 OF 4 · OWNER &amp; LOCATION</div>
-      <h2>Owner &amp; Location</h2>
-      <p>Owner details and business GPS location</p>
+      <div class="step-label">STEP 2 OF 4 · OWNER DETAILS</div>
+      <h2>Owner Details</h2>
+      <p>Business owner information</p>
     </div>
     <div class="scroller">
       <div class="form-body">
@@ -432,39 +415,19 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
         <div class="field">
           <label>Phone number <span class="req">*</span></label>
           <input type="tel" placeholder="e.g. 0244 123 456">
-          <div class="field-note">SMS with login credentials will be sent to this number</div>
+          <div class="field-note">SMS with login credentials sent here</div>
         </div>
         <div class="field">
-          <label>National ID / Ghana Card <span class="opt-tag">Optional</span></label>
+          <label>Ghana Card <span class="req">*</span></label>
           <input type="text" placeholder="e.g. GHA-123456789-1">
-          <div class="field-note">Optional — adds 5% to profile completion</div>
         </div>
         <div class="field">
           <label>TIN <span class="opt-tag">Optional</span></label>
           <input type="text" placeholder="e.g. C0012345678">
         </div>
-        <div class="divider"></div>
-        <div class="gps-card">
-          <div class="gps-top">
-            <div class="gps-icon">
-              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            </div>
-            <div>
-              <div class="gps-title">GPS Location Capture</div>
-              <div class="gps-sub">Required for business mapping</div>
-            </div>
-          </div>
-          <button class="gps-btn" onclick="captureGPS()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
-            Capture GPS Location
-          </button>
-          <div class="gps-result" id="gps-result">
-            ✓ Lat: 5.5502° N &nbsp;·&nbsp; Lng: -0.2174° W<br>Accuracy: ±4m &nbsp;·&nbsp; Captured 17:15
-          </div>
-        </div>
         <div class="hint-box yellow">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c47f00" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          <span>Owner account is created immediately after registration. An SMS with login credentials and app download links will be sent to their phone.</span>
+          <span>⚡</span>
+          <span>Owner account is created instantly. An SMS with login credentials and app download links will be sent to their phone.</span>
         </div>
       </div>
     </div>
@@ -474,12 +437,12 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
     </div>
   </div>
 
-  <!-- SCREEN REG3: Login Credentials -->
+  <!-- STEP 3: Create PIN (no password) -->
   <div class="screen" id="s-reg3">
     <div class="screen-head">
-      <div class="step-label">STEP 3 OF 4 · LOGIN CREDENTIALS</div>
-      <h2>Create Login</h2>
-      <p>POS login credentials for the owner</p>
+      <div class="step-label">STEP 3 OF 4 · CREATE PIN</div>
+      <h2>Set Owner PIN</h2>
+      <p>Owner will use this PIN to log into the POS</p>
     </div>
     <div class="scroller">
       <div class="form-body">
@@ -488,22 +451,35 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
           <input type="text" placeholder="e.g. ama.owusu">
         </div>
         <div class="field">
-          <label>Temporary password <span class="req">*</span></label>
-          <input type="password" id="pw" placeholder="Min 8 characters" oninput="pwStrength()">
-          <div class="pw-bars"><div class="pw-bar" id="pb1"></div><div class="pw-bar" id="pb2"></div><div class="pw-bar" id="pb3"></div><div class="pw-bar" id="pb4"></div></div>
-          <div class="pw-lbl" id="pwlbl">—</div>
-        </div>
-        <div class="field">
-          <label>Confirm password <span class="req">*</span></label>
-          <input type="password" placeholder="Repeat password">
+          <label>Set temporary PIN <span class="req">*</span></label>
+          <div class="pin-display" id="set-pin-display">
+            <div class="pin-dot" id="sp1"></div>
+            <div class="pin-dot" id="sp2"></div>
+            <div class="pin-dot" id="sp3"></div>
+            <div class="pin-dot" id="sp4"></div>
+          </div>
+          <div class="pin-pad">
+            <button class="pin-key" onclick="setPinTap(1)">1</button>
+            <button class="pin-key" onclick="setPinTap(2)">2</button>
+            <button class="pin-key" onclick="setPinTap(3)">3</button>
+            <button class="pin-key" onclick="setPinTap(4)">4</button>
+            <button class="pin-key" onclick="setPinTap(5)">5</button>
+            <button class="pin-key" onclick="setPinTap(6)">6</button>
+            <button class="pin-key" onclick="setPinTap(7)">7</button>
+            <button class="pin-key" onclick="setPinTap(8)">8</button>
+            <button class="pin-key" onclick="setPinTap(9)">9</button>
+            <button class="pin-key"></button>
+            <button class="pin-key" onclick="setPinTap(0)">0</button>
+            <button class="pin-key del" onclick="setPinDel()">⌫</button>
+          </div>
         </div>
         <div class="hint-box">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1aaa6b" stroke-width="2" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-          <span>Owner will be prompted to set a new password and PIN on first login. OTP will be required at every login for security.</span>
+          <span>🔒</span>
+          <span>Owner will be prompted to change this PIN on first login. OTP required at every login for security.</span>
         </div>
         <div class="hint-box blue">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#185FA5" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012.18 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 8.1a16 16 0 006 6l.72-.72a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 15.5v1.42z"/></svg>
-          <span>An SMS with credentials, app download links (Android &amp; iOS), and a PIN setup link will be sent to the owner's phone after registration.</span>
+          <span>📱</span>
+          <span>After registration an SMS is sent with: username, PIN setup link, app download links (Android &amp; iOS), and the Sikaflow website.</span>
         </div>
       </div>
     </div>
@@ -513,7 +489,7 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
     </div>
   </div>
 
-  <!-- SCREEN REG4: Review -->
+  <!-- STEP 4: Review -->
   <div class="screen" id="s-reg4">
     <div class="screen-head">
       <div class="step-label">STEP 4 OF 4 · REVIEW</div>
@@ -526,16 +502,16 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
           <div class="cred-row"><span class="ck">Business name</span><span class="cv">Ama's Fresh Foods</span></div>
           <div class="cred-row"><span class="ck">Business type</span><span class="cv">Unregistered</span></div>
           <div class="cred-row"><span class="ck">Sector</span><span class="cv">Retail — Food</span></div>
-          <div class="cred-row"><span class="ck">District</span><span class="cv">Accra Central</span></div>
-          <div class="cred-row"><span class="ck">Zone</span><span class="cv">Makola Zone B</span></div>
+          <div class="cred-row"><span class="ck">District / Zone</span><span class="cv">Accra C. · Makola B</span></div>
+          <div class="cred-row"><span class="ck">GPS</span><span class="cv" style="color:#1aaa6b;">5.5502°N ✓</span></div>
           <div class="cred-row"><span class="ck">Owner</span><span class="cv">Ama Owusu</span></div>
           <div class="cred-row"><span class="ck">Phone</span><span class="cv">0244 123 456</span></div>
-          <div class="cred-row"><span class="ck">GPS</span><span class="cv">5.5502°N, -0.2174°W</span></div>
-          <div class="cred-row"><span class="ck">Registered by</span><span class="cv">Kofi Mensah (NSP)</span></div>
+          <div class="cred-row"><span class="ck">Ghana Card</span><span class="cv">GHA-123···789</span></div>
+          <div class="cred-row"><span class="ck">Registered by</span><span class="cv">FA-0047</span></div>
         </div>
         <div class="hint-box">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1aaa6b" stroke-width="2" stroke-linecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-          <span>This registration will be tagged to your NSP account (Kofi Mensah) and appear in your supervisor's performance report.</span>
+          <span>🔗</span>
+          <span>This registration will be tagged to Field Agent FA-0047 and appear in your supervisor's performance reports.</span>
         </div>
       </div>
     </div>
@@ -545,33 +521,25 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
     </div>
   </div>
 
-  <!-- SCREEN: Success -->
+  <!-- SUCCESS -->
   <div class="screen" id="s-success">
     <div class="success-screen">
-      <div class="check-circle">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
+      <div class="check-circle">✓</div>
       <h2>Registration Successful!</h2>
-      <p class="sub">Ama Owusu has been registered. An SMS has been sent to 0244 123 456.</p>
+      <p class="sub">Ama Owusu registered. SMS sent to 0244 123 456.</p>
       <div class="ref-box">
         <div class="ref-lbl">PROGRAMME REFERENCE NUMBER</div>
         <div class="ref-num">SKF-ACC-8271</div>
       </div>
       <div class="sms-box">
         <div class="sb-label">SMS sent to owner</div>
-        <div class="sb-preview">
-          Welcome to Sikaflow! Your business Ama's Fresh Foods has been registered.<br><br>
-          Username: ama.owusu<br>
-          Set your PIN: sikaflow.com/setup/8271<br>
-          Download app: sikaflow.com/download<br>
-          Website: sikaflow.com<br><br>
-          Programme Ref: SKF-ACC-8271
-        </div>
+        <div class="sb-preview">Welcome to Sikaflow! Business: Ama's Fresh Foods (SKF-ACC-8271).<br><br>Username: ama.owusu<br>Set your PIN: sikaflow.com/setup/8271<br>Download: sikaflow.com/download<br>Website: sikaflow.com</div>
       </div>
       <div class="creds-box">
-        <div class="cred-row"><span class="ck">Registered by</span><span class="cv">Kofi Mensah</span></div>
+        <div class="cred-row"><span class="ck">Field Agent</span><span class="cv">FA-0047</span></div>
         <div class="cred-row"><span class="ck">Username</span><span class="cv">ama.owusu</span></div>
-        <div class="cred-row"><span class="ck">GPS captured</span><span class="cv">✓ 5.5502°N</span></div>
+        <div class="cred-row"><span class="ck">GPS</span><span class="cv" style="color:#1aaa6b;">✓ Captured</span></div>
+        <div class="cred-row"><span class="ck">Ghana Card</span><span class="cv">✓ Recorded</span></div>
       </div>
       <div class="completion-wrap">
         <div class="completion-top"><span class="cl">Profile completion</span><span class="cv">20%</span></div>
@@ -579,13 +547,13 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
       </div>
       <div class="next-steps">
         <div class="ns-label">Next steps</div>
-        <div class="ns-item"><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>GPS confirmed &amp; address entered</div>
-        <div class="ns-item"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Owner sets PIN on first login</div>
-        <div class="ns-item"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>Load product catalogue</div>
-        <div class="ns-item"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/></svg>Supervisor to verify record</div>
+        <div class="ns-item">📍 GPS confirmed &amp; address added</div>
+        <div class="ns-item">👤 Owner sets new PIN on first login</div>
+        <div class="ns-item">🏪 Load product catalogue</div>
+        <div class="ns-item">✅ Supervisor to verify record</div>
       </div>
-      <button class="start-btn" onclick="go('nsp')">Register Another MSME →</button>
-      <div class="start-hint">Returns to NSP home screen</div>
+      <button class="start-btn" onclick="go('fa')">Register Another MSME →</button>
+      <div class="start-hint">Returns to Field Agent home</div>
     </div>
   </div>
 
@@ -594,78 +562,28 @@ h1 { font-size: 14px; font-weight: 500; color: #607191; margin-bottom: 16px; let
 <div class="nav-pills">
   <button class="nav-pill" onclick="go('splash')">Splash</button>
   <button class="nav-pill" onclick="go('login')">Login</button>
-  <button class="nav-pill" onclick="go('nsp')">NSP Home</button>
-  <button class="nav-pill" onclick="go('reg1')">1 Business</button>
-  <button class="nav-pill" onclick="go('reg2')">2 Owner+GPS</button>
-  <button class="nav-pill" onclick="go('reg3')">3 Credentials</button>
+  <button class="nav-pill" onclick="go('fa')">FA Home</button>
+  <button class="nav-pill" onclick="go('reg1')">1 Location</button>
+  <button class="nav-pill" onclick="go('reg2')">2 Owner</button>
+  <button class="nav-pill" onclick="go('reg3')">3 PIN</button>
   <button class="nav-pill" onclick="go('reg4')">4 Review</button>
   <button class="nav-pill" onclick="go('success')">Success</button>
 </div>
 
 <script>
-const screenMap = {
-  splash:'s-splash', login:'s-login', nsp:'s-nsp',
-  reg1:'s-reg1', reg2:'s-reg2', reg3:'s-reg3', reg4:'s-reg4', success:'s-success'
-};
-const regScreens = ['reg1','reg2','reg3','reg4'];
-const progMap = { splash:0, login:0, nsp:0, reg1:25, reg2:50, reg3:75, reg4:90, success:100 };
-
-function go(key) {
-  Object.values(screenMap).forEach(id => document.getElementById(id).classList.remove('active'));
-  document.getElementById(screenMap[key]).classList.add('active');
-  document.getElementById('prog').style.width = progMap[key] + '%';
-  const isReg = regScreens.includes(key);
-  const dw = document.getElementById('dots-wrap');
-  dw.style.display = isReg ? 'flex' : 'none';
-  if (isReg) {
-    const idx = regScreens.indexOf(key);
-    for (let i = 0; i < 4; i++) {
-      const d = document.getElementById('dot-' + i);
-      d.classList.remove('active','done');
-      if (i < idx) d.classList.add('done');
-      else if (i === idx) d.classList.add('active');
-    }
-  }
-}
-
-function loginRoute() {
-  // Simulate NSP role detection → route to NSP home
-  go('nsp');
-}
-
-function onType() {
-  const isReg = document.querySelector('input[name="btype"]:checked').value === 'registered';
-  document.getElementById('reg-fields').classList.toggle('open', isReg);
-}
-
-function captureGPS() {
-  const btn = event.target.closest('button');
-  btn.textContent = 'Capturing…';
-  btn.style.opacity = '0.7';
-  setTimeout(() => {
-    btn.innerHTML = '✓ Location Captured';
-    btn.style.background = 'var(--green)';
-    btn.style.opacity = '1';
-    document.getElementById('gps-result').classList.add('show');
-  }, 1200);
-}
-
-function pwStrength() {
-  const v = document.getElementById('pw').value;
-  let s = 0;
-  if (v.length >= 6) s++;
-  if (v.length >= 8) s++;
-  if (/[A-Z]/.test(v) && /[0-9]/.test(v)) s++;
-  if (/[^A-Za-z0-9]/.test(v)) s++;
-  const cols = ['#d93025','#c47f00','#1aaa6b','#1aaa6b'];
-  const lbls = ['—','Weak','Fair','Strong','Very strong'];
-  for (let i = 1; i <= 4; i++) {
-    document.getElementById('pb'+i).style.background = i <= s ? cols[s-1] : '#d4dce8';
-  }
-  const lbl = document.getElementById('pwlbl');
-  lbl.textContent = lbls[s];
-  lbl.style.color = s > 0 ? cols[s-1] : '#607191';
-}
+const smap={splash:'s-splash',login:'s-login',fa:'s-fa',reg1:'s-reg1',reg2:'s-reg2',reg3:'s-reg3',reg4:'s-reg4',success:'s-success'};
+const regS=['reg1','reg2','reg3','reg4'];
+const pmap={splash:0,login:0,fa:0,reg1:25,reg2:50,reg3:75,reg4:90,success:100};
+function go(k){Object.values(smap).forEach(id=>document.getElementById(id).classList.remove('active'));document.getElementById(smap[k]).classList.add('active');document.getElementById('prog').style.width=pmap[k]+'%';const isR=regS.includes(k);const dw=document.getElementById('dots-wrap');dw.style.display=isR?'flex':'none';if(isR){const idx=regS.indexOf(k);for(let i=0;i<4;i++){const d=document.getElementById('dot-'+i);d.classList.remove('active','done');if(i<idx)d.classList.add('done');else if(i===idx)d.classList.add('active');}}}
+function loginRoute(){go('fa');}
+function onType(){const isR=document.querySelector('input[name="btype"]:checked').value==='registered';document.getElementById('reg-fields').classList.toggle('open',isR);}
+function captureGPS(){const btn=document.getElementById('gps-btn');btn.textContent='📡 Capturing…';btn.style.opacity='.7';setTimeout(()=>{btn.textContent='✓ Location Captured';btn.style.background='var(--green)';btn.style.opacity='1';document.getElementById('gps-result').classList.add('show');},1200);}
+let pinCount=0;
+function pinTap(n){if(pinCount<4){pinCount++;document.getElementById('pd'+pinCount).classList.add('filled');if(pinCount===4){setTimeout(()=>loginRoute(),400);}}}
+function pinDel(){if(pinCount>0){document.getElementById('pd'+pinCount).classList.remove('filled');pinCount--;}}
+let setPinCount=0;
+function setPinTap(n){if(setPinCount<4){setPinCount++;document.getElementById('sp'+setPinCount).classList.add('filled');}}
+function setPinDel(){if(setPinCount>0){document.getElementById('sp'+setPinCount).classList.remove('filled');setPinCount--;}}
 </script>
 </body>
 </html>
