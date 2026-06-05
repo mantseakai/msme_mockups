@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NLA Agent POS — 6/49 Golden Draw</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cinzel:wght@400;600;700;900&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════ TOKENS — matching user app exactly ═══════════════ */
+:root {
+  --gold:        #D4AF37;
+  --gold-light:  #F0D060;
+  --gold-pale:   #FFF4CC;
+  --gold-dark:   #9A7B1C;
+  --purple:      #2D0A4E;
+  --purple-mid:  #4A1272;
+  --purple-light:#7B3FA8;
+  --purple-pale: #C4A0E8;
+  --text-light:  #F5E8C0;
+  --shadow-gold: 0 0 20px rgba(212,175,55,0.5);
+  /* Agent extras */
+  --agent-grn:   #00C853;
+  --agent-grn2:  #69F0AE;
+  --info:        #6C8EFF;
+  --warn:        #FFB300;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  background:var(--purple);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow',sans-serif;
+}
+
+/* ── Background (matches user app) ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 20% 20%,rgba(74,18,114,0.8) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 80%,rgba(45,10,78,0.9) 0%,transparent 60%),
+    radial-gradient(ellipse at 50% 50%,rgba(212,175,55,0.04) 0%,transparent 70%);
+}
+
+/* Stars */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.star{position:absolute;background:white;border-radius:50%;
+  animation:twinkle var(--dur,3s) ease-in-out infinite;
+  animation-delay:var(--delay,0s);opacity:0;}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(0.5);}50%{opacity:var(--opacity,0.6);transform:scale(1);}}
+
+/* ═══════════════ PHONE SHELL ═══════════════ */
+.shell{
+  width:390px;height:844px;background:var(--purple);
+  border-radius:42px;overflow:hidden;position:relative;
+  box-shadow:0 0 0 2px rgba(212,175,55,0.2),0 0 0 4px #1a0630,
+    0 40px 100px rgba(0,0,0,0.85),var(--shadow-gold);
+}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:120px;height:32px;background:#000;border-radius:0 0 20px 20px;z-index:1000;}
+.statusbar{position:absolute;top:0;left:0;right:0;height:44px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 22px 6px;z-index:999;font-size:0.65rem;font-weight:600;
+  color:var(--text-light);letter-spacing:0.06em;font-family:'Barlow',sans-serif;}
+
+/* ═══════════════ MARQUEE — exact match ═══════════════ */
+.marquee-wrap{
+  background:linear-gradient(90deg,var(--gold-dark),var(--gold),var(--gold-light),var(--gold),var(--gold-dark));
+  color:var(--purple);padding:8px 0;overflow:hidden;
+  position:relative;z-index:10;border-bottom:1px solid var(--gold-dark);
+  flex-shrink:0;
+}
+.marquee-inner{display:flex;animation:marquee 22s linear infinite;white-space:nowrap;}
+.marquee-inner span{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:600;
+  letter-spacing:0.12em;padding:0 60px;text-transform:uppercase;}
+.marquee-inner span strong{font-size:0.92rem;font-weight:700;}
+.marquee-sep{margin:0 16px;opacity:0.5;}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+/* ═══════════════ SCREEN SYSTEM ═══════════════ */
+.screen{position:absolute;top:0;left:0;right:0;bottom:0;
+  overflow-y:auto;overflow-x:hidden;scrollbar-width:none;
+  display:none;flex-direction:column;padding-bottom:84px;}
+.screen::-webkit-scrollbar{display:none;}
+.screen.active{display:flex;}
+.screen.in{animation:scIn 0.32s cubic-bezier(0.25,0.46,0.45,0.94) both;}
+@keyframes scIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* ═══════════════ BOTTOM NAV ═══════════════ */
+.nav{position:absolute;bottom:0;left:0;right:0;height:82px;
+  background:rgba(18,4,38,0.97);backdrop-filter:blur(20px);
+  border-top:1px solid rgba(212,175,55,0.2);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 6px 14px;z-index:500;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:7px 10px;border-radius:12px;transition:all 0.2s;flex:1;}
+.ni.on{background:rgba(212,175,55,0.1);}
+.ni-icon{font-size:1.1rem;color:rgba(196,160,232,0.4);transition:all 0.2s;}
+.ni-label{font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(196,160,232,0.4);font-weight:600;transition:all 0.2s;font-family:'Barlow',sans-serif;}
+.ni.on .ni-icon,.ni.on .ni-label{color:var(--gold);}
+
+/* ═══════════════ SHARED COMPONENTS ═══════════════ */
+
+/* Section card — identical to user app */
+.section-card{
+  margin:0 16px 14px;
+  background:rgba(45,10,78,0.5);
+  border:1px solid rgba(212,175,55,0.2);
+  border-radius:14px;padding:16px 20px;
+}
+.section-label{
+  font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;font-family:'Barlow',sans-serif;
+}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(212,175,55,0.2);}
+
+/* Page header with back button */
+.page-header{
+  padding:52px 20px 16px;
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(180deg,rgba(74,18,114,0.3) 0%,transparent 100%);
+  border-bottom:1px solid rgba(212,175,55,0.12);
+  flex-shrink:0;
+}
+.back-btn{width:34px;height:34px;border-radius:50%;
+  background:rgba(45,10,78,0.6);border:1px solid rgba(212,175,55,0.25);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.1rem;color:var(--purple-pale);transition:all 0.2s;flex-shrink:0;}
+.back-btn:hover{border-color:var(--gold);color:var(--gold-light);}
+.page-title{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;
+  color:var(--text-light);letter-spacing:0.04em;}
+.page-sub{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;
+  color:var(--purple-pale);margin-top:2px;}
+
+/* Ornament divider */
+.ornament{display:flex;align-items:center;justify-content:center;
+  gap:10px;margin:10px 0;}
+.orn-line{flex:1;max-width:60px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dark));}
+.orn-line.r{background:linear-gradient(90deg,var(--gold-dark),transparent);}
+.orn-diamond{width:7px;height:7px;background:var(--gold);
+  transform:rotate(45deg);box-shadow:0 0 8px rgba(212,175,55,0.6);}
+
+/* Kente strip */
+.kente{height:4px;flex-shrink:0;
+  background:repeating-linear-gradient(90deg,
+    #CF0921 0,#CF0921 14px,#D4AF37 14px,#D4AF37 28px,
+    #00A651 28px,#00A651 42px,#000 42px,#000 56px);}
+
+/* Pills */
+.pill{font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;
+  padding:3px 9px;border-radius:100px;font-weight:600;font-family:'Barlow',sans-serif;}
+.pill.gold{background:rgba(212,175,55,0.15);color:var(--gold);border:1px solid rgba(212,175,55,0.3);}
+.pill.green{background:rgba(0,200,83,0.15);color:var(--agent-grn);border:1px solid rgba(0,200,83,0.3);}
+.pill.red{background:rgba(207,9,33,0.2);color:#FF5577;border:1px solid rgba(207,9,33,0.35);}
+.pill.blue{background:rgba(108,142,255,0.15);color:var(--info);border:1px solid rgba(108,142,255,0.3);}
+.pill.live{background:rgba(207,9,33,0.2);color:#FF4466;border:1px solid rgba(207,9,33,0.4);}
+
+/* Primary gold button */
+.gold-btn{
+  width:100%;padding:17px;border:none;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,var(--gold-light) 0%,var(--gold) 50%,var(--gold-dark) 100%);
+  color:var(--purple);font-family:'Cinzel',serif;font-size:0.95rem;font-weight:700;
+  letter-spacing:0.1em;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all 0.2s;
+  box-shadow:0 6px 28px rgba(212,175,55,0.3),0 2px 8px rgba(0,0,0,0.3);}
+.gold-btn:hover{transform:translateY(-1px);box-shadow:0 10px 36px rgba(212,175,55,0.45);}
+.gold-btn:active{transform:translateY(1px);}
+.ghost-btn{
+  width:100%;padding:15px;border-radius:14px;cursor:pointer;
+  background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.25);
+  color:var(--gold);font-family:'Cinzel',serif;font-size:0.85rem;font-weight:600;
+  letter-spacing:0.08em;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all 0.2s;}
+.ghost-btn:hover{border-color:var(--gold);background:rgba(212,175,55,0.08);}
+.green-btn{
+  width:100%;padding:16px;border:none;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,var(--agent-grn),#00922e);
+  color:#fff;font-family:'Cinzel',serif;font-size:0.95rem;font-weight:700;
+  letter-spacing:0.08em;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all 0.2s;box-shadow:0 6px 24px rgba(0,200,83,0.3);}
+
+/* Number buttons — exact user app style */
+.nb{
+  aspect-ratio:1;border:1.5px solid rgba(212,175,55,0.2);border-radius:8px;
+  background:rgba(45,10,78,0.4);color:var(--text-light);
+  font-family:'Barlow',sans-serif;font-size:0.8rem;font-weight:500;
+  cursor:pointer;transition:all 0.18s;
+  display:flex;align-items:center;justify-content:center;}
+.nb:hover:not(.sel):not(.dis){
+  border-color:rgba(212,175,55,0.5);background:rgba(212,175,55,0.08);color:var(--gold-light);}
+.nb.sel{
+  background:linear-gradient(135deg,rgba(212,175,55,0.3),rgba(212,175,55,0.15));
+  border-color:var(--gold);color:var(--gold-light);font-weight:700;
+  box-shadow:0 0 14px rgba(212,175,55,0.35),inset 0 0 10px rgba(212,175,55,0.1);
+  animation:nbPop 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes nbPop{0%{transform:scale(0.85);}100%{transform:scale(1);}}
+.nb.dis{opacity:0.3;cursor:not-allowed;pointer-events:none;}
+
+/* Selected pills */
+.sel-pill{width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  color:var(--purple);font-family:'Cinzel',serif;font-size:0.78rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 12px rgba(212,175,55,0.4);
+  animation:spIn 0.28s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes spIn{0%{transform:scale(0) rotate(-15deg);opacity:0;}100%{transform:scale(1) rotate(0);opacity:1;}}
+
+/* Jackpot card — matches user app */
+.jackpot-card{
+  margin:0 16px 14px;
+  background:linear-gradient(135deg,rgba(74,18,114,0.6) 0%,rgba(45,10,78,0.8) 100%);
+  border:1px solid rgba(212,175,55,0.35);border-radius:16px;
+  padding:16px 20px;text-align:center;position:relative;overflow:hidden;
+  animation:cardGlow 4s ease-in-out infinite;}
+.jackpot-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.6),transparent);}
+@keyframes cardGlow{
+  0%,100%{box-shadow:0 0 20px rgba(212,175,55,0.1),inset 0 0 30px rgba(212,175,55,0.02);}
+  50%{box-shadow:0 0 35px rgba(212,175,55,0.25),inset 0 0 30px rgba(212,175,55,0.06);}}
+.jackpot-label{font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;}
+.jackpot-amount{font-family:'Cinzel',serif;font-size:2rem;font-weight:700;
+  color:var(--gold-light);line-height:1.1;margin:4px 0 2px;
+  text-shadow:0 0 30px rgba(212,175,55,0.4);
+  animation:jpPulse 3s ease-in-out infinite;}
+@keyframes jpPulse{0%,100%{text-shadow:0 0 20px rgba(212,175,55,0.3);}
+  50%{text-shadow:0 0 40px rgba(212,175,55,0.7),0 0 60px rgba(212,175,55,0.2);}}
+.jackpot-desc{font-size:0.68rem;color:var(--purple-pale);}
+
+/* Draw option — exact user app */
+.draw-option{
+  border:1.5px solid rgba(212,175,55,0.25);border-radius:10px;
+  padding:12px 10px;cursor:pointer;transition:all 0.25s;
+  background:rgba(45,10,78,0.3);text-align:center;position:relative;overflow:hidden;}
+.draw-option::before{content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(212,175,55,0.12),transparent);
+  opacity:0;transition:opacity 0.25s;}
+.draw-option.active{border-color:var(--gold);background:rgba(212,175,55,0.1);}
+.draw-option.active::before{opacity:1;}
+.draw-option .draw-icon{font-size:1.3rem;margin-bottom:4px;}
+.draw-option .draw-name{font-family:'Cinzel',serif;font-size:0.76rem;font-weight:600;
+  color:var(--text-light);letter-spacing:0.05em;}
+.draw-option.active .draw-name{color:var(--gold-light);}
+.draw-option .draw-time{font-size:0.62rem;color:var(--purple-pale);margin-top:2px;}
+.draw-option .active-dot{display:none;width:6px;height:6px;background:var(--gold);
+  border-radius:50%;margin:5px auto 0;box-shadow:0 0 8px var(--gold);}
+.draw-option.active .active-dot{display:block;}
+
+/* ═══════════════ LOGIN SCREEN ═══════════════ */
+#s-login{background:var(--purple);}
+.login-wrap{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:60px 24px 28px;position:relative;z-index:1;}
+.login-header{text-align:center;margin-bottom:28px;}
+.login-badge-text{
+  display:inline-block;font-family:'Barlow',sans-serif;font-size:0.62rem;
+  font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);
+  border:1px solid rgba(212,175,55,0.4);padding:5px 18px;border-radius:100px;
+  margin-bottom:14px;}
+.login-title{font-family:'Cinzel',serif;font-size:2rem;font-weight:700;
+  background:linear-gradient(160deg,var(--gold-light) 0%,var(--gold) 40%,var(--gold-dark) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:0.04em;}
+.login-sub{font-family:'Cormorant Garamond',serif;font-size:1rem;font-style:italic;
+  color:var(--purple-pale);margin-top:4px;}
+.agent-id-card{
+  background:linear-gradient(135deg,rgba(74,18,114,0.6),rgba(45,10,78,0.8));
+  border:1px solid rgba(212,175,55,0.35);border-radius:16px;
+  padding:16px 20px;width:100%;max-width:320px;margin-bottom:16px;}
+.aid-label{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:8px;}
+.aid-display{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;
+  color:var(--text-light);text-align:center;padding:10px;
+  background:rgba(45,10,78,0.5);border-radius:10px;border:1px solid rgba(212,175,55,0.2);}
+.pin-row{display:flex;gap:10px;justify-content:center;margin-top:12px;}
+.pin-dot{width:18px;height:18px;border-radius:50%;
+  border:1.5px solid rgba(212,175,55,0.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.6rem;color:var(--gold);transition:all 0.2s;}
+.pin-dot.filled{background:var(--gold);border-color:var(--gold);color:var(--purple);}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  width:100%;max-width:280px;margin-top:14px;}
+.np-btn{padding:15px;background:rgba(45,10,78,0.5);border:1px solid rgba(212,175,55,0.2);
+  border-radius:12px;font-family:'Cinzel',serif;font-size:1.3rem;font-weight:600;
+  color:var(--text-light);cursor:pointer;text-align:center;transition:all 0.15s;}
+.np-btn:hover{border-color:rgba(212,175,55,0.5);background:rgba(212,175,55,0.08);color:var(--gold-light);}
+.np-btn.del{color:rgba(196,160,232,0.7);font-family:'Barlow',sans-serif;}
+.np-btn.enter{background:linear-gradient(135deg,var(--gold-light),var(--gold),var(--gold-dark));
+  color:var(--purple);border-color:transparent;box-shadow:0 4px 16px rgba(212,175,55,0.3);}
+.terminal-info{font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(196,160,232,0.4);text-align:center;margin-top:16px;}
+
+/* ═══════════════ DASHBOARD ═══════════════ */
+.dash-hero{
+  padding:52px 20px 20px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,rgba(74,18,114,0.25) 0%,transparent 80%);}
+.agent-greeting{font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--purple-pale);margin-bottom:3px;}
+.agent-name{font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;
+  color:var(--text-light);line-height:1.05;}
+.agent-name span{
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.agent-meta{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.agent-id-tag{font-family:'Cinzel',serif;font-size:0.62rem;color:var(--purple-pale);}
+
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px;margin-bottom:14px;}
+.stat-card{
+  background:linear-gradient(135deg,rgba(74,18,114,0.5),rgba(45,10,78,0.7));
+  border:1px solid rgba(212,175,55,0.18);border-radius:14px;
+  padding:14px 16px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.4),transparent);}
+.stat-icon{font-size:1.2rem;margin-bottom:6px;}
+.stat-val{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:var(--text-light);}
+.stat-val.grn{color:var(--agent-grn);}
+.stat-val.gold{color:var(--gold-light);}
+.stat-val.blue{color:var(--info);}
+.stat-lbl{font-size:0.55rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--purple-pale);margin-top:2px;}
+
+/* Quick action cards */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.qa-btn{
+  background:rgba(45,10,78,0.5);border:1px solid rgba(212,175,55,0.2);
+  border-radius:14px;padding:18px 14px;cursor:pointer;transition:all 0.2s;
+  display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;}
+.qa-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.3),transparent);}
+.qa-btn:hover{border-color:rgba(212,175,55,0.45);background:rgba(74,18,114,0.5);}
+.qa-btn.primary{border-color:rgba(212,175,55,0.35);
+  background:linear-gradient(135deg,rgba(74,18,114,0.5),rgba(45,10,78,0.7));}
+.qa-icon{font-size:1.4rem;}
+.qa-label{font-family:'Cinzel',serif;font-size:0.82rem;font-weight:600;
+  color:var(--text-light);}
+.qa-desc{font-size:0.6rem;color:var(--purple-pale);}
+
+/* Recent tickets */
+.recent-item{
+  background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.15);
+  border-radius:12px;padding:12px 14px;display:flex;align-items:center;
+  gap:12px;margin-bottom:8px;}
+.ri-icon{width:38px;height:38px;border-radius:10px;display:flex;
+  align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;
+  background:rgba(74,18,114,0.6);border:1px solid rgba(212,175,55,0.2);}
+.ri-info{flex:1;min-width:0;}
+.ri-name{font-size:0.76rem;font-weight:600;color:var(--text-light);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ri-meta{font-size:0.58rem;color:var(--purple-pale);margin-top:2px;display:flex;gap:5px;align-items:center;}
+.ri-amt{font-family:'Cinzel',serif;font-size:0.85rem;font-weight:700;color:var(--agent-grn);}
+
+/* ═══════════════ TICKET SCREEN ═══════════════ */
+.lines-ctrl{
+  background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.2);
+  border-radius:12px;padding:12px 16px;
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.lc-lbl{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:600;color:var(--text-light);}
+.lc-sub{font-size:0.58rem;color:var(--purple-pale);margin-top:2px;}
+.lc-ctrl{display:flex;align-items:center;gap:12px;}
+.lc-btn{width:30px;height:30px;border-radius:8px;
+  border:1px solid rgba(212,175,55,0.25);background:rgba(45,10,78,0.6);
+  color:var(--text-light);font-size:1.1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.lc-btn:hover{border-color:var(--gold);color:var(--gold-light);}
+.lc-val{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;
+  color:var(--gold-light);min-width:24px;text-align:center;}
+
+/* Selected display */
+.sel-display{display:flex;gap:7px;flex-wrap:wrap;align-items:center;
+  justify-content:center;padding:10px;
+  background:rgba(45,10,78,0.4);
+  border-radius:10px;border:1px dashed rgba(212,175,55,0.2);
+  margin-bottom:12px;min-height:50px;}
+.sel-hint{font-size:0.68rem;color:var(--purple-pale);font-style:italic;}
+
+/* Quick pick / clear */
+.ticket-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.ta-btn{padding:11px;border-radius:10px;font-family:'Barlow',sans-serif;
+  font-size:0.72rem;font-weight:700;letter-spacing:0.08em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.18s;border:none;}
+.ta-btn.qp{background:rgba(45,10,78,0.6);border:1px solid rgba(212,175,55,0.3);color:var(--gold);}
+.ta-btn.qp:hover{background:rgba(212,175,55,0.1);}
+.ta-btn.clr{background:rgba(45,10,78,0.4);border:1px solid rgba(196,160,232,0.25);color:var(--purple-pale);}
+.ta-btn.clr:hover{border-color:rgba(212,175,55,0.3);color:var(--gold);}
+
+/* Stake section */
+.stake-section{
+  background:linear-gradient(135deg,rgba(74,18,114,0.5),rgba(45,10,78,0.7));
+  border:1px solid rgba(212,175,55,0.2);border-radius:14px;
+  padding:14px 16px;margin-bottom:14px;}
+.stake-row-flex{display:flex;align-items:center;justify-content:space-between;}
+.stake-lbl{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;}
+.stake-ctrls{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.sc-btn{width:28px;height:28px;border-radius:6px;
+  border:1px solid rgba(212,175,55,0.25);background:rgba(45,10,78,0.6);
+  color:var(--text-light);font-size:1rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+.sc-btn:hover{border-color:var(--gold);color:var(--gold);}
+.stake-amt{font-family:'Cinzel',serif;font-size:1rem;font-weight:700;
+  color:var(--gold-light);min-width:72px;text-align:center;}
+.divider-line{height:1px;background:rgba(212,175,55,0.15);margin:12px 0;}
+.total-row{display:flex;align-items:center;justify-content:space-between;}
+.total-lbl{font-family:'Cinzel',serif;font-size:0.82rem;font-weight:600;color:var(--text-light);}
+.total-breakdown{font-size:0.6rem;color:var(--purple-pale);margin-top:2px;}
+.total-amt{font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--gold-light);}
+
+/* ═══════════════ PAYMENT SCREEN ═══════════════ */
+.ticket-preview{
+  margin:0 0 14px;
+  background:linear-gradient(135deg,rgba(74,18,114,0.6),rgba(45,10,78,0.8));
+  border:1px solid rgba(212,175,55,0.3);border-radius:16px;
+  padding:18px;position:relative;overflow:hidden;}
+.ticket-preview::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,175,55,0.6),transparent);}
+.tp-title{font-family:'Cinzel',serif;font-size:0.95rem;font-weight:700;color:var(--gold-light);}
+.tp-serial{font-family:'Barlow',sans-serif;font-size:0.58rem;color:var(--purple-pale);margin-top:2px;}
+.tp-numbers{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0;}
+.tp-num{width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  color:var(--purple);font-family:'Cinzel',serif;font-size:0.8rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 10px rgba(212,175,55,0.35);}
+.tp-row{display:flex;justify-content:space-between;padding:5px 0;
+  border-bottom:1px solid rgba(212,175,55,0.08);font-size:0.7rem;}
+.tp-row:last-child{border-bottom:none;}
+.tp-row-lbl{color:var(--purple-pale);}
+.tp-row-val{color:var(--text-light);font-weight:600;}
+.barcode-area{margin-top:12px;padding-top:12px;border-top:1px dashed rgba(212,175,55,0.15);
+  display:flex;flex-direction:column;align-items:center;gap:5px;}
+.barcode-bars{display:flex;gap:1px;height:30px;align-items:flex-end;}
+.bar{background:rgba(212,175,55,0.55);border-radius:1px;}
+.barcode-num{font-family:'Barlow',sans-serif;font-size:0.55rem;letter-spacing:0.18em;color:var(--purple-pale);}
+
+/* Payment method buttons */
+.pay-methods{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.pm-btn{background:rgba(45,10,78,0.5);border:1.5px solid rgba(212,175,55,0.2);
+  border-radius:14px;padding:14px 10px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.pm-btn.active{border-color:var(--gold);background:rgba(212,175,55,0.1);}
+.pm-icon{font-size:1.5rem;margin-bottom:5px;}
+.pm-name{font-family:'Cinzel',serif;font-size:0.78rem;font-weight:600;color:var(--text-light);}
+.pm-btn.active .pm-name{color:var(--gold-light);}
+.pm-dot{display:none;width:6px;height:6px;border-radius:50%;background:var(--gold);
+  margin:5px auto 0;box-shadow:0 0 8px var(--gold);}
+.pm-btn.active .pm-dot{display:block;}
+
+/* Cash calc */
+.cash-calc{
+  background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.2);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+.cc-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;
+  border-bottom:1px solid rgba(212,175,55,0.08);}
+.cc-row:last-child{border-bottom:none;}
+.cc-lbl{font-size:0.68rem;color:var(--purple-pale);}
+.cc-val{font-family:'Cinzel',serif;font-size:0.88rem;font-weight:700;color:var(--text-light);}
+.cc-val.change{color:var(--agent-grn);}
+.cc-input{width:100%;margin-top:10px;background:rgba(45,10,78,0.6);
+  border:1px solid rgba(212,175,55,0.25);border-radius:10px;
+  padding:11px 14px;font-family:'Cinzel',serif;font-size:0.95rem;
+  color:var(--gold-light);outline:none;}
+.cc-input:focus{border-color:var(--gold);}
+.momo-input{background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.2);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;display:none;}
+.momo-lbl{font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:8px;}
+.momo-field{display:flex;gap:8px;align-items:center;}
+.momo-prefix{font-family:'Cinzel',serif;font-size:0.88rem;color:var(--purple-pale);flex-shrink:0;}
+.momo-num{flex:1;background:rgba(45,10,78,0.6);border:1px solid rgba(212,175,55,0.25);
+  border-radius:10px;padding:10px 14px;font-family:'Cinzel',serif;font-size:0.95rem;
+  color:var(--text-light);outline:none;}
+.momo-num:focus{border-color:var(--gold);}
+
+/* ═══════════════ CONFIRMATION ═══════════════ */
+.confirm-hero{display:flex;flex-direction:column;align-items:center;
+  padding:52px 20px 20px;text-align:center;
+  background:linear-gradient(180deg,rgba(0,200,83,0.07) 0%,transparent 60%);}
+.confirm-icon{width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--agent-grn),#00922e);
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+  margin-bottom:16px;
+  box-shadow:0 0 0 8px rgba(0,200,83,0.1),0 0 0 16px rgba(0,200,83,0.05);
+  animation:ciPop 0.5s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes ciPop{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.confirm-title{font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;color:var(--agent-grn);}
+.confirm-sub{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;color:var(--purple-pale);}
+.confirm-amount{font-family:'Cinzel',serif;font-size:2.2rem;font-weight:700;
+  color:var(--gold-light);margin-top:10px;text-shadow:0 0 24px rgba(212,175,55,0.35);}
+.confirm-meta{font-size:0.62rem;color:var(--purple-pale);margin-top:4px;}
+
+/* ═══════════════ PRIZE CHECK ═══════════════ */
+.scan-box{
+  background:rgba(45,10,78,0.4);border:2px dashed rgba(212,175,55,0.25);
+  border-radius:16px;padding:28px 20px;text-align:center;
+  margin-bottom:14px;cursor:pointer;transition:all 0.2s;}
+.scan-box:hover{border-color:rgba(212,175,55,0.5);background:rgba(74,18,114,0.3);}
+.scan-icon{font-size:2.4rem;margin-bottom:10px;}
+.scan-lbl{font-family:'Cinzel',serif;font-size:0.9rem;font-weight:700;color:var(--text-light);margin-bottom:4px;}
+.scan-sub{font-size:0.62rem;color:var(--purple-pale);}
+.or-divider{display:flex;align-items:center;gap:10px;
+  font-size:0.6rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--purple-pale);
+  margin-bottom:12px;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:rgba(212,175,55,0.15);}
+.ticket-num-input{display:flex;gap:8px;align-items:center;
+  background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.2);
+  border-radius:12px;padding:10px 14px;margin-bottom:14px;}
+.tni{flex:1;background:transparent;border:none;outline:none;
+  font-family:'Cinzel',serif;font-size:0.88rem;color:var(--text-light);}
+.tni::placeholder{color:rgba(196,160,232,0.35);}
+.check-result{border-radius:14px;padding:16px;margin-bottom:14px;}
+.cr-win{background:rgba(45,10,78,0.4);border:1px solid rgba(0,200,83,0.35);}
+.cr-lose{background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.15);}
+
+/* ═══════════════ REPORTS ═══════════════ */
+.report-period{display:flex;gap:6px;padding:0 16px 12px;overflow-x:auto;scrollbar-width:none;}
+.report-period::-webkit-scrollbar{display:none;}
+.rp-tab{flex-shrink:0;padding:7px 16px;border-radius:100px;font-size:0.62rem;
+  font-weight:600;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;
+  border:1px solid rgba(212,175,55,0.18);background:rgba(45,10,78,0.4);color:var(--purple-pale);}
+.rp-tab.on{background:rgba(212,175,55,0.12);border-color:rgba(212,175,55,0.35);color:var(--gold-light);}
+.report-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;
+  padding:0 16px;margin-bottom:14px;}
+.rs-card{background:rgba(45,10,78,0.5);border:1px solid rgba(212,175,55,0.15);
+  border-radius:12px;padding:12px 10px;text-align:center;}
+.rs-val{font-family:'Cinzel',serif;font-size:0.9rem;font-weight:700;color:var(--text-light);}
+.rs-lbl{font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple-pale);margin-top:3px;}
+.commission-card{
+  margin:0 16px 14px;
+  background:linear-gradient(135deg,rgba(74,18,114,0.5),rgba(45,10,78,0.7));
+  border:1px solid rgba(0,200,83,0.3);border-radius:14px;padding:16px;}
+.commission-card::before{content:'';display:block;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,200,83,0.5),transparent);margin-bottom:12px;}
+.cc-title{font-family:'Cinzel',serif;font-size:0.9rem;font-weight:700;color:var(--agent-grn);}
+.tx-item{background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.13);
+  border-radius:12px;padding:12px 14px;display:flex;align-items:center;
+  gap:10px;margin-bottom:7px;}
+.txi-icon{width:36px;height:36px;border-radius:9px;display:flex;
+  align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;
+  background:rgba(74,18,114,0.6);border:1px solid rgba(212,175,55,0.18);}
+.txi-info{flex:1;min-width:0;}
+.txi-name{font-size:0.75rem;font-weight:600;color:var(--text-light);}
+.txi-meta{font-size:0.58rem;color:var(--purple-pale);margin-top:2px;display:flex;align-items:center;gap:5px;}
+.txi-amt{font-family:'Cinzel',serif;font-size:0.82rem;font-weight:700;color:var(--agent-grn);}
+
+/* ═══════════════ KYC STYLES ═══════════════ */
+.kyc-step{display:none;flex-direction:column;gap:0;}
+.kyc-step.active{display:flex;}
+
+/* Step indicator */
+.step-bar{display:flex;align-items:center;gap:0;margin-bottom:18px;}
+.step-node{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
+.step-circle{width:28px;height:28px;border-radius:50%;
+  background:rgba(45,10,78,0.6);border:1.5px solid rgba(212,175,55,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:0.65rem;font-weight:700;color:var(--purple-pale);
+  transition:all 0.3s;}
+.step-circle.done{background:var(--gold);border-color:var(--gold);color:var(--purple);}
+.step-circle.active{background:rgba(212,175,55,0.15);border-color:var(--gold);color:var(--gold-light);}
+.step-lbl{font-size:0.5rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--purple-pale);text-align:center;line-height:1.2;}
+.step-lbl.active{color:var(--gold);}
+.step-line{flex:1;height:1px;background:rgba(212,175,55,0.18);margin-bottom:16px;}
+.step-line.done{background:var(--gold);}
+
+/* Phone lookup */
+.phone-input-wrap{
+  background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.2);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+.phi-label{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--gold);font-weight:600;margin-bottom:8px;}
+.phi-row{display:flex;align-items:center;gap:8px;}
+.phi-prefix{font-family:'Cinzel',serif;font-size:0.9rem;color:var(--purple-pale);flex-shrink:0;}
+.phi-input{flex:1;background:rgba(45,10,78,0.6);border:1px solid rgba(212,175,55,0.2);
+  border-radius:10px;padding:12px 14px;font-family:'Cinzel',serif;
+  font-size:1rem;color:var(--text-light);outline:none;width:100%;}
+.phi-input:focus{border-color:var(--gold);}
+
+/* Customer found card */
+.customer-card{
+  background:linear-gradient(135deg,rgba(74,18,114,0.5),rgba(45,10,78,0.7));
+  border:1px solid rgba(0,200,83,0.35);border-radius:16px;padding:16px;
+  margin-bottom:14px;position:relative;overflow:hidden;}
+.customer-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,200,83,0.5),transparent);}
+.cust-avatar{width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:var(--purple);
+  flex-shrink:0;}
+.cust-name{font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--text-light);}
+.cust-meta{font-size:0.6rem;color:var(--purple-pale);margin-top:2px;}
+.verified-badge{display:flex;align-items:center;gap:5px;
+  background:rgba(0,200,83,0.15);border:1px solid rgba(0,200,83,0.3);
+  border-radius:100px;padding:4px 10px;width:fit-content;margin-top:8px;}
+.vb-icon{font-size:0.75rem;}
+.vb-text{font-size:0.55rem;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--agent-grn);font-weight:700;}
+
+/* ID type selector */
+.id-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.id-type-btn{
+  background:rgba(45,10,78,0.4);border:1.5px solid rgba(212,175,55,0.2);
+  border-radius:12px;padding:12px 10px;cursor:pointer;text-align:center;transition:all 0.22s;}
+.id-type-btn.active{border-color:var(--gold);background:rgba(212,175,55,0.1);}
+.id-type-icon{font-size:1.2rem;margin-bottom:4px;}
+.id-type-name{font-family:'Cinzel',serif;font-size:0.72rem;font-weight:600;color:var(--text-light);}
+.id-type-btn.active .id-type-name{color:var(--gold-light);}
+.id-type-fmt{font-size:0.55rem;color:var(--purple-pale);margin-top:2px;}
+
+/* ID number input */
+.id-num-wrap{
+  background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.2);
+  border-radius:14px;padding:14px 16px;margin-bottom:14px;}
+.id-field{width:100%;background:rgba(45,10,78,0.6);border:1px solid rgba(212,175,55,0.2);
+  border-radius:10px;padding:12px 14px;font-family:'Cinzel',serif;
+  font-size:0.95rem;color:var(--text-light);outline:none;margin-top:8px;
+  letter-spacing:0.08em;}
+.id-field:focus{border-color:var(--gold);}
+
+/* DOB input */
+.dob-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;}
+.dob-field{background:rgba(45,10,78,0.6);border:1px solid rgba(212,175,55,0.2);
+  border-radius:10px;padding:11px 10px;font-family:'Cinzel',serif;
+  font-size:0.88rem;color:var(--text-light);outline:none;text-align:center;width:100%;}
+.dob-field:focus{border-color:var(--gold);}
+.dob-label{font-size:0.52rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--purple-pale);text-align:center;margin-top:4px;}
+
+/* Verification result */
+.verify-result{border-radius:16px;padding:20px;text-align:center;margin-bottom:14px;}
+.vr-pass{
+  background:linear-gradient(135deg,rgba(74,18,114,0.5),rgba(45,10,78,0.7));
+  border:1px solid rgba(0,200,83,0.4);}
+.vr-fail{
+  background:linear-gradient(135deg,rgba(100,0,20,0.5),rgba(60,0,10,0.7));
+  border:1px solid rgba(207,9,33,0.5);}
+.vr-icon{font-size:2.5rem;margin-bottom:10px;}
+.vr-title{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;margin-bottom:6px;}
+.vr-pass .vr-title{color:var(--agent-grn);}
+.vr-fail .vr-title{color:#FF4466;}
+.vr-detail{font-size:0.7rem;color:var(--purple-pale);line-height:1.5;}
+.vr-fail .vr-detail{color:rgba(255,100,120,0.8);}
+.vr-age{font-family:'Cinzel',serif;font-size:2rem;font-weight:700;
+  margin:10px 0 4px;}
+.vr-pass .vr-age{color:var(--gold-light);}
+.vr-fail .vr-age{color:#FF4466;}
+.vr-id-detail{background:rgba(45,10,78,0.4);border-radius:10px;padding:10px;
+  margin-top:12px;display:flex;flex-direction:column;gap:5px;}
+.vr-id-row{display:flex;justify-content:space-between;font-size:0.68rem;}
+.vr-id-lbl{color:var(--purple-pale);}
+.vr-id-val{font-family:'Cinzel',serif;font-weight:600;color:var(--text-light);}
+
+/* Hard block */
+.hard-block{
+  background:linear-gradient(135deg,rgba(120,0,20,0.6),rgba(70,0,12,0.8));
+  border:2px solid rgba(207,9,33,0.6);border-radius:16px;
+  padding:24px 20px;text-align:center;margin-bottom:14px;
+  animation:blockPulse 2s ease-in-out infinite;}
+@keyframes blockPulse{
+  0%,100%{box-shadow:0 0 20px rgba(207,9,33,0.2);}
+  50%{box-shadow:0 0 40px rgba(207,9,33,0.4);}}
+.hb-icon{font-size:3rem;margin-bottom:12px;display:block;}
+.hb-title{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;
+  color:#FF4466;margin-bottom:8px;letter-spacing:0.04em;}
+.hb-body{font-size:0.72rem;color:rgba(255,150,150,0.8);line-height:1.6;margin-bottom:14px;}
+.hb-age{font-family:'Cinzel',serif;font-size:2.4rem;font-weight:700;
+  color:#FF4466;display:block;margin:8px 0;text-shadow:0 0 20px rgba(255,50,80,0.4);}
+.hb-law{font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(255,100,120,0.6);padding:8px;
+  border:1px solid rgba(207,9,33,0.3);border-radius:8px;margin-top:10px;}
+
+/* Customer session badge (shows on ticket screen) */
+.cust-session{
+  background:linear-gradient(135deg,rgba(0,200,83,0.1),rgba(0,166,81,0.06));
+  border:1px solid rgba(0,200,83,0.3);border-radius:12px;
+  padding:10px 14px;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;}
+.cs-avatar{width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:0.75rem;font-weight:700;
+  color:var(--purple);flex-shrink:0;}
+.cs-info{flex:1;min-width:0;}
+.cs-name{font-family:'Cinzel',serif;font-size:0.82rem;font-weight:700;color:var(--text-light);}
+.cs-meta{font-size:0.58rem;color:var(--agent-grn);margin-top:1px;}
+.cs-change{font-size:0.58rem;color:var(--purple-pale);cursor:pointer;text-decoration:underline;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars" id="stars"></div>
+
+<div class="shell">
+  <div class="notch"></div>
+  <div class="statusbar">
+    <span style="font-family:'Cinzel',serif;font-size:0.64rem">9:41</span>
+    <span style="font-size:0.58rem;color:var(--purple-pale)">AGT-004 · SHIFT 1 &nbsp; ▐▐</span>
+  </div>
+
+  <!-- Gold marquee — identical to user app -->
+  <div class="marquee-wrap" id="marqueeBar" style="display:none">
+    <div class="marquee-inner">
+      <span>⭐ Agent Terminal — AGT-004 <span class="marquee-sep">|</span> Group 1 Jackpot <span class="marquee-sep">✦</span> <strong id="mJackpot">GHS 4,285,000</strong> <span class="marquee-sep">|</span> Daily Draw — 5:30 PM Today <span class="marquee-sep">✦</span> Monthly Draw — Last Friday <span class="marquee-sep">|</span> Commission Rate: 5% ⭐</span>
+      <span>⭐ Agent Terminal — AGT-004 <span class="marquee-sep">|</span> Group 1 Jackpot <span class="marquee-sep">✦</span> <strong>GHS 4,285,000</strong> <span class="marquee-sep">|</span> Daily Draw — 5:30 PM Today <span class="marquee-sep">✦</span> Monthly Draw — Last Friday <span class="marquee-sep">|</span> Commission Rate: 5% ⭐</span>
+    </div>
+  </div>
+
+  <!-- ══════════ LOGIN ══════════ -->
+  <div class="screen active" id="s-login">
+    <div class="login-wrap">
+      <div class="login-header">
+        <div class="login-badge-text">Ghana National Lottery Authority</div>
+        <div class="login-title">Agent POS</div>
+        <div class="login-sub">6/49 Golden Draw · Terminal v2.4</div>
+        <div class="ornament">
+          <div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line r"></div>
+        </div>
+      </div>
+      <div class="agent-id-card">
+        <div class="aid-label">✦ &nbsp; Agent ID</div>
+        <div class="aid-display">AGT — 004</div>
+        <div class="pin-row">
+          <div class="pin-dot" id="pd0">○</div>
+          <div class="pin-dot" id="pd1">○</div>
+          <div class="pin-dot" id="pd2">○</div>
+          <div class="pin-dot" id="pd3">○</div>
+        </div>
+      </div>
+      <div class="numpad">
+        <div class="np-btn" onclick="lp('1')">1</div>
+        <div class="np-btn" onclick="lp('2')">2</div>
+        <div class="np-btn" onclick="lp('3')">3</div>
+        <div class="np-btn" onclick="lp('4')">4</div>
+        <div class="np-btn" onclick="lp('5')">5</div>
+        <div class="np-btn" onclick="lp('6')">6</div>
+        <div class="np-btn" onclick="lp('7')">7</div>
+        <div class="np-btn" onclick="lp('8')">8</div>
+        <div class="np-btn" onclick="lp('9')">9</div>
+        <div class="np-btn del" onclick="lp('del')">⌫</div>
+        <div class="np-btn" onclick="lp('0')">0</div>
+        <div class="np-btn enter" onclick="lp('ok')">✓</div>
+      </div>
+      <div class="terminal-info">TRM-GH-0041 · Accra Central Branch</div>
+    </div>
+  </div>
+
+  <!-- ══════════ DASHBOARD ══════════ -->
+  <div class="screen" id="s-dash">
+    <div class="dash-hero">
+      <div class="agent-greeting">Shift 1 — Friday, 06 Jun 2026</div>
+      <div class="agent-name">Kwame <span>Asante!</span></div>
+      <div class="agent-meta">
+        <span class="agent-id-tag">AGT-004</span>
+        <span class="pill green">● Active</span>
+        <span style="font-size:0.6rem;color:var(--purple-pale)">Since 8:00 AM</span>
+      </div>
+    </div>
+    <div class="kente"></div>
+
+    <!-- Jackpot card -->
+    <div style="padding:14px 16px 0">
+      <div class="jackpot-card">
+        <div class="jackpot-label">✦ &nbsp; Group 1 Jackpot — Live &nbsp; ✦</div>
+        <div class="jackpot-amount" id="dashJP">GH₵ 4,285,000</div>
+        <div class="jackpot-desc">Daily Draw today at 5:30 PM · 38% of prize pool</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" style="padding-top:0;margin-top:0">
+      <div class="stat-card">
+        <div class="stat-icon">🎫</div>
+        <div class="stat-val gold">47</div>
+        <div class="stat-lbl">Tickets Sold</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-val grn">GH₵ 284</div>
+        <div class="stat-lbl">Today's Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-val blue">GH₵ 14.20</div>
+        <div class="stat-lbl">Commission</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-val gold">5:30 PM</div>
+        <div class="stat-lbl">Next Draw</div>
+      </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div style="padding:0 16px">
+      <div class="section-label">Quick Actions</div>
+      <div class="qa-grid">
+        <div class="qa-btn primary" onclick="goTo('s-kyc');resetKyc()">
+          <div class="qa-icon">🎟️</div>
+          <div class="qa-label">New Ticket</div>
+          <div class="qa-desc">Sell a 6/49 ticket</div>
+        </div>
+        <div class="qa-btn" onclick="goTo('s-check')">
+          <div class="qa-icon">🔍</div>
+          <div class="qa-label">Check Prize</div>
+          <div class="qa-desc">Verify winning ticket</div>
+        </div>
+        <div class="qa-btn" onclick="goTo('s-reports')">
+          <div class="qa-icon">📊</div>
+          <div class="qa-label">My Reports</div>
+          <div class="qa-desc">Sales & commissions</div>
+        </div>
+        <div class="qa-btn" onclick="toast('⚙️ Settings coming soon')">
+          <div class="qa-icon">⚙️</div>
+          <div class="qa-label">Settings</div>
+          <div class="qa-desc">Terminal & account</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent -->
+    <div style="padding:14px 16px 0">
+      <div class="section-label">Recent Tickets</div>
+      <div class="recent-item">
+        <div class="ri-icon">🎫</div>
+        <div class="ri-info">
+          <div class="ri-name">Daily Draw — 05, 12, 23, 31, 44, 49</div>
+          <div class="ri-meta"><span class="pill gold">Daily</span>&nbsp;10:42 AM · 1 line</div>
+        </div>
+        <div class="ri-amt">+GH₵ 5</div>
+      </div>
+      <div class="recent-item">
+        <div class="ri-icon">🎫</div>
+        <div class="ri-info">
+          <div class="ri-name">Monthly Draw — 03, 07, 19, 28, 36, 47</div>
+          <div class="ri-meta"><span class="pill blue">Monthly</span>&nbsp;10:28 AM · 2 lines</div>
+        </div>
+        <div class="ri-amt">+GH₵ 10</div>
+      </div>
+      <div class="recent-item">
+        <div class="ri-icon">🎫</div>
+        <div class="ri-info">
+          <div class="ri-name">Daily Draw — Quick Pick × 3 lines</div>
+          <div class="ri-meta"><span class="pill gold">Daily</span>&nbsp;9:55 AM · 3 lines</div>
+        </div>
+        <div class="ri-amt">+GH₵ 15</div>
+      </div>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+
+  <!-- ══════════ NEW TICKET ══════════ -->
+  <div class="screen" id="s-ticket">
+    <div class="page-header">
+      <div class="back-btn" onclick="goTo('s-dash')">‹</div>
+      <div>
+        <div class="page-title">New Ticket</div>
+        <div class="page-sub">6/49 — The Golden Draw</div>
+      </div>
+      <div style="margin-left:auto"><span class="pill gold">GH₵ 4.28M</span></div>
+    </div>
+    <div class="kente"></div>
+
+    <div style="padding:14px 16px 0">
+      <!-- Customer session badge -->
+      <div class="cust-session" id="custSessionBadge" style="display:none">
+        <div class="cs-avatar" id="csBadgeAvatar">KM</div>
+        <div class="cs-info">
+          <div class="cs-name" id="csBadgeName">Kofi Mensah</div>
+          <div class="cs-meta" id="csBadgeMeta">Age 36 · KYC Verified ✓</div>
+        </div>
+        <span class="cs-change" onclick="goTo('s-kyc');resetKyc()">Change</span>
+      </div>
+
+      <!-- Draw type -->
+      <div class="section-label">Select Draw Type</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <div class="draw-option active" id="dt-daily" onclick="selDraw('daily')">
+          <div class="draw-icon">🌅</div>
+          <div class="draw-name">Daily Draw</div>
+          <div class="draw-time">Every day · 5:30 PM</div>
+          <div class="active-dot"></div>
+        </div>
+        <div class="draw-option" id="dt-monthly" onclick="selDraw('monthly')">
+          <div class="draw-icon">🌕</div>
+          <div class="draw-name">Monthly Draw</div>
+          <div class="draw-time">Last Friday · 5:30 PM</div>
+          <div class="active-dot"></div>
+        </div>
+      </div>
+
+      <!-- Lines -->
+      <div class="lines-ctrl">
+        <div>
+          <div class="lc-lbl">Number of Lines</div>
+          <div class="lc-sub">Each line = 6 numbers · GH₵1 min</div>
+        </div>
+        <div class="lc-ctrl">
+          <button class="lc-btn" onclick="changeLines(-1)">−</button>
+          <div class="lc-val" id="linesVal">1</div>
+          <button class="lc-btn" onclick="changeLines(1)">+</button>
+        </div>
+      </div>
+
+      <!-- Number section -->
+      <div class="section-label">Pick Your Numbers</div>
+
+      <!-- Count + clear -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-family:'Cinzel',serif;font-size:0.78rem;color:var(--gold)">
+          Selected: <span id="cntDisplay" style="font-size:1.1rem;font-weight:700">0</span> / 6
+        </div>
+        <button class="ta-btn clr" onclick="clearNums()" style="width:auto;padding:5px 12px">Clear All</button>
+      </div>
+
+      <!-- Selected display -->
+      <div class="sel-display" id="selDisplay">
+        <span class="sel-hint">Tap numbers below to select</span>
+      </div>
+
+      <!-- Quick pick -->
+      <div class="ticket-actions">
+        <button class="ta-btn qp" onclick="quickPick()">🎲 &nbsp; Quick Pick</button>
+        <button class="ta-btn clr" onclick="clearNums()">✕ &nbsp; Clear All</button>
+      </div>
+
+      <!-- Grid -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px" id="numGrid"></div>
+
+      <!-- Stake -->
+      <div class="stake-section">
+        <div class="stake-row-flex">
+          <div>
+            <div class="stake-lbl">✦ &nbsp; Stake Per Line</div>
+            <div class="stake-ctrls">
+              <button class="sc-btn" onclick="changeStake(-1)">−</button>
+              <div class="stake-amt" id="stakeAmt">GH₵ 5.00</div>
+              <button class="sc-btn" onclick="changeStake(1)">+</button>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="stake-lbl">Min. Stake</div>
+            <div style="font-family:'Cinzel',serif;font-size:0.82rem;color:var(--purple-pale);margin-top:6px">GH₵ 1.00</div>
+          </div>
+        </div>
+        <div class="divider-line"></div>
+        <div class="total-row">
+          <div>
+            <div class="total-lbl">Total Amount</div>
+            <div class="total-breakdown" id="totalBreakdown">1 line × GH₵5.00</div>
+          </div>
+          <div class="total-amt" id="totalAmt">GH₵ 5.00</div>
+        </div>
+      </div>
+
+      <button class="gold-btn" onclick="proceedPayment()" style="margin-bottom:16px">
+        💳 &nbsp; Proceed to Payment
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════ PAYMENT ══════════ -->
+  <div class="screen" id="s-payment">
+    <div class="page-header">
+      <div class="back-btn" onclick="goTo('s-ticket')">‹</div>
+      <div>
+        <div class="page-title">Payment</div>
+        <div class="page-sub">Confirm & Collect</div>
+      </div>
+    </div>
+    <div class="kente"></div>
+
+    <div style="padding:14px 16px 0">
+      <div class="section-label">Ticket Summary</div>
+      <div class="ticket-preview">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div>
+            <div class="tp-title">6/49 GOLDEN DRAW</div>
+            <div class="tp-serial" id="tpSerial">TKT-2026-06-06-00048</div>
+          </div>
+          <span class="pill gold" id="tpDrawType">Daily Draw</span>
+        </div>
+        <div style="font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:600">✦ Selected Numbers</div>
+        <div class="tp-numbers" id="tpNumbers"></div>
+        <div class="tp-row"><span class="tp-row-lbl">Lines</span><span class="tp-row-val" id="tpLines">1 line</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Stake per line</span><span class="tp-row-val" id="tpStakeLine">GH₵ 5.00</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Draw Date</span><span class="tp-row-val">Fri, 06 Jun 2026 · 5:30 PM</span></div>
+        <div class="tp-row" style="padding-top:8px;border-top:1px solid rgba(212,175,55,0.15);border-bottom:none;margin-top:4px">
+          <span style="font-family:'Cinzel',serif;font-weight:700;color:var(--text-light)">Total Due</span>
+          <span style="font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:var(--gold-light)" id="tpTotal">GH₵ 5.00</span>
+        </div>
+        <div class="barcode-area">
+          <div class="barcode-bars" id="barcodeViz"></div>
+          <div class="barcode-num">2026-06-06-TKT-00048</div>
+        </div>
+      </div>
+
+      <div class="section-label">Payment Method</div>
+      <div class="pay-methods">
+        <div class="pm-btn active" id="pm-cash" onclick="selPayment('cash')">
+          <div class="pm-icon">💵</div>
+          <div class="pm-name">Cash</div>
+          <div class="pm-dot"></div>
+        </div>
+        <div class="pm-btn" id="pm-momo" onclick="selPayment('momo')">
+          <div class="pm-icon">📱</div>
+          <div class="pm-name">Mobile Money</div>
+          <div class="pm-dot"></div>
+        </div>
+      </div>
+
+      <div class="cash-calc" id="cashCalc">
+        <div class="cc-row"><span class="cc-lbl">Amount Due</span><span class="cc-val" id="ccDue">GH₵ 5.00</span></div>
+        <div class="cc-row"><span class="cc-lbl">Tendered</span><span class="cc-val" id="ccTendered">GH₵ 0.00</span></div>
+        <div class="cc-row"><span class="cc-lbl">Change</span><span class="cc-val change" id="ccChange">GH₵ 0.00</span></div>
+        <input class="cc-input" type="number" placeholder="Enter amount received…" id="cashInput" oninput="calcChange()">
+      </div>
+
+      <div class="momo-input" id="momoInput">
+        <div class="momo-lbl">✦ &nbsp; Customer Mobile Money Number</div>
+        <div class="momo-field">
+          <span class="momo-prefix">+233</span>
+          <input class="momo-num" type="tel" placeholder="XX XXX XXXX" maxlength="10">
+        </div>
+      </div>
+
+      <button class="green-btn" onclick="confirmSale()" style="margin-bottom:16px">
+        ✅ &nbsp; Confirm Sale & Print Ticket
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════ CONFIRMATION ══════════ -->
+  <div class="screen" id="s-confirm">
+    <div class="confirm-hero">
+      <div class="confirm-icon">✓</div>
+      <div class="confirm-title">Ticket Sold!</div>
+      <div class="confirm-sub">Transaction successful</div>
+      <div class="confirm-amount" id="confAmt">GH₵ 5.00</div>
+      <div class="confirm-meta" id="confMeta">Received via Cash · Change GH₵ 0.00</div>
+      <div class="ornament" style="margin-top:12px">
+        <div class="orn-line"></div><div class="orn-diamond"></div><div class="orn-line r"></div>
+      </div>
+    </div>
+    <div class="kente"></div>
+
+    <div style="padding:14px 16px 0">
+      <div class="section-label">Receipt</div>
+      <div class="ticket-preview">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed rgba(212,175,55,0.18)">
+          <div>
+            <div class="tp-title">NLA · 6/49 Golden Draw</div>
+            <div class="tp-serial" id="ptRef">TKT-2026-06-06-00048</div>
+          </div>
+          <span class="pill green">SOLD</span>
+        </div>
+        <div style="font-size:0.6rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;font-weight:600">✦ Numbers Played</div>
+        <div class="tp-numbers" id="confNumbers" style="margin-bottom:14px"></div>
+        <div class="tp-row"><span class="tp-row-lbl">Draw</span><span class="tp-row-val" id="confDraw">Daily · 06 Jun 2026</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Agent</span><span class="tp-row-val">Kwame Asante · AGT-004</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Terminal</span><span class="tp-row-val">TRM-GH-0041</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Issued</span><span class="tp-row-val">06 Jun 2026 · 10:42 AM</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Stake</span><span class="tp-row-val" id="confStake">GH₵ 5.00</span></div>
+        <div class="barcode-area">
+          <div class="barcode-bars" id="confBarcode"></div>
+          <div class="barcode-num" id="confBarcodeNum">2026-06-06-TKT-00048</div>
+          <div style="font-size:0.55rem;color:rgba(196,160,232,0.5);margin-top:4px;text-align:center">Check results at myfuture.nla.gov.gh or any NLA outlet</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <button class="gold-btn" onclick="goTo('s-ticket');resetTicket()">🎟️ &nbsp; Sell Another Ticket</button>
+        <button class="ghost-btn" onclick="toast('🖨️ Sending to printer…')">🖨️ &nbsp; Reprint Receipt</button>
+        <button class="ghost-btn" onclick="toast('📱 SMS sent to customer')">📱 &nbsp; Send via SMS</button>
+        <button class="ghost-btn" onclick="goTo('s-dash')" style="color:var(--purple-pale);border-color:rgba(196,160,232,0.2)">🏠 &nbsp; Back to Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ PRIZE CHECK ══════════ -->
+  <div class="screen" id="s-check">
+    <div class="page-header">
+      <div class="back-btn" onclick="goTo('s-dash')">‹</div>
+      <div>
+        <div class="page-title">Prize Checker</div>
+        <div class="page-sub">Verify Winning Tickets</div>
+      </div>
+    </div>
+    <div class="kente"></div>
+
+    <div style="padding:16px">
+      <div class="scan-box" onclick="toast('📷 Camera scanner coming soon')">
+        <div class="scan-icon">📷</div>
+        <div class="scan-lbl">Scan Ticket Barcode</div>
+        <div class="scan-sub">Tap to open camera scanner</div>
+      </div>
+      <div class="or-divider">or enter manually</div>
+      <div class="ticket-num-input">
+        <input class="tni" type="text" placeholder="e.g. 2026-06-05-TKT-00031" id="checkInput">
+        <button class="ta-btn qp" onclick="checkPrize()" style="width:auto;padding:8px 14px;white-space:nowrap">Check</button>
+      </div>
+
+      <!-- Win result -->
+      <div class="check-result cr-win" id="crWin" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <span style="font-size:1.4rem">🏆</span>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:1rem;font-weight:700;color:var(--agent-grn)">Winner!</div>
+            <div style="font-size:0.6rem;color:var(--purple-pale)">Ticket: 2026-06-05-TKT-00031</div>
+          </div>
+          <span class="pill green" style="margin-left:auto">Group 4</span>
+        </div>
+        <div class="tp-row"><span class="tp-row-lbl">Numbers Matched</span><span class="tp-row-val" style="color:var(--agent-grn)">3 of 6</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Prize Group</span><span class="tp-row-val">Group 4</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Prize Amount</span><span style="font-family:'Cinzel',serif;font-weight:700;color:var(--gold-light);font-size:1rem">GH₵ 200.00</span></div>
+        <button class="green-btn" style="margin-top:12px;font-size:0.85rem" onclick="toast('💰 Processing payout…')">
+          💰 &nbsp; Process Payout — GH₵ 200.00
+        </button>
+      </div>
+
+      <!-- No win result -->
+      <div class="check-result cr-lose" id="crLose" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-size:1.3rem">😔</span>
+          <div>
+            <div style="font-family:'Cinzel',serif;font-size:0.9rem;font-weight:700;color:var(--text-light)">No Prize</div>
+            <div style="font-size:0.6rem;color:var(--purple-pale)">This ticket did not win in the draw</div>
+          </div>
+        </div>
+        <div class="tp-row"><span class="tp-row-lbl">Draw Date</span><span class="tp-row-val">05 Jun 2026 · Daily Draw</span></div>
+        <div class="tp-row"><span class="tp-row-lbl">Numbers Matched</span><span class="tp-row-val">2 of 6</span></div>
+      </div>
+
+      <!-- Last winning numbers -->
+      <div class="section-label" style="margin-top:4px">Last Draw — Winning Numbers</div>
+      <div style="background:linear-gradient(135deg,rgba(74,18,114,0.5),rgba(45,10,78,0.7));border:1px solid rgba(212,175,55,0.2);border-radius:14px;padding:14px 16px">
+        <div style="font-size:0.6rem;color:var(--purple-pale);margin-bottom:10px;letter-spacing:0.1em;text-transform:uppercase">Daily Draw · 05 Jun 2026</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <div class="sel-pill">07</div><div class="sel-pill">14</div>
+          <div class="sel-pill">22</div><div class="sel-pill">31</div>
+          <div class="sel-pill">38</div><div class="sel-pill">46</div>
+        </div>
+        <div style="font-size:0.62rem;color:var(--purple-pale);margin-top:10px">
+          Bonus: <span style="color:var(--gold);font-family:'Cinzel',serif;font-weight:600">33</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ REPORTS ══════════ -->
+  <div class="screen" id="s-reports">
+    <div class="page-header">
+      <div class="back-btn" onclick="goTo('s-dash')">‹</div>
+      <div>
+        <div class="page-title">My Reports</div>
+        <div class="page-sub">Sales & Commission</div>
+      </div>
+    </div>
+    <div class="kente"></div>
+
+    <div style="padding-top:14px">
+      <div class="report-period">
+        <div class="rp-tab on">Today</div>
+        <div class="rp-tab">This Week</div>
+        <div class="rp-tab">This Month</div>
+        <div class="rp-tab">Custom</div>
+      </div>
+
+      <div class="commission-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="cc-title">Commission Summary</div>
+          <span class="pill green">5% Rate</span>
+        </div>
+        <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,83,0.4),transparent);margin:10px 0"></div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div class="tp-row"><span class="tp-row-lbl">Total Sales</span><span class="tp-row-val">GH₵ 284.00</span></div>
+          <div class="tp-row"><span class="tp-row-lbl">Tickets Sold</span><span class="tp-row-val">47</span></div>
+          <div class="tp-row"><span class="tp-row-lbl">Commission (5%)</span><span style="font-family:'Cinzel',serif;font-weight:700;color:var(--agent-grn)">GH₵ 14.20</span></div>
+          <div class="tp-row"><span class="tp-row-lbl">Void Transactions</span><span class="tp-row-val">2</span></div>
+          <div class="tp-row" style="border:none"><span class="tp-row-lbl">Payout Processed</span><span class="tp-row-val">GH₵ 200.00</span></div>
+        </div>
+      </div>
+
+      <div class="report-summary">
+        <div class="rs-card"><div class="rs-val">47</div><div class="rs-lbl">Tickets</div></div>
+        <div class="rs-card"><div class="rs-val" style="color:var(--agent-grn)">GH₵ 284</div><div class="rs-lbl">Revenue</div></div>
+        <div class="rs-card"><div class="rs-val" style="color:var(--gold-light)">14.20</div><div class="rs-lbl">Commission</div></div>
+      </div>
+
+      <div style="padding:0 16px">
+        <div class="section-label">Today's Transactions</div>
+        <div class="tx-item">
+          <div class="txi-icon">🎫</div>
+          <div class="txi-info">
+            <div class="txi-name">Ticket #TKT-00048 — 1 Line</div>
+            <div class="txi-meta"><span class="pill gold">Daily</span>&nbsp;10:42 AM · Cash</div>
+          </div>
+          <div class="txi-amt">GH₵ 5</div>
+        </div>
+        <div class="tx-item">
+          <div class="txi-icon">🎫</div>
+          <div class="txi-info">
+            <div class="txi-name">Ticket #TKT-00047 — 2 Lines</div>
+            <div class="txi-meta"><span class="pill blue">Monthly</span>&nbsp;10:28 AM · MoMo</div>
+          </div>
+          <div class="txi-amt">GH₵ 10</div>
+        </div>
+        <div class="tx-item">
+          <div class="txi-icon">🎫</div>
+          <div class="txi-info">
+            <div class="txi-name">Ticket #TKT-00046 — 3 Lines (QP)</div>
+            <div class="txi-meta"><span class="pill gold">Daily</span>&nbsp;9:55 AM · Cash</div>
+          </div>
+          <div class="txi-amt">GH₵ 15</div>
+        </div>
+        <div class="tx-item">
+          <div class="txi-icon" style="background:rgba(207,9,33,0.15);border:1px solid rgba(207,9,33,0.2)">❌</div>
+          <div class="txi-info">
+            <div class="txi-name">Ticket #TKT-00045 — VOIDED</div>
+            <div class="txi-meta"><span class="pill red">Void</span>&nbsp;9:40 AM</div>
+          </div>
+          <div class="txi-amt" style="color:#FF5577">—</div>
+        </div>
+        <div class="tx-item">
+          <div class="txi-icon">🎫</div>
+          <div class="txi-info">
+            <div class="txi-name">Ticket #TKT-00044 — 5 Lines</div>
+            <div class="txi-meta"><span class="pill gold">Daily</span>&nbsp;9:20 AM · Cash</div>
+          </div>
+          <div class="txi-amt">GH₵ 25</div>
+        </div>
+      </div>
+      <div style="height:10px"></div>
+    </div>
+  </div>
+
+  <!-- ══════════ KYC VERIFICATION ══════════ -->
+  <div class="screen" id="s-kyc">
+    <div class="page-header">
+      <div class="back-btn" onclick="goTo('s-dash')">‹</div>
+      <div>
+        <div class="page-title">Customer Verification</div>
+        <div class="page-sub">KYC — Age Check Required</div>
+      </div>
+      <div style="margin-left:auto"><span class="pill red">18+ Only</span></div>
+    </div>
+    <div class="kente"></div>
+
+    <div style="padding:14px 16px 0">
+
+      <!-- Step indicator -->
+      <div class="step-bar">
+        <div class="step-node">
+          <div class="step-circle active" id="sc1">1</div>
+          <div class="step-lbl active" id="sl1">Lookup</div>
+        </div>
+        <div class="step-line" id="sline1"></div>
+        <div class="step-node">
+          <div class="step-circle" id="sc2">2</div>
+          <div class="step-lbl" id="sl2">ID Check</div>
+        </div>
+        <div class="step-line" id="sline2"></div>
+        <div class="step-node">
+          <div class="step-circle" id="sc3">3</div>
+          <div class="step-lbl" id="sl3">Verified</div>
+        </div>
+      </div>
+
+      <!-- ── STEP 1: Phone Lookup ── -->
+      <div class="kyc-step active" id="kyc-step1">
+        <div class="section-label">Customer Phone Lookup</div>
+        <div style="background:linear-gradient(135deg,rgba(74,18,114,0.4),rgba(45,10,78,0.6));border:1px solid rgba(212,175,55,0.2);border-radius:14px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:0.68rem;color:var(--purple-pale);line-height:1.6;">
+            Enter the customer's mobile number to check if they are already verified. 
+            Returning verified customers can proceed immediately. New customers must complete ID verification.
+          </div>
+        </div>
+        <div class="phone-input-wrap">
+          <div class="phi-label">✦ &nbsp; Customer Mobile Number</div>
+          <div class="phi-row">
+            <span class="phi-prefix">+233</span>
+            <input class="phi-input" type="tel" placeholder="XX XXX XXXX" id="kycPhone" maxlength="10">
+          </div>
+        </div>
+        <button class="gold-btn" onclick="lookupCustomer()" style="margin-bottom:10px">
+          🔍 &nbsp; Look Up Customer
+        </button>
+        <button class="ghost-btn" onclick="kycStep(2)">
+          ➕ &nbsp; New Customer — Verify ID
+        </button>
+
+        <!-- Found: verified customer -->
+        <div id="kycFoundVerified" style="display:none;margin-top:14px">
+          <div class="section-label">Customer Found</div>
+          <div class="customer-card">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div class="cust-avatar" id="kycAvatarInitials">KA</div>
+              <div>
+                <div class="cust-name" id="kycFoundName">Kofi Mensah</div>
+                <div class="cust-meta" id="kycFoundMeta">DOB: 15 Mar 1990 · Age: 36 · GHA-001234567-8</div>
+              </div>
+            </div>
+            <div class="verified-badge" style="margin-top:10px">
+              <span class="vb-icon">✓</span>
+              <span class="vb-text">KYC Verified · 18+ Confirmed</span>
+            </div>
+          </div>
+          <button class="gold-btn" onclick="proceedWithCustomer()" style="margin-bottom:8px">
+            ✅ &nbsp; Proceed to Ticket
+          </button>
+          <button class="ghost-btn" onclick="kycStep(2)">
+            🔄 &nbsp; Different Customer — New Verification
+          </button>
+        </div>
+
+        <!-- Not found -->
+        <div id="kycNotFound" style="display:none;margin-top:14px">
+          <div style="background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.2);border-radius:12px;padding:12px 14px;text-align:center">
+            <div style="font-size:0.9rem;font-family:'Cinzel',serif;color:var(--text-light);margin-bottom:4px">Customer Not Found</div>
+            <div style="font-size:0.65rem;color:var(--purple-pale)">This number is not registered. Please complete ID verification below.</div>
+          </div>
+          <button class="gold-btn" onclick="kycStep(2)" style="margin-top:12px">
+            📋 &nbsp; Proceed to ID Verification
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: ID Verification ── -->
+      <div class="kyc-step" id="kyc-step2">
+        <div class="section-label">Select ID Type</div>
+        <div class="id-type-grid">
+          <div class="id-type-btn active" id="idt-ghana" onclick="selIdType('ghana')">
+            <div class="id-type-icon">🪪</div>
+            <div class="id-type-name">Ghana Card</div>
+            <div class="id-type-fmt">GHA-XXXXXXXXXX-X</div>
+          </div>
+          <div class="id-type-btn" id="idt-voter" onclick="selIdType('voter')">
+            <div class="id-type-icon">🗳️</div>
+            <div class="id-type-name">Voter ID</div>
+            <div class="id-type-fmt">EC/XXXXXXXXX</div>
+          </div>
+          <div class="id-type-btn" id="idt-passport" onclick="selIdType('passport')">
+            <div class="id-type-icon">📘</div>
+            <div class="id-type-name">Passport</div>
+            <div class="id-type-fmt">GHA-XXXXXXXXX</div>
+          </div>
+          <div class="id-type-btn" id="idt-driver" onclick="selIdType('driver')">
+            <div class="id-type-icon">🚗</div>
+            <div class="id-type-name">Driver's Licence</div>
+            <div class="id-type-fmt">DVLA-XXXXXXXXX</div>
+          </div>
+        </div>
+
+        <div class="section-label">ID Number</div>
+        <div class="id-num-wrap">
+          <div class="phi-label">✦ &nbsp; Enter ID Number</div>
+          <input class="id-field" type="text" placeholder="GHA-XXXXXXXXXX-X" id="idNumInput">
+        </div>
+
+        <div class="section-label">Date of Birth</div>
+        <div class="id-num-wrap">
+          <div class="phi-label">✦ &nbsp; Customer's Date of Birth</div>
+          <div style="font-size:0.62rem;color:var(--purple-pale);margin-bottom:8px">
+            Must match ID document exactly. Agent is responsible for accuracy.
+          </div>
+          <div class="dob-row">
+            <div>
+              <input class="dob-field" type="number" placeholder="DD" min="1" max="31" id="dobDay">
+              <div class="dob-label">Day</div>
+            </div>
+            <div>
+              <input class="dob-field" type="number" placeholder="MM" min="1" max="12" id="dobMonth">
+              <div class="dob-label">Month</div>
+            </div>
+            <div>
+              <input class="dob-field" type="number" placeholder="YYYY" min="1900" max="2025" id="dobYear">
+              <div class="dob-label">Year</div>
+            </div>
+          </div>
+          <div style="margin-top:10px;font-size:0.62rem;color:var(--purple-pale);display:flex;align-items:center;gap:6px">
+            <span style="color:var(--gold)">⚠</span>
+            Providing false age information is a criminal offence under the National Lottery Authority Act.
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <button class="gold-btn" onclick="verifyAge()">
+            🔐 &nbsp; Verify Age & Identity
+          </button>
+          <button class="ghost-btn" onclick="kycStep(1)">
+            ‹ &nbsp; Back to Phone Lookup
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3A: PASS ── -->
+      <div class="kyc-step" id="kyc-step3-pass">
+        <div class="verify-result vr-pass">
+          <div class="vr-icon">✅</div>
+          <div class="vr-title">Age Verified</div>
+          <div class="vr-age" id="vrAge">36 Years Old</div>
+          <div class="vr-detail">Customer meets the minimum age requirement of 18 years. Identity confirmed against <span id="vrIdType">Ghana Card</span>.</div>
+          <div class="vr-id-detail">
+            <div class="vr-id-row"><span class="vr-id-lbl">Full Name</span><span class="vr-id-val" id="vrName">Kofi Asante Mensah</span></div>
+            <div class="vr-id-row"><span class="vr-id-lbl">Date of Birth</span><span class="vr-id-val" id="vrDob">15 March 1990</span></div>
+            <div class="vr-id-row"><span class="vr-id-lbl">ID Number</span><span class="vr-id-val" id="vrIdNum">GHA-1234567890-1</span></div>
+            <div class="vr-id-row"><span class="vr-id-lbl">Verified By</span><span class="vr-id-val">Agent AGT-004 · 06 Jun 2026</span></div>
+          </div>
+          <div class="verified-badge" style="margin:12px auto 0;width:fit-content">
+            <span class="vb-icon">✓</span>
+            <span class="vb-text">KYC Complete — Ready to Play</span>
+          </div>
+        </div>
+
+        <div style="background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.15);border-radius:12px;padding:12px;margin-bottom:14px;">
+          <div style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px;">✦ Agent Declaration</div>
+          <div style="font-size:0.62rem;color:var(--purple-pale);line-height:1.6;">
+            By proceeding, Agent AGT-004 confirms they have physically sighted and verified the customer's ID document, and that the information entered matches the document presented.
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <button class="gold-btn" onclick="proceedWithCustomer()">
+            🎟️ &nbsp; Proceed to Ticket
+          </button>
+          <button class="ghost-btn" onclick="kycStep(1)">
+            🔄 &nbsp; Verify Different Customer
+          </button>
+        </div>
+      </div>
+
+      <!-- ── STEP 3B: FAIL — Hard Block ── -->
+      <div class="kyc-step" id="kyc-step3-fail">
+        <div class="hard-block">
+          <span class="hb-icon">🚫</span>
+          <div class="hb-title">Sale Blocked — Underage Customer</div>
+          <span class="hb-age" id="hbAge">16 Years Old</span>
+          <div class="hb-body">
+            This customer does not meet the minimum age requirement of <strong>18 years</strong> to participate in NLA lottery games.<br><br>
+            This transaction <strong>cannot proceed</strong>. Selling lottery tickets to minors is a criminal offence.
+          </div>
+          <div class="hb-law">
+            NLA Act 2006 (Act 722) · Section 29 — Minimum age: 18 years<br>
+            Penalty: Fine + suspension of Agent licence
+          </div>
+        </div>
+
+        <div style="background:rgba(45,10,78,0.4);border:1px solid rgba(212,175,55,0.18);border-radius:12px;padding:12px;margin-bottom:14px;">
+          <div style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--warn);font-weight:600;margin-bottom:6px;">⚠ This Attempt Has Been Logged</div>
+          <div style="font-size:0.62rem;color:var(--purple-pale);line-height:1.5;">
+            ID: <span id="loggedId" style="font-family:'Cinzel',serif;color:var(--text-light)">GHA-XXXXXXXXXX-X</span><br>
+            Agent: AGT-004 · Terminal: TRM-GH-0041<br>
+            Time: 06 Jun 2026 · 10:44 AM<br>
+            Status: Blocked — Under 18
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+          <button class="ghost-btn" onclick="kycStep(1)" style="border-color:rgba(207,9,33,0.3);color:#FF6688">
+            🔄 &nbsp; Verify Different Customer
+          </button>
+          <button class="ghost-btn" onclick="goTo('s-dash')">
+            🏠 &nbsp; Back to Dashboard
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav" id="mainNav" style="display:none">
+    <div class="ni on" id="nav-dash" onclick="goTo('s-dash')">
+      <span class="ni-icon">🏠</span><span class="ni-label">Home</span>
+    </div>
+    <div class="ni" id="nav-ticket" onclick="goTo('s-kyc');resetKyc()">
+      <span class="ni-icon">🎟️</span><span class="ni-label">New Ticket</span>
+    </div>
+    <div class="ni" id="nav-check" onclick="goTo('s-check')">
+      <span class="ni-icon">🔍</span><span class="ni-label">Prize Check</span>
+    </div>
+    <div class="ni" id="nav-reports" onclick="goTo('s-reports')">
+      <span class="ni-icon">📊</span><span class="ni-label">Reports</span>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<!-- Toast -->
+<div id="toastEl" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:linear-gradient(135deg,rgba(74,18,114,0.95),rgba(45,10,78,0.97));
+  border:1px solid rgba(212,175,55,0.35);color:var(--text-light);
+  font-family:'Cinzel',serif;font-size:0.78rem;letter-spacing:0.06em;
+  padding:12px 22px;border-radius:100px;z-index:2000;white-space:nowrap;
+  box-shadow:0 8px 30px rgba(0,0,0,0.5),var(--shadow-gold);
+  transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;"></div>
+
+<script>
+// ── Stars ──────────────────────────────────────────────
+const starsEl = document.getElementById('stars');
+for(let i=0;i<60;i++){
+  const s=document.createElement('div'); s.className='star';
+  const sz=(Math.random()*2.5+0.5).toFixed(1);
+  s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;
+    --dur:${(Math.random()*4+2).toFixed(1)}s;--delay:${(Math.random()*5).toFixed(1)}s;
+    --opacity:${(Math.random()*0.5+0.2).toFixed(2)};`;
+  starsEl.appendChild(s);
+}
+
+// ── State ──────────────────────────────────────────────
+const navScreens=['s-dash','s-kyc','s-check','s-reports'];
+const navIds=['nav-dash','nav-ticket','nav-check','nav-reports'];
+let currentScreen='s-login', selectedNums=new Set(),
+    currentLines=1, currentDraw='daily',
+    stakeIdx=2, paymentMethod='cash', pinEntry='';
+const STAKES=[1,2,5,10,20,50,100];
+
+// ── Jackpot ticker ─────────────────────────────────────
+let jackpot=4285000;
+setInterval(()=>{
+  jackpot+=Math.floor(Math.random()*380+80);
+  const f='GH₵ '+jackpot.toLocaleString();
+  ['dashJP'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=f;});
+  const mj=document.getElementById('mJackpot');
+  if(mj) mj.textContent='GHS '+jackpot.toLocaleString();
+},3800);
+
+// ── Navigation ─────────────────────────────────────────
+function goTo(id){
+  if(id===currentScreen)return;
+  const prev=document.getElementById(currentScreen);
+  const next=document.getElementById(id);
+  prev.classList.remove('active'); prev.style.display='none';
+  next.style.display='flex'; next.classList.add('in');
+  setTimeout(()=>next.classList.remove('in'),400);
+  next.classList.add('active');
+  currentScreen=id; next.scrollTop=0;
+  const nav=document.getElementById('mainNav');
+  const mb=document.getElementById('marqueeBar');
+  if(id==='s-login'){nav.style.display='none';mb.style.display='none';}
+  else{
+    nav.style.display='flex'; mb.style.display='block';
+    navIds.forEach((nid,i)=>document.getElementById(nid).classList.toggle('on',navScreens[i]===id));
+  }
+}
+
+// ── Login PIN ──────────────────────────────────────────
+function lp(v){
+  if(v==='del'){ pinEntry=pinEntry.slice(0,-1); }
+  else if(v==='ok'){ if(pinEntry.length===4)doLogin(); return; }
+  else { if(pinEntry.length>=4)return; pinEntry+=v; }
+  ['pd0','pd1','pd2','pd3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(i<pinEntry.length){el.textContent='●';el.classList.add('filled');}
+    else{el.textContent='○';el.classList.remove('filled');}
+  });
+  if(pinEntry.length===4)setTimeout(doLogin,350);
+}
+function doLogin(){toast('✦ Welcome back, Kwame Asante!');setTimeout(()=>goTo('s-dash'),600);}
+
+// ── Draw selection ─────────────────────────────────────
+function selDraw(t){
+  currentDraw=t;
+  document.getElementById('dt-daily').classList.toggle('active',t==='daily');
+  document.getElementById('dt-monthly').classList.toggle('active',t==='monthly');
+}
+
+// ── Lines ──────────────────────────────────────────────
+function changeLines(d){
+  currentLines=Math.max(1,Math.min(10,currentLines+d));
+  document.getElementById('linesVal').textContent=currentLines;
+  updateTotal();
+}
+
+// ── Number grid ────────────────────────────────────────
+const grid=document.getElementById('numGrid');
+for(let i=1;i<=49;i++){
+  const b=document.createElement('button');
+  b.className='nb'; b.id='n'+i; b.textContent=i<10?'0'+i:i;
+  b.onclick=()=>toggleNum(i); grid.appendChild(b);
+}
+function toggleNum(n){
+  if(selectedNums.has(n)){selectedNums.delete(n);document.getElementById('n'+n).classList.remove('sel');}
+  else{
+    if(selectedNums.size>=6){toast('Maximum 6 numbers per line');return;}
+    selectedNums.add(n);document.getElementById('n'+n).classList.add('sel');
+  }
+  document.querySelectorAll('.nb').forEach(b=>{
+    if(!b.classList.contains('sel'))b.classList.toggle('dis',selectedNums.size>=6);
+  });
+  renderSel();
+}
+function renderSel(){
+  const d=document.getElementById('selDisplay');
+  document.getElementById('cntDisplay').textContent=selectedNums.size;
+  d.innerHTML='';
+  if(!selectedNums.size){d.innerHTML='<span class="sel-hint">Tap numbers below to select</span>';return;}
+  [...selectedNums].sort((a,b)=>a-b).forEach(n=>{
+    const p=document.createElement('div'); p.className='sel-pill';
+    p.textContent=n<10?'0'+n:n; d.appendChild(p);
+  });
+}
+function quickPick(){
+  clearNums();
+  const pool=[...Array(49)].map((_,i)=>i+1);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  pool.slice(0,6).forEach(n=>{selectedNums.add(n);document.getElementById('n'+n).classList.add('sel');});
+  document.querySelectorAll('.nb:not(.sel)').forEach(b=>b.classList.add('dis'));
+  renderSel(); toast('🎲 Lucky numbers selected!');
+}
+function clearNums(){
+  selectedNums.clear();
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('sel','dis'));
+  renderSel();
+}
+
+// ── Stake ──────────────────────────────────────────────
+function changeStake(d){
+  stakeIdx=Math.max(0,Math.min(STAKES.length-1,stakeIdx+d));
+  document.getElementById('stakeAmt').textContent='GH₵ '+STAKES[stakeIdx].toFixed(2);
+  updateTotal();
+}
+function updateTotal(){
+  const t=STAKES[stakeIdx]*currentLines;
+  document.getElementById('totalAmt').textContent='GH₵ '+t.toFixed(2);
+  document.getElementById('totalBreakdown').textContent=
+    currentLines+' line'+(currentLines>1?'s':'')+' × GH₵'+STAKES[stakeIdx].toFixed(2);
+}
+
+// ── Proceed to payment ─────────────────────────────────
+function proceedPayment(){
+  if(selectedNums.size<6){toast('⚠️ Please select 6 numbers first');return;}
+  const total=STAKES[stakeIdx]*currentLines;
+  const sorted=[...selectedNums].sort((a,b)=>a-b);
+  document.getElementById('tpNumbers').innerHTML=
+    sorted.map(n=>`<div class="tp-num">${n<10?'0'+n:n}</div>`).join('');
+  document.getElementById('tpDrawType').textContent=
+    currentDraw==='daily'?'Daily Draw':'Monthly Draw';
+  document.getElementById('tpLines').textContent=
+    currentLines+' line'+(currentLines>1?'s':'');
+  document.getElementById('tpStakeLine').textContent='GH₵ '+STAKES[stakeIdx].toFixed(2);
+  document.getElementById('tpTotal').textContent='GH₵ '+total.toFixed(2);
+  document.getElementById('ccDue').textContent='GH₵ '+total.toFixed(2);
+  document.getElementById('cashInput').value='';
+  document.getElementById('ccTendered').textContent='GH₵ 0.00';
+  document.getElementById('ccChange').textContent='GH₵ 0.00';
+  buildBarcode('barcodeViz');
+  goTo('s-payment');
+}
+
+// ── Barcode ────────────────────────────────────────────
+function buildBarcode(id){
+  const el=document.getElementById(id); if(!el)return; el.innerHTML='';
+  [3,1,1,2,3,1,2,1,3,2,1,1,2,1,3,1,1,2,3,1,2,3,1,1,2,1,3,2,1,1,3,1,2,1,1,3,2,1]
+    .forEach(w=>{const b=document.createElement('div');b.className='bar';
+      b.style.cssText=`width:${w}px;height:${18+Math.random()*12}px`;el.appendChild(b);});
+}
+
+// ── Payment method ─────────────────────────────────────
+function selPayment(t){
+  paymentMethod=t;
+  document.getElementById('pm-cash').classList.toggle('active',t==='cash');
+  document.getElementById('pm-momo').classList.toggle('active',t==='momo');
+  document.getElementById('cashCalc').style.display=t==='cash'?'block':'none';
+  document.getElementById('momoInput').style.display=t==='momo'?'block':'none';
+}
+function calcChange(){
+  const due=STAKES[stakeIdx]*currentLines;
+  const ten=parseFloat(document.getElementById('cashInput').value)||0;
+  document.getElementById('ccTendered').textContent='GH₵ '+ten.toFixed(2);
+  document.getElementById('ccChange').textContent='GH₵ '+Math.max(0,ten-due).toFixed(2);
+}
+
+// ── Confirm sale ───────────────────────────────────────
+function confirmSale(){
+  const total=STAKES[stakeIdx]*currentLines;
+  const sorted=[...selectedNums].sort((a,b)=>a-b);
+  const change=paymentMethod==='cash'
+    ?Math.max(0,(parseFloat(document.getElementById('cashInput').value)||0)-total):0;
+  document.getElementById('confNumbers').innerHTML=
+    sorted.map(n=>`<div class="tp-num">${n<10?'0'+n:n}</div>`).join('');
+  document.getElementById('confAmt').textContent='GH₵ '+total.toFixed(2);
+  document.getElementById('confMeta').textContent=
+    paymentMethod==='cash'
+      ?'Received via Cash · Change GH₵ '+change.toFixed(2):'Received via Mobile Money';
+  document.getElementById('confStake').textContent='GH₵ '+total.toFixed(2);
+  document.getElementById('confDraw').textContent=
+    (currentDraw==='daily'?'Daily':'Monthly')+' · 06 Jun 2026';
+  buildBarcode('confBarcode');
+  goTo('s-confirm');
+  toast('🖨️ Printing ticket…');
+}
+
+function resetTicket(){
+  clearNums(); currentLines=1; stakeIdx=2; currentDraw='daily';
+  document.getElementById('linesVal').textContent='1';
+  document.getElementById('stakeAmt').textContent='GH₵ 5.00';
+  updateTotal();
+  document.getElementById('dt-daily').classList.add('active');
+  document.getElementById('dt-monthly').classList.remove('active');
+}
+
+// ── Prize check ────────────────────────────────────────
+function checkPrize(){
+  const v=document.getElementById('checkInput').value.trim();
+  if(!v){toast('⚠️ Please enter a ticket number');return;}
+  const isWin=['1','3','5','7','9'].includes(v.slice(-1))||v.includes('31');
+  document.getElementById('crWin').style.display=isWin?'block':'none';
+  document.getElementById('crLose').style.display=isWin?'none':'block';
+  toast(isWin?'🏆 Winning ticket found!':'😔 No prize for this ticket');
+}
+
+// ── Report tabs ────────────────────────────────────────
+document.querySelectorAll('.rp-tab').forEach(t=>{
+  t.addEventListener('click',function(){
+    this.closest('.report-period').querySelectorAll('.rp-tab').forEach(x=>x.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+
+// ── Toast ──────────────────────────────────────────────
+let tt;
+function toast(msg){
+  const el=document.getElementById('toastEl');
+  el.textContent=msg; el.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(tt); tt=setTimeout(()=>{el.style.transform='translateX(-50%) translateY(80px)';},2800);
+}
+
+// ── KYC State & Logic ─────────────────────────────────
+let kycCustomer = null;
+let currentIdType = 'ghana';
+
+// Mock verified customers database
+const VERIFIED_DB = {
+  '0244112233': { name:'Kofi Mensah', initials:'KM', dob:'15 Mar 1990', age:36, id:'GHA-0012345678-3', verified:true },
+  '0501234567': { name:'Abena Owusu', initials:'AO', dob:'22 Jun 1988', age:37, id:'GHA-9876543210-1', verified:true },
+  '0271122334': { name:'Kwesi Boateng', initials:'KB', dob:'08 Nov 1995', age:30, id:'GHA-5544332211-7', verified:true },
+};
+
+const ID_PLACEHOLDERS = {
+  ghana:'GHA-XXXXXXXXXX-X', voter:'EC/XXXXXXXXX',
+  passport:'G-XXXXXXXXX', driver:'DVLA-XXXXXXXXXX'
+};
+
+function resetKyc() {
+  kycCustomer = null;
+  kycStep(1);
+  document.getElementById('kycPhone').value = '';
+  document.getElementById('kycFoundVerified').style.display = 'none';
+  document.getElementById('kycNotFound').style.display = 'none';
+  document.getElementById('idNumInput').value = '';
+  document.getElementById('dobDay').value = '';
+  document.getElementById('dobMonth').value = '';
+  document.getElementById('dobYear').value = '';
+  // Remove customer session badge if it exists
+  const badge = document.getElementById('custSessionBadge');
+  if (badge) badge.style.display = 'none';
+}
+
+function kycStep(n) {
+  // Hide all steps
+  ['kyc-step1','kyc-step2','kyc-step3-pass','kyc-step3-fail'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
+  // Show correct step
+  const stepMap = { 1:'kyc-step1', 2:'kyc-step2', 3.1:'kyc-step3-pass', 3.2:'kyc-step3-fail' };
+  const target = stepMap[n] || 'kyc-step1';
+  document.getElementById(target)?.classList.add('active');
+
+  // Update step indicator
+  const stepNum = n === 3.1 || n === 3.2 ? 3 : n;
+  [1,2,3].forEach(i => {
+    const circle = document.getElementById('sc'+i);
+    const label  = document.getElementById('sl'+i);
+    circle.className = 'step-circle' + (i < stepNum ? ' done' : i === stepNum ? ' active' : '');
+    label.className  = 'step-lbl'    + (i === stepNum ? ' active' : '');
+    if (i < 3) document.getElementById('sline'+i).className = 'step-line' + (i < stepNum ? ' done' : '');
+  });
+}
+
+function lookupCustomer() {
+  const phone = document.getElementById('kycPhone').value.replace(/\s/g,'');
+  if (phone.length < 9) { toast('⚠️ Enter a valid phone number'); return; }
+
+  document.getElementById('kycFoundVerified').style.display = 'none';
+  document.getElementById('kycNotFound').style.display = 'none';
+
+  const found = VERIFIED_DB[phone] || VERIFIED_DB['0244112233']; // demo: always find on valid number
+  const isReal = !!VERIFIED_DB[phone];
+
+  if (phone.length >= 9) {
+    if (isReal || phone.startsWith('02') || phone.startsWith('05')) {
+      // Show found customer
+      const cust = found;
+      document.getElementById('kycFoundName').textContent = cust.name;
+      document.getElementById('kycAvatarInitials').textContent = cust.initials;
+      document.getElementById('kycFoundMeta').textContent =
+        `DOB: ${cust.dob} · Age: ${cust.age} · ${cust.id}`;
+      document.getElementById('kycFoundVerified').style.display = 'block';
+      kycCustomer = cust;
+    } else {
+      document.getElementById('kycNotFound').style.display = 'block';
+    }
+  }
+}
+
+function selIdType(type) {
+  currentIdType = type;
+  ['ghana','voter','passport','driver'].forEach(t => {
+    document.getElementById('idt-'+t).classList.toggle('active', t === type);
+  });
+  document.getElementById('idNumInput').placeholder = ID_PLACEHOLDERS[type];
+}
+
+function verifyAge() {
+  const idNum = document.getElementById('idNumInput').value.trim();
+  const day   = parseInt(document.getElementById('dobDay').value);
+  const month = parseInt(document.getElementById('dobMonth').value);
+  const year  = parseInt(document.getElementById('dobYear').value);
+
+  if (!idNum) { toast('⚠️ Please enter ID number'); return; }
+  if (!day || !month || !year || year < 1900 || year > 2025) {
+    toast('⚠️ Please enter a valid date of birth'); return;
+  }
+
+  const dob   = new Date(year, month - 1, day);
+  const today = new Date(2026, 5, 6); // Demo date: 06 Jun 2026
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dobStr = `${day} ${monthNames[month-1]} ${year}`;
+
+  if (age >= 18) {
+    // PASS
+    document.getElementById('vrAge').textContent = age + ' Years Old';
+    document.getElementById('vrName').textContent = 'Customer ' + idNum.slice(-4); // masked
+    document.getElementById('vrDob').textContent = dobStr;
+    document.getElementById('vrIdNum').textContent = idNum;
+    document.getElementById('vrIdType').textContent =
+      { ghana:'Ghana Card', voter:"Voter's ID", passport:'Passport', driver:"Driver's Licence" }[currentIdType];
+    kycCustomer = {
+      name: 'Verified Customer',
+      initials: idNum.slice(-2).toUpperCase(),
+      dob: dobStr, age, id: idNum, verified: true
+    };
+    kycStep(3.1);
+  } else {
+    // FAIL — hard block
+    document.getElementById('hbAge').textContent = age + ' Years Old';
+    document.getElementById('loggedId').textContent = idNum;
+    kycCustomer = null;
+    kycStep(3.2);
+  }
+}
+
+function proceedWithCustomer() {
+  if (!kycCustomer) { toast('⚠️ No verified customer'); return; }
+  // Show customer session badge on ticket screen
+  const badge = document.getElementById('custSessionBadge');
+  if (badge) {
+    document.getElementById('csBadgeAvatar').textContent = kycCustomer.initials;
+    document.getElementById('csBadgeName').textContent = kycCustomer.name;
+    document.getElementById('csBadgeMeta').textContent = 'Age '+kycCustomer.age+' · KYC Verified ✓';
+    badge.style.display = 'flex';
+  }
+  resetTicket();
+  goTo('s-ticket');
+}
+
+// ── Init ───────────────────────────────────────────────
+updateTotal(); buildBarcode('barcodeViz');
+</script>
+</body>
+</html>
