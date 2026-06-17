@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow — Visit Log GPS Check Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;min-height:100vh;padding:32px 16px 60px;color:#111827;}
+
+.page{max-width:960px;margin:0 auto;}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:32px;}
+.page-header h1{font-size:22px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.page-header p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+
+.hint-bar{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:28px;display:flex;gap:8px;align-items:center;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:300px 1fr;gap:32px;align-items:start;}
+
+/* PHONE */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;position:sticky;top:24px;}
+.state-tabs{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;}
+.stab{font-size:11px;padding:5px 12px;border-radius:20px;border:0.5px solid #b0bac8;background:#fff;cursor:pointer;color:#607191;font-family:'Sora',sans-serif;transition:all .2s;}
+.stab:hover{background:#f0f4f8;}
+.stab.active{background:#0d1b3e;color:#fff;border-color:#0d1b3e;}
+.state-label{font-size:11px;color:#607191;text-align:center;}
+
+.phone{width:260px;background:#1a2744;border-radius:28px;overflow:hidden;border:2.5px solid #2d3f6b;box-shadow:0 0 0 4px #e4e9f0,0 0 0 6px #b0bac8;}
+.pbar{background:#1a2744;padding:8px 14px 5px;display:flex;justify-content:space-between;align-items:center;}
+.pbar .pt{color:#fff;font-size:11px;font-weight:500;}
+.pbar .pi{display:flex;gap:4px;align-items:center;}
+.pbar .pi i{color:#fff;font-size:12px;}
+.ptop{background:#1e3a8a;padding:10px 14px 12px;display:flex;align-items:center;gap:10px;}
+.ptop i{color:#fff;font-size:18px;}
+.ptop span{color:#fff;font-size:14px;font-weight:500;}
+.pbody{background:#f0f4f8;min-height:500px;display:flex;flex-direction:column;}
+
+.gps-panel{margin:10px 10px 0;border-radius:10px;overflow:hidden;border:1.5px solid;transition:all .2s;}
+.gps-panel.checking{border-color:#b5d4f4;background:#e6f1fb;}
+.gps-panel.success{border-color:#9ed8bf;background:#e6f7f0;}
+.gps-panel.warning{border-color:#f7c1c1;background:#fcebeb;}
+.gps-panel.failed{border-color:#d3d1c7;background:#f1efe8;}
+.gps-header{padding:9px 11px 7px;display:flex;align-items:center;gap:8px;}
+.gh-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gh-icon i{font-size:13px;}
+.checking .gh-icon{background:#b5d4f4;} .checking .gh-icon i{color:#0c447c;}
+.success  .gh-icon{background:#9ed8bf;} .success  .gh-icon i{color:#085041;}
+.warning  .gh-icon{background:#f7c1c1;} .warning  .gh-icon i{color:#791f1f;}
+.failed   .gh-icon{background:#d3d1c7;} .failed   .gh-icon i{color:#444441;}
+.checking .gt-title{color:#0c447c;} .checking .gt-sub{color:#378add;}
+.success  .gt-title{color:#085041;} .success  .gt-sub{color:#0f6e56;}
+.warning  .gt-title{color:#791f1f;} .warning  .gt-sub{color:#a32d2d;}
+.failed   .gt-title{color:#444441;} .failed   .gt-sub{color:#5f5e5a;}
+.gt-title{font-size:11px;font-weight:500;}
+.gt-sub{font-size:10px;margin-top:1px;}
+.gps-details{padding:0 11px 9px;font-size:10px;}
+.coord{font-family:'DM Mono',monospace;font-size:9px;color:#374151;margin-bottom:4px;}
+.dist-row{display:flex;align-items:center;gap:5px;margin-top:3px;}
+.dist-pill{font-size:9px;font-weight:500;padding:1px 6px;border-radius:20px;}
+.success .dist-pill{background:#c0dd97;color:#27500a;}
+.warning .dist-pill{background:#f09595;color:#501313;}
+
+.prog-bar{height:3px;background:#d1d5db;overflow:hidden;margin:6px 10px 0;}
+.prog-fill{height:100%;background:#1e3a8a;transition:width 1s ease;}
+
+.fform{padding:10px 10px 12px;}
+.ffl{font-size:10px;font-weight:500;color:#374151;margin-bottom:3px;display:flex;align-items:center;gap:3px;}
+.ffl .req{color:#e24b4a;font-size:12px;line-height:1;}
+.fsel{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:7px;padding:7px 9px;font-size:11px;color:#374151;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.fsel.dis{background:#f1efe8;color:#888780;border-color:#d3d1c7;}
+.fsel i{font-size:12px;color:#9ca3af;}
+.ftxt{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:7px;padding:7px 9px;font-size:11px;color:#888780;margin-bottom:10px;height:56px;resize:none;display:block;}
+.ftxt.dis{background:#f1efe8;border-color:#d3d1c7;}
+
+.ov-note{background:#faeeda;border:1px solid #fac775;border-radius:7px;padding:7px 9px;font-size:10px;color:#633806;margin-bottom:7px;line-height:1.5;}
+.ov-note i{font-size:11px;vertical-align:-1px;}
+
+.sbtn{width:100%;background:#1e3a8a;color:#fff;border:none;border-radius:9px;padding:10px;font-size:13px;font-weight:500;text-align:center;cursor:pointer;}
+.sbtn.dis{background:#b4b2a9;color:#f1efe8;cursor:not-allowed;}
+.sbtn.ok{background:#085041;}
+.sbtn.warn-btn{background:#a32d2d;}
+
+.retry-btn{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:7px;padding:6px;font-size:10px;font-weight:500;color:#374151;text-align:center;margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;}
+.ov-btn{width:100%;background:#faeeda;border:1.5px solid #fac775;border-radius:7px;padding:6px;font-size:10px;font-weight:500;color:#633806;text-align:center;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;}
+
+.existing-visit{background:#fff;margin:10px 10px 0;border-radius:8px;border:1.5px solid #e5e7eb;padding:9px 11px;}
+.ev-tag{display:inline-block;background:#e6f1fb;color:#0c447c;font-size:9px;font-weight:500;padding:2px 6px;border-radius:4px;margin-bottom:3px;}
+.ev-date{font-size:9px;color:#6b7280;float:right;margin-top:2px;}
+.ev-note{font-size:10px;color:#374151;margin-top:2px;}
+.ev-sub{font-size:10px;color:#6b7280;}
+
+.spin{display:inline-block;animation:spin 1s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+/* DOCS PANEL */
+.docs{display:flex;flex-direction:column;gap:24px;}
+
+.doc-section{background:#fff;border:0.5px solid #d4dce8;border-radius:12px;overflow:hidden;}
+.ds-header{padding:14px 18px 12px;border-bottom:0.5px solid #e2e8f0;display:flex;align-items:center;gap:10px;background:#fafcff;}
+.ds-header .dsh-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ds-header .dsh-icon i{font-size:15px;}
+.ds-header h2{font-size:14px;font-weight:500;color:#0d1b3e;}
+.ds-header p{font-size:11px;color:#607191;margin-top:1px;}
+.ds-body{padding:16px 18px;}
+
+.state-card{border-radius:8px;border:1px solid;padding:10px 14px;margin-bottom:10px;}
+.state-card:last-child{margin-bottom:0;}
+.state-card.blue{background:#e6f1fb;border-color:#b5d4f4;}
+.state-card.green{background:#e6f7f0;border-color:#9ed8bf;}
+.state-card.red{background:#fcebeb;border-color:#f7c1c1;}
+.state-card.gray{background:#f1efe8;border-color:#d3d1c7;}
+.sc-title{font-size:12px;font-weight:500;margin-bottom:4px;}
+.state-card.blue .sc-title{color:#0c447c;}
+.state-card.green .sc-title{color:#085041;}
+.state-card.red .sc-title{color:#791f1f;}
+.state-card.gray .sc-title{color:#444441;}
+.sc-body{font-size:11px;line-height:1.6;color:#374151;}
+
+.code-block{background:#f4f6f9;border-radius:8px;padding:12px 14px;font-family:'DM Mono',monospace;font-size:11px;color:#1e293b;line-height:1.8;overflow-x:auto;margin:8px 0;}
+.code-block .cm{color:#9ca3af;}
+.code-block .ck{color:#0c447c;}
+.code-block .cv{color:#633806;}
+.code-block .cs{color:#085041;}
+
+.rule{height:1px;background:#e2e8f0;margin:14px 0;}
+
+.table-wrap{overflow-x:auto;margin:8px 0;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+thead th{text-align:left;padding:7px 10px;background:#f4f6f9;color:#607191;font-weight:500;font-size:10px;letter-spacing:.3px;border-bottom:0.5px solid #e2e8f0;}
+tbody td{padding:8px 10px;border-bottom:0.5px solid #f1f5f9;color:#374151;vertical-align:top;line-height:1.5;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:nth-child(even){background:#fafcff;}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;}
+.tag.green{background:#e6f7f0;color:#085041;}
+.tag.red{background:#fcebeb;color:#791f1f;}
+.tag.amber{background:#faeeda;color:#633806;}
+.tag.blue{background:#e6f1fb;color:#0c447c;}
+.tag.gray{background:#f1efe8;color:#444441;}
+
+.impl-step{display:flex;gap:10px;margin-bottom:12px;}
+.step-num{width:22px;height:22px;border-radius:50%;background:#0d1b3e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:1px;}
+.step-body{flex:1;}
+.step-body .st{font-size:12px;font-weight:500;color:#0d1b3e;margin-bottom:3px;}
+.step-body .sb{font-size:11px;color:#607191;line-height:1.6;}
+
+.warn-box{background:#faeeda;border:1px solid #fac775;border-radius:8px;padding:10px 14px;font-size:11px;color:#633806;line-height:1.6;display:flex;gap:8px;margin:8px 0;}
+.warn-box i{font-size:14px;flex-shrink:0;margin-top:1px;}
+.info-box{background:#e6f1fb;border:1px solid #b5d4f4;border-radius:8px;padding:10px 14px;font-size:11px;color:#0c447c;line-height:1.6;display:flex;gap:8px;margin:8px 0;}
+.info-box i{font-size:14px;flex-shrink:0;margin-top:1px;}
+
+@media(max-width:720px){
+  .layout{grid-template-columns:1fr;}
+  .phone-wrap{position:static;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <h1>Visit Log - GPS Location Check</h1>
+    <p>Mockup + implementation guide for the Vietnam development team</p>
+
+  </div>
+
+  <div class="hint-bar">
+    <i class="ti ti-info-circle" aria-hidden="true"></i>
+    Use the state tabs below the phone to preview all four GPS scenarios. Open this file in any browser, no internet required.
+  </div>
+
+  <div class="layout">
+
+    <!-- LEFT: PHONE MOCKUP -->
+    <div class="phone-wrap">
+      <div class="state-tabs" role="tablist" aria-label="GPS state examples">
+        <button class="stab active" onclick="setState('checking')">Checking</button>
+        <button class="stab" onclick="setState('success')">In range</button>
+        <button class="stab" onclick="setState('warning')">Out of range</button>
+        <button class="stab" onclick="setState('failed')">GPS failed</button>
+      </div>
+      <div class="state-label" id="state-desc">Acquiring GPS signal…</div>
+
+      <div class="phone">
+        <div class="pbar">
+          <span class="pt">09:26</span>
+          <div class="pi">
+            <i class="ti ti-wifi" aria-hidden="true"></i>
+            <i class="ti ti-battery-2" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="ptop">
+          <i class="ti ti-arrow-left" aria-label="Back"></i>
+          <span>Visit Log</span>
+        </div>
+        <div class="pbody">
+          <div class="existing-visit">
+            <div class="ev-tag">Onboarding</div>
+            <div class="ev-date">13 Jun 2026 15:42</div>
+            <div class="ev-note">wiwi</div>
+            <div class="ev-sub">hhhhh</div>
+          </div>
+
+          <div class="prog-bar" id="prog-wrap" style="display:none">
+            <div class="prog-fill" id="prog-fill" style="width:0%"></div>
+          </div>
+
+          <div class="gps-panel checking" id="gps-panel" style="margin-top:8px">
+            <div class="gps-header">
+              <div class="gh-icon">
+                <i class="ti ti-map-pin" id="gps-icon" aria-hidden="true"></i>
+              </div>
+              <div>
+                <div class="gt-title" id="gps-title">Verifying your location…</div>
+                <div class="gt-sub" id="gps-sub">Checking you are at the business</div>
+              </div>
+            </div>
+            <div class="gps-details" id="gps-details"></div>
+          </div>
+
+          <div class="fform">
+            <div style="font-size:12px;font-weight:500;color:#111827;margin-bottom:8px">Log a visit</div>
+            <div class="ffl">Visit Type <span class="req">*</span></div>
+            <div class="fsel dis" id="f-vtype"><span id="vtype-txt">Select visit type</span><i class="ti ti-chevron-down" aria-hidden="true"></i></div>
+            <div class="ffl">Business <span class="req">*</span></div>
+            <div class="fsel" style="background:#e6f7f0;border-color:#9ed8bf"><span style="color:#085041;font-size:11px">Ama's Fresh Foods</span><i class="ti ti-check" style="color:#085041" aria-hidden="true"></i></div>
+            <div class="ffl">Note</div>
+            <textarea class="ftxt dis" id="f-note" placeholder="Describe the visit..." disabled></textarea>
+            <div id="ov-section" style="display:none">
+              <div class="ov-note"><i class="ti ti-alert-triangle" aria-hidden="true"></i> GPS unavailable. Select a reason — this visit will be flagged for supervisor review.</div>
+              <div class="ffl">Override reason <span class="req">*</span></div>
+              <div class="fsel" style="background:#fff;font-size:11px"><span id="ov-reason-txt" style="font-size:11px">Select reason…</span><i class="ti ti-chevron-down" aria-hidden="true"></i></div>
+            </div>
+            <div class="sbtn dis" id="submit-btn" role="button" aria-disabled="true">Submit Visit</div>
+          </div>
+        </div>
+      </div>
+      <div class="state-label" style="font-size:10px;color:#94a3b8">Tap state tabs to preview each scenario</div>
+    </div>
+
+    <!-- RIGHT: IMPLEMENTATION DOCS -->
+    <div class="docs">
+
+      <!-- HOW IT WORKS -->
+      <div class="doc-section">
+        <div class="ds-header">
+          <div class="dsh-icon" style="background:#e6f7f0"><i class="ti ti-map-pin-check" style="color:#085041" aria-hidden="true"></i></div>
+          <div><h2>How the GPS check works</h2><p>Overview of the proximity verification flow</p></div>
+        </div>
+        <div class="ds-body">
+          <p style="font-size:12px;color:#374151;line-height:1.7;margin-bottom:12px">When a Field Agent opens Visit Log for an MSME, the app silently requests their current GPS position and computes the straight-line distance to the MSME's stored coordinates (captured at registration). If within 50 metres, the form unlocks automatically. No manual steps required from the agent.</p>
+          <div class="state-card blue">
+            <div class="sc-title"><i class="ti ti-loader-2" aria-hidden="true"></i> Checking - form locked</div>
+            <div class="sc-body">GPS acquisition in progress. Form is disabled. Progress bar shown. Timeout after 15 seconds → escalates to GPS Failed state.</div>
+          </div>
+          <div class="state-card green">
+            <div class="sc-title"><i class="ti ti-map-pin-check" aria-hidden="true"></i> In range — form unlocks</div>
+            <div class="sc-body">Agent is within 50m of the MSME location. Exact distance shown. Form enables. GPS coords logged on the visit record.</div>
+          </div>
+          <div class="state-card red">
+            <div class="sc-title"><i class="ti ti-map-pin-off" aria-hidden="true"></i> Out of range — form blocked</div>
+            <div class="sc-body">GPS acquired but agent is &gt;50m from MSME. Distance shown. Form stays locked. Agent must move closer. No override option — this is intentional.</div>
+          </div>
+          <div class="state-card gray">
+            <div class="sc-title"><i class="ti ti-map-pin-exclamation" aria-hidden="true"></i> GPS failed — override required</div>
+            <div class="sc-body">GPS timed out, permission denied, or signal lost. Agent must select an override reason from a fixed list. Visit is saved with <code style="font-family:'DM Mono',monospace;font-size:10px">gps_verified: false</code> and flagged for supervisor review.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FLUTTER IMPLEMENTATION -->
+      <div class="doc-section">
+        <div class="ds-header">
+          <div class="dsh-icon" style="background:#e6f1fb"><i class="ti ti-brand-flutter" style="color:#0c447c" aria-hidden="true"></i></div>
+          <div><h2>Flutter implementation</h2><p>Step-by-step build guide</p></div>
+        </div>
+        <div class="ds-body">
+
+          <div class="impl-step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="st">Add the geolocator package</div>
+              <div class="sb">Add to <code style="font-family:'DM Mono',monospace;font-size:10px">pubspec.yaml</code>:</div>
+              <div class="code-block">dependencies:
+  geolocator: ^11.0.0</div>
+              <div class="sb">Add permissions to <code style="font-family:'DM Mono',monospace;font-size:10px">AndroidManifest.xml</code>:</div>
+              <div class="code-block">&lt;uses-permission android:name=
+  "android.permission.ACCESS_FINE_LOCATION"/&gt;
+&lt;uses-permission android:name=
+  "android.permission.ACCESS_COARSE_LOCATION"/&gt;</div>
+            </div>
+          </div>
+
+          <div class="rule"></div>
+
+          <div class="impl-step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="st">Haversine distance function</div>
+              <div class="sb">Use Geolocator's built-in method — no external dependency needed:</div>
+              <div class="code-block"><span class="ck">double</span> distanceTo(
+  <span class="ck">double</span> msme_lat, <span class="ck">double</span> msme_lng,
+  <span class="ck">double</span> agent_lat, <span class="ck">double</span> agent_lng,
+) {
+  <span class="cm">// Returns distance in metres</span>
+  <span class="cs">return</span> Geolocator.distanceBetween(
+    agent_lat, agent_lng,
+    msme_lat, msme_lng,
+  );
+}
+
+<span class="cm">// Threshold — configurable per market</span>
+<span class="cs">const double</span> PROXIMITY_LIMIT_M = 50.0;</div>
+            </div>
+          </div>
+
+          <div class="rule"></div>
+
+          <div class="impl-step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="st">GPS check on page load</div>
+              <div class="sb">Run this in <code style="font-family:'DM Mono',monospace;font-size:10px">initState()</code> of the Visit Log screen:</div>
+              <div class="code-block"><span class="ck">enum</span> GpsState { checking, success, outOfRange, failed }
+
+<span class="ck">Future</span>&lt;<span class="ck">void</span>&gt; runGpsCheck() <span class="cs">async</span> {
+  setState(() => gpsState = GpsState.checking);
+
+  <span class="cm">// Check permission first</span>
+  <span class="ck">final</span> perm = <span class="cs">await</span> Geolocator.checkPermission();
+  <span class="cs">if</span> (perm == LocationPermission.denied) {
+    <span class="cs">await</span> Geolocator.requestPermission();
+  }
+
+  <span class="cs">try</span> {
+    <span class="ck">final</span> pos = <span class="cs">await</span> Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+      timeLimit: <span class="ck">const</span> Duration(seconds: 15),
+    );
+
+    <span class="ck">final</span> dist = distanceTo(
+      msme.gpsLat, msme.gpsLng,
+      pos.latitude, pos.longitude,
+    );
+
+    setState(() {
+      agentLat = pos.latitude;
+      agentLng = pos.longitude;
+      distanceToMsme = dist;
+      gpsState = dist &lt;= PROXIMITY_LIMIT_M
+          ? GpsState.success
+          : GpsState.outOfRange;
+    });
+
+  } <span class="cs">on</span> TimeoutException {
+    setState(() => gpsState = GpsState.failed);
+  } <span class="cs">catch</span> (_) {
+    setState(() => gpsState = GpsState.failed);
+  }
+}</div>
+            </div>
+          </div>
+
+          <div class="rule"></div>
+
+          <div class="impl-step">
+            <div class="step-num">4</div>
+            <div class="step-body">
+              <div class="st">Form enable/disable logic</div>
+              <div class="sb">Gate the form fields and submit button on GPS state:</div>
+              <div class="code-block"><span class="ck">bool</span> get formEnabled =>
+    gpsState == GpsState.success ||
+    gpsState == GpsState.failed; <span class="cm">// failed = override mode</span>
+
+<span class="ck">bool</span> get canSubmit {
+  <span class="cs">if</span> (gpsState == GpsState.success) {
+    <span class="cs">return</span> visitTypeSelected && noteNotEmpty;
+  }
+  <span class="cs">if</span> (gpsState == GpsState.failed) {
+    <span class="cs">return</span> visitTypeSelected && overrideReasonSelected;
+  }
+  <span class="cs">return false</span>;
+}</div>
+            </div>
+          </div>
+
+          <div class="rule"></div>
+
+          <div class="impl-step">
+            <div class="step-num">5</div>
+            <div class="step-body">
+              <div class="st">Override reason dropdown</div>
+              <div class="sb">Show this only in GPS Failed state. Use a fixed list — no free text:</div>
+              <div class="code-block"><span class="ck">const</span> List&lt;<span class="ck">String</span>&gt; overrideReasons = [
+  <span class="cv">'Device location turned off'</span>,
+  <span class="cv">'Indoor — no GPS signal'</span>,
+  <span class="cv">'Market area GPS coverage gap'</span>,
+  <span class="cv">'Device GPS hardware issue'</span>,
+  <span class="cv">'Other'</span>,
+];</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VISIT RECORD SCHEMA -->
+      <div class="doc-section">
+        <div class="ds-header">
+          <div class="dsh-icon" style="background:#e6f7f0"><i class="ti ti-database" style="color:#085041" aria-hidden="true"></i></div>
+          <div><h2>Visit record — data model</h2><p>Fields to store on every visit log submission</p></div>
+        </div>
+        <div class="ds-body">
+          <div class="code-block"><span class="cm">// POST /api/v1/visits — request body</span>
+{
+  <span class="ck">"msme_id"</span>:          <span class="cv">"uuid"</span>,
+  <span class="ck">"field_agent_id"</span>:   <span class="cv">"FA-GAR-ACC-047"</span>,
+  <span class="ck">"visit_type"</span>:       <span class="cv">"onboarding | follow_up | support | audit"</span>,
+  <span class="ck">"note"</span>:            <span class="cv">"string | null"</span>,
+
+  <span class="cm">// GPS fields — always included</span>
+  <span class="ck">"gps_verified"</span>:    <span class="cs">true | false</span>,
+  <span class="ck">"agent_lat"</span>:       <span class="cv">5.5502</span>,
+  <span class="ck">"agent_lng"</span>:       <span class="cv">-0.2074</span>,
+  <span class="ck">"gps_accuracy_m"</span>:  <span class="cv">4</span>,
+  <span class="ck">"distance_to_msme_m"</span>: <span class="cv">23</span>,
+  <span class="ck">"gps_timestamp"</span>:  <span class="cv">"ISO 8601"</span>,
+
+  <span class="cm">// Only populated when gps_verified = false</span>
+  <span class="ck">"override_reason"</span>: <span class="cv">"Indoor — no GPS signal" | null</span>
+}</div>
+
+          <div class="warn-box">
+            <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+            Always store raw GPS coordinates and computed distance — not just the boolean. This lets supervisors map every visit and detect patterns (e.g. agent always logging from 400m away on "GPS failed").
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td><code style="font-family:'DM Mono',monospace;font-size:10px">gps_verified</code></td><td>boolean</td><td><span class="tag green">Always</span></td><td>true = within 50m, false = failed/override</td></tr>
+                <tr><td><code style="font-family:'DM Mono',monospace;font-size:10px">agent_lat / lng</code></td><td>decimal</td><td><span class="tag green">Always</span></td><td>null if GPS completely unavailable</td></tr>
+                <tr><td><code style="font-family:'DM Mono',monospace;font-size:10px">gps_accuracy_m</code></td><td>integer</td><td><span class="tag green">Always</span></td><td>Metres accuracy from device</td></tr>
+                <tr><td><code style="font-family:'DM Mono',monospace;font-size:10px">distance_to_msme_m</code></td><td>integer</td><td><span class="tag green">Always</span></td><td>Computed server-side too — don't trust client</td></tr>
+                <tr><td><code style="font-family:'DM Mono',monospace;font-size:10px">override_reason</code></td><td>string</td><td><span class="tag amber">If failed</span></td><td>From fixed enum list only</td></tr>
+                <tr><td><code style="font-family:'DM Mono',monospace;font-size:10px">gps_timestamp</code></td><td>datetime</td><td><span class="tag green">Always</span></td><td>When GPS was captured, not when form submitted</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDGE CASES -->
+      <div class="doc-section">
+        <div class="ds-header">
+          <div class="dsh-icon" style="background:#faeeda"><i class="ti ti-shield-check" style="color:#633806" aria-hidden="true"></i></div>
+          <div><h2>Edge cases to handle</h2><p>Build these before go-live</p></div>
+        </div>
+        <div class="ds-body">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Scenario</th><th>Behaviour</th><th>Priority</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>MSME has no stored GPS coordinates</td>
+                  <td>Skip proximity check. Log visit with <code style="font-family:'DM Mono',monospace;font-size:10px">gps_check: skipped_no_msme_coords</code>. Do not block.</td>
+                  <td><span class="tag red">Blocker</span></td>
+                </tr>
+                <tr>
+                  <td>GPS permission denied by user</td>
+                  <td>Show permission prompt. If denied, fall through to GPS Failed state with override required.</td>
+                  <td><span class="tag red">Blocker</span></td>
+                </tr>
+                <tr>
+                  <td>GPS accuracy &gt;50m (poor signal)</td>
+                  <td>Still check distance but show accuracy warning. If accuracy &gt; threshold distance, treat as GPS Failed.</td>
+                  <td><span class="tag amber">High</span></td>
+                </tr>
+                <tr>
+                  <td>Agent at edge of 50m boundary</td>
+                  <td>Apply the limit strictly. 51m = out of range. No "close enough" fuzzing — the fixed list override exists for genuine cases.</td>
+                  <td><span class="tag blue">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>Agent retries GPS (from failed state)</td>
+                  <td>Retry button re-runs the full check flow from scratch. Retry max 3 times before locking to override-only.</td>
+                  <td><span class="tag amber">High</span></td>
+                </tr>
+                <tr>
+                  <td>Sunmi device location services off</td>
+                  <td>Detect in <code style="font-family:'DM Mono',monospace;font-size:10px">initState()</code> via <code style="font-family:'DM Mono',monospace;font-size:10px">Geolocator.isLocationServiceEnabled()</code>. Show prompt to enable. If user ignores, fall to GPS Failed.</td>
+                  <td><span class="tag red">Blocker</span></td>
+                </tr>
+                <tr>
+                  <td>Multiple MSMEs at same location</td>
+                  <td>Proximity check passes for all. Business dropdown is still required — agent must select the correct one.</td>
+                  <td><span class="tag blue">Normal</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BACKEND VALIDATION -->
+      <div class="doc-section">
+        <div class="ds-header">
+          <div class="dsh-icon" style="background:#e6f1fb"><i class="ti ti-server" style="color:#0c447c" aria-hidden="true"></i></div>
+          <div><h2>Backend validation</h2><p>Re-verify on the server — never trust the client</p></div>
+        </div>
+        <div class="ds-body">
+          <div class="info-box">
+            <i class="ti ti-info-circle" aria-hidden="true"></i>
+            The Flutter app enforces the GPS check, but the backend must independently recompute the distance and validate it. A tampered client could send <code style="font-family:'DM Mono',monospace;font-size:10px">gps_verified: true</code> with fake coordinates.
+          </div>
+          <div class="code-block"><span class="cm"># Django — visits/views.py</span>
+
+<span class="cs">from</span> geopy.distance <span class="cs">import</span> geodesic
+
+PROXIMITY_LIMIT_M = 50
+
+<span class="ck">def</span> validate_visit_gps(data, msme):
+    <span class="cs">if not</span> msme.gps_lat <span class="cs">or not</span> msme.gps_lng:
+        data[<span class="cv">'gps_check'</span>] = <span class="cv">'skipped_no_msme_coords'</span>
+        data[<span class="cv">'gps_verified'</span>] = <span class="cs">False</span>
+        <span class="cs">return</span> data
+
+    <span class="cs">if</span> data.get(<span class="cv">'agent_lat'</span>) <span class="cs">is None</span>:
+        data[<span class="cv">'gps_verified'</span>] = <span class="cs">False</span>
+        <span class="cs">return</span> data
+
+    dist = geodesic(
+        (data[<span class="cv">'agent_lat'</span>], data[<span class="cv">'agent_lng'</span>]),
+        (msme.gps_lat, msme.gps_lng),
+    ).meters
+
+    <span class="cm"># Override the client-submitted distance with server value</span>
+    data[<span class="cv">'distance_to_msme_m'</span>] = <span class="ck">int</span>(dist)
+    data[<span class="cv">'gps_verified'</span>] = dist &lt;= PROXIMITY_LIMIT_M
+
+    <span class="cm"># If client claims verified but server says no → flag it</span>
+    <span class="cs">if not</span> data[<span class="cv">'gps_verified'</span>] <span class="cs">and not</span> data.get(<span class="cv">'override_reason'</span>):
+        raise ValidationError(<span class="cv">'GPS check failed — override reason required'</span>)
+
+    <span class="cs">return</span> data</div>
+          <div class="warn-box">
+            <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+            Install <code style="font-family:'DM Mono',monospace;font-size:10px">geopy</code> on the backend: <code style="font-family:'DM Mono',monospace;font-size:10px">pip install geopy</code>. Do not use a simple Euclidean distance — it is inaccurate at GPS scales near the equator.
+          </div>
+        </div>
+      </div>
+
+      <!-- SUPERVISOR PORTAL -->
+      <div class="doc-section">
+        <div class="ds-header">
+          <div class="dsh-icon" style="background:#f1efe8"><i class="ti ti-chart-bar" style="color:#444441" aria-hidden="true"></i></div>
+          <div><h2>Supervisor portal — what to show</h2><p>Visibility into GPS-flagged visits</p></div>
+        </div>
+        <div class="ds-body">
+          <p style="font-size:12px;color:#374151;line-height:1.7;margin-bottom:10px">The portal's visit log list must surface GPS status clearly so supervisors can prioritise review.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Badge</th><th>Meaning</th><th>Supervisor action</th></tr></thead>
+              <tbody>
+                <tr><td><span class="tag green">GPS verified</span></td><td>Agent was within 50m at time of log</td><td>No action required</td></tr>
+                <tr><td><span class="tag amber">Override — review</span></td><td>GPS failed, agent used manual override</td><td>Review reason + map position</td></tr>
+                <tr><td><span class="tag red">GPS mismatch</span></td><td>Server distance &gt;50m but client sent verified=true</td><td>Escalate — possible tampering</td></tr>
+                <tr><td><span class="tag gray">No MSME GPS</span></td><td>MSME has no stored coordinates</td><td>Assign a Field Agent to capture GPS</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="info-box" style="margin-top:12px">
+            <i class="ti ti-bell" aria-hidden="true"></i>
+            Send supervisors a daily digest of override-flagged visits — not just a portal list. An agent with 3+ overrides in a week is a pattern, not noise. This can be a simple email summary job run each morning.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const states = {
+  checking:{desc:'Acquiring GPS signal — form is locked until location is confirmed',panel:'checking',icon:'ti-loader-2',spin:true,title:'Verifying your location…',sub:'Checking you are at the business',details:'',vtypeCls:'dis',vtypeTxt:'Select visit type',noteDis:true,ovShow:false,btnCls:'dis',btnTxt:'Checking location…',prog:true},
+  success:{desc:'GPS confirmed — agent is within 50m of the business',panel:'success',icon:'ti-map-pin-check',spin:false,title:'Location confirmed',sub:"You are 23m from Ama's Fresh Foods",details:'<div class="coord">5.5502°N, −0.2074°W &nbsp;·&nbsp; ±4m accuracy</div><div class="dist-row"><span class="dist-pill">23m away</span><span style="font-size:9px;color:#0f6e56;margin-left:3px">Within 50m limit ✓</span></div>',vtypeCls:'',vtypeTxt:'Onboarding check',noteDis:false,ovShow:false,btnCls:'ok',btnTxt:'Submit Visit',prog:false},
+  warning:{desc:'GPS acquired but agent is too far — visit blocked, must move closer',panel:'warning',icon:'ti-map-pin-off',spin:false,title:'Too far from business',sub:'You are 340m away — must be within 50m',details:'<div class="coord">5.5535°N, −0.2039°W &nbsp;·&nbsp; ±6m accuracy</div><div class="dist-row"><span class="dist-pill">340m away</span><span style="font-size:9px;color:#a32d2d;margin-left:3px">Limit is 50m — move closer</span></div>',vtypeCls:'dis',vtypeTxt:'Select visit type',noteDis:true,ovShow:false,btnCls:'dis warn-btn',btnTxt:'Too far from business',prog:false},
+  failed:{desc:'GPS timed out — override required, visit flagged for supervisor review',panel:'failed',icon:'ti-map-pin-exclamation',spin:false,title:'GPS unavailable',sub:'Could not get signal — override required below',details:'<button class="retry-btn"><i class="ti ti-refresh" aria-hidden="true"></i> Retry GPS</button><button class="ov-btn"><i class="ti ti-pencil-exclamation" aria-hidden="true"></i> Override &amp; log manually</button>',vtypeCls:'',vtypeTxt:'Onboarding check',noteDis:false,ovShow:true,btnCls:'',btnTxt:'Submit Visit (flagged for review)',prog:false}
+};
+
+let timer=null;
+function setState(k){
+  const s=states[k];
+  document.querySelectorAll('.stab').forEach((b,i)=>{b.classList.toggle('active',['checking','success','warning','failed'][i]===k);});
+  document.getElementById('state-desc').textContent=s.desc;
+  const panel=document.getElementById('gps-panel');
+  panel.className='gps-panel '+s.panel;
+  const icon=document.getElementById('gps-icon');
+  icon.className='ti '+(s.spin?s.icon+' spin':s.icon);
+  document.getElementById('gps-title').textContent=s.title;
+  document.getElementById('gps-sub').textContent=s.sub;
+  document.getElementById('gps-details').innerHTML=s.details;
+  const vt=document.getElementById('f-vtype');
+  vt.className='fsel '+(s.vtypeCls||'');
+  document.getElementById('vtype-txt').textContent=s.vtypeTxt;
+  if(k==='success'){vt.style.background='#fff';vt.style.borderColor='#d1d5db';}else{vt.style.background='';vt.style.borderColor='';}
+  const note=document.getElementById('f-note');
+  note.disabled=s.noteDis;
+  note.className='ftxt'+(s.noteDis?' dis':'');
+  document.getElementById('ov-section').style.display=s.ovShow?'':'none';
+  const btn=document.getElementById('submit-btn');
+  btn.className='sbtn '+(s.btnCls||'');
+  btn.textContent=s.btnTxt;
+  const pw=document.getElementById('prog-wrap');
+  const pf=document.getElementById('prog-fill');
+  if(s.prog){pw.style.display='';if(timer)clearInterval(timer);pf.style.width='0%';let w=0;timer=setInterval(()=>{w=Math.min(w+2,75);pf.style.width=w+'%';if(w>=75)clearInterval(timer);},60);}else{pw.style.display='none';if(timer)clearInterval(timer);}
+}
+setState('checking');
+</script>
+</body>
+</html>

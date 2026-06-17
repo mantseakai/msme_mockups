@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow — Visit Log GPS Check</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px 60px;}
+
+.wrap{display:flex;flex-direction:column;align-items:center;gap:14px;}
+
+.state-tabs{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;}
+.stab{font-size:12px;padding:6px 14px;border-radius:20px;border:0.5px solid #b0bac8;background:#fff;cursor:pointer;color:#607191;font-family:'Sora',sans-serif;transition:all .2s;}
+.stab:hover{background:#f0f4f8;}
+.stab.active{background:#0d1b3e;color:#fff;border-color:#0d1b3e;}
+
+.state-label{font-size:12px;color:#607191;text-align:center;max-width:300px;line-height:1.5;}
+
+.phone{width:300px;background:#1a2744;border-radius:32px;overflow:hidden;border:2.5px solid #2d3f6b;box-shadow:0 0 0 4px #e4e9f0,0 0 0 6px #b0bac8;}
+.pbar{background:#1a2744;padding:8px 16px 5px;display:flex;justify-content:space-between;align-items:center;}
+.pbar .pt{color:#fff;font-size:12px;font-weight:500;}
+.pbar .pi{display:flex;gap:5px;align-items:center;}
+.pbar .pi i{color:#fff;font-size:13px;}
+.ptop{background:#1e3a8a;padding:12px 16px 14px;display:flex;align-items:center;gap:12px;}
+.ptop i{color:#fff;font-size:20px;}
+.ptop span{color:#fff;font-size:16px;font-weight:500;}
+.pbody{background:#f0f4f8;display:flex;flex-direction:column;padding-bottom:16px;}
+
+.existing-visit{background:#fff;margin:12px 12px 0;border-radius:10px;border:1.5px solid #e5e7eb;padding:11px 13px;}
+.ev-tag{display:inline-block;background:#e6f1fb;color:#0c447c;font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px;margin-bottom:4px;}
+.ev-date{font-size:10px;color:#6b7280;float:right;margin-top:3px;}
+.ev-note{font-size:11px;color:#374151;margin-top:2px;}
+.ev-sub{font-size:11px;color:#6b7280;}
+
+.prog-bar{height:3px;background:#d1d5db;overflow:hidden;margin:8px 12px 0;}
+.prog-fill{height:100%;background:#1e3a8a;transition:width 1s ease;}
+
+.gps-panel{margin:8px 12px 0;border-radius:10px;overflow:hidden;border:1.5px solid;}
+.gps-panel.checking{border-color:#b5d4f4;background:#e6f1fb;}
+.gps-panel.success{border-color:#9ed8bf;background:#e6f7f0;}
+.gps-panel.warning{border-color:#f7c1c1;background:#fcebeb;}
+.gps-panel.failed{border-color:#d3d1c7;background:#f1efe8;}
+
+.gps-header{padding:10px 13px 8px;display:flex;align-items:center;gap:9px;}
+.gh-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gh-icon i{font-size:14px;}
+.checking .gh-icon{background:#b5d4f4;} .checking .gh-icon i{color:#0c447c;}
+.success  .gh-icon{background:#9ed8bf;} .success  .gh-icon i{color:#085041;}
+.warning  .gh-icon{background:#f7c1c1;} .warning  .gh-icon i{color:#791f1f;}
+.failed   .gh-icon{background:#d3d1c7;} .failed   .gh-icon i{color:#444441;}
+.checking .gt-title{color:#0c447c;} .checking .gt-sub{color:#378add;}
+.success  .gt-title{color:#085041;} .success  .gt-sub{color:#0f6e56;}
+.warning  .gt-title{color:#791f1f;} .warning  .gt-sub{color:#a32d2d;}
+.failed   .gt-title{color:#444441;} .failed   .gt-sub{color:#5f5e5a;}
+.gt-title{font-size:12px;font-weight:500;}
+.gt-sub{font-size:11px;margin-top:2px;}
+
+.gps-details{padding:0 13px 10px;font-size:11px;}
+.coord{font-family:'DM Mono',monospace;font-size:10px;color:#374151;margin-bottom:4px;}
+.dist-row{display:flex;align-items:center;gap:6px;margin-top:4px;}
+.dist-pill{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;}
+.success .dist-pill{background:#c0dd97;color:#27500a;}
+.warning .dist-pill{background:#f09595;color:#501313;}
+
+.fform{padding:12px 12px 0;}
+.sec-title{font-size:13px;font-weight:500;color:#111827;margin-bottom:10px;}
+.ffl{font-size:11px;font-weight:500;color:#374151;margin-bottom:4px;display:flex;align-items:center;gap:3px;}
+.ffl .req{color:#e24b4a;font-size:13px;line-height:1;}
+.fsel{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:9px 12px;font-size:12px;color:#374151;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.fsel.dis{background:#f1efe8;color:#888780;border-color:#d3d1c7;}
+.fsel i{font-size:14px;color:#9ca3af;}
+.ftxt{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:9px 12px;font-size:12px;color:#888780;margin-bottom:12px;height:64px;resize:none;display:block;}
+.ftxt.dis{background:#f1efe8;border-color:#d3d1c7;}
+
+.ov-note{background:#faeeda;border:1px solid #fac775;border-radius:8px;padding:9px 12px;font-size:11px;color:#633806;margin-bottom:8px;line-height:1.6;}
+.ov-note i{font-size:12px;vertical-align:-1px;}
+
+.sbtn{width:100%;background:#1e3a8a;color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:500;text-align:center;cursor:pointer;}
+.sbtn.dis{background:#b4b2a9;color:#f1efe8;cursor:not-allowed;}
+.sbtn.ok{background:#085041;}
+.sbtn.warn-btn{background:#a32d2d;}
+
+.retry-btn{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:8px;font-size:11px;font-weight:500;color:#374151;text-align:center;margin-bottom:7px;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;}
+.ov-btn{width:100%;background:#faeeda;border:1.5px solid #fac775;border-radius:8px;padding:8px;font-size:11px;font-weight:500;color:#633806;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;}
+
+.spin{display:inline-block;animation:spin 1s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="state-tabs" role="tablist" aria-label="GPS state examples">
+    <button class="stab active" onclick="setState('checking')">Checking</button>
+    <button class="stab" onclick="setState('success')">In range</button>
+    <button class="stab" onclick="setState('warning')">Out of range</button>
+    <button class="stab" onclick="setState('failed')">GPS failed</button>
+  </div>
+
+  <div class="state-label" id="state-desc">Acquiring GPS signal — form locked until location confirmed</div>
+
+  <div class="phone">
+    <div class="pbar">
+      <span class="pt">09:26</span>
+      <div class="pi">
+        <i class="ti ti-wifi" aria-hidden="true"></i>
+        <i class="ti ti-battery-2" aria-hidden="true"></i>
+      </div>
+    </div>
+
+    <div class="ptop">
+      <i class="ti ti-arrow-left" aria-label="Back"></i>
+      <span>Visit Log</span>
+    </div>
+
+    <div class="pbody">
+
+      <div class="existing-visit">
+        <div class="ev-tag">Onboarding</div>
+        <div class="ev-date">13 Jun 2026 15:42</div>
+        <div class="ev-note">wiwi</div>
+        <div class="ev-sub">hhhhh</div>
+      </div>
+
+      <div class="prog-bar" id="prog-wrap" style="display:none">
+        <div class="prog-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+
+      <div class="gps-panel checking" id="gps-panel">
+        <div class="gps-header">
+          <div class="gh-icon">
+            <i class="ti ti-map-pin" id="gps-icon" aria-hidden="true"></i>
+          </div>
+          <div>
+            <div class="gt-title" id="gps-title">Verifying your location…</div>
+            <div class="gt-sub" id="gps-sub">Checking you are at the business</div>
+          </div>
+        </div>
+        <div class="gps-details" id="gps-details"></div>
+      </div>
+
+      <div class="fform">
+        <div class="sec-title">Log a visit</div>
+
+        <div class="ffl">Visit Type <span class="req">*</span></div>
+        <div class="fsel dis" id="f-vtype">
+          <span id="vtype-txt">Select visit type</span>
+          <i class="ti ti-chevron-down" aria-hidden="true"></i>
+        </div>
+
+        <div class="ffl">Business <span class="req">*</span></div>
+        <div class="fsel" style="background:#e6f7f0;border-color:#9ed8bf;">
+          <span style="color:#085041;">Ama's Fresh Foods</span>
+          <i class="ti ti-check" style="color:#085041;" aria-hidden="true"></i>
+        </div>
+
+        <div class="ffl">Note</div>
+        <textarea class="ftxt dis" id="f-note" placeholder="Describe the visit..." disabled></textarea>
+
+        <div id="ov-section" style="display:none">
+          <div class="ov-note">
+            <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+            GPS unavailable. Select a reason — this visit will be flagged for supervisor review.
+          </div>
+          <div class="ffl">Override reason <span class="req">*</span></div>
+          <div class="fsel" style="background:#fff;">
+            <span id="ov-reason-txt" style="color:#374151;">Select reason…</span>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+
+        <div class="sbtn dis" id="submit-btn" role="button" aria-disabled="true">Submit Visit</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+const states = {
+  checking: {
+    desc: 'Acquiring GPS signal — form locked until location confirmed',
+    panel: 'checking', icon: 'ti-loader-2', spin: true,
+    title: 'Verifying your location…', sub: 'Checking you are at the business',
+    details: '', vtypeCls: 'dis', vtypeTxt: 'Select visit type',
+    noteDis: true, ovShow: false,
+    btnCls: 'dis', btnTxt: 'Submit Visit', prog: true,
+  },
+  success: {
+    desc: 'GPS confirmed — agent is within 50m of the business. Form unlocked.',
+    panel: 'success', icon: 'ti-map-pin-check', spin: false,
+    title: 'Location confirmed', sub: "You are 23m from Ama's Fresh Foods",
+    details: '<div class="coord">5.5502°N, −0.2074°W &nbsp;·&nbsp; ±4m accuracy</div><div class="dist-row"><span class="dist-pill">23m away</span><span style="font-size:10px;color:#0f6e56;margin-left:4px">Within 50m limit ✓</span></div>',
+    vtypeCls: '', vtypeTxt: 'Onboarding check',
+    noteDis: false, ovShow: false,
+    btnCls: 'ok', btnTxt: 'Submit Visit', prog: false,
+  },
+  warning: {
+    desc: 'GPS acquired but agent is too far from the MSME — form blocked. Must move closer.',
+    panel: 'warning', icon: 'ti-map-pin-off', spin: false,
+    title: 'Too far from business', sub: 'You are 340m away — must be within 50m',
+    details: '<div class="coord">5.5535°N, −0.2039°W &nbsp;·&nbsp; ±6m accuracy</div><div class="dist-row"><span class="dist-pill">340m away</span><span style="font-size:10px;color:#a32d2d;margin-left:4px">Move within 50m to continue</span></div>',
+    vtypeCls: 'dis', vtypeTxt: 'Select visit type',
+    noteDis: true, ovShow: false,
+    btnCls: 'dis warn-btn', btnTxt: 'Too far from business', prog: false,
+  },
+  failed: {
+    desc: 'GPS timed out or unavailable — override required. Visit flagged for supervisor review.',
+    panel: 'failed', icon: 'ti-map-pin-exclamation', spin: false,
+    title: 'GPS unavailable', sub: 'Select an override reason to continue',
+    details: '<button class="retry-btn"><i class="ti ti-refresh" aria-hidden="true"></i> Retry GPS</button><button class="ov-btn"><i class="ti ti-pencil-exclamation" aria-hidden="true"></i> Override &amp; log manually</button>',
+    vtypeCls: '', vtypeTxt: 'Onboarding check',
+    noteDis: false, ovShow: true,
+    btnCls: '', btnTxt: 'Submit Visit (flagged for review)', prog: false,
+  }
+};
+
+let timer = null;
+
+function setState(k) {
+  const s = states[k];
+  document.querySelectorAll('.stab').forEach((b, i) => {
+    b.classList.toggle('active', ['checking','success','warning','failed'][i] === k);
+  });
+  document.getElementById('state-desc').textContent = s.desc;
+
+  const panel = document.getElementById('gps-panel');
+  panel.className = 'gps-panel ' + s.panel;
+
+  const icon = document.getElementById('gps-icon');
+  icon.className = 'ti ' + s.icon + (s.spin ? ' spin' : '');
+
+  document.getElementById('gps-title').textContent = s.title;
+  document.getElementById('gps-sub').textContent = s.sub;
+  document.getElementById('gps-details').innerHTML = s.details;
+
+  const vt = document.getElementById('f-vtype');
+  vt.className = 'fsel ' + (s.vtypeCls || '');
+  vt.style.background = s.vtypeCls === 'dis' ? '' : '#fff';
+  vt.style.borderColor = s.vtypeCls === 'dis' ? '' : '#d1d5db';
+  document.getElementById('vtype-txt').textContent = s.vtypeTxt;
+
+  const note = document.getElementById('f-note');
+  note.disabled = s.noteDis;
+  note.className = 'ftxt' + (s.noteDis ? ' dis' : '');
+
+  document.getElementById('ov-section').style.display = s.ovShow ? '' : 'none';
+
+  const btn = document.getElementById('submit-btn');
+  btn.className = 'sbtn ' + (s.btnCls || '');
+  btn.textContent = s.btnTxt;
+  btn.setAttribute('aria-disabled', s.btnCls.includes('dis'));
+
+  const pw = document.getElementById('prog-wrap');
+  const pf = document.getElementById('prog-fill');
+  if (s.prog) {
+    pw.style.display = '';
+    if (timer) clearInterval(timer);
+    pf.style.width = '0%';
+    let w = 0;
+    timer = setInterval(() => {
+      w = Math.min(w + 2, 75);
+      pf.style.width = w + '%';
+      if (w >= 75) clearInterval(timer);
+    }, 60);
+  } else {
+    pw.style.display = 'none';
+    if (timer) clearInterval(timer);
+  }
+}
+
+setState('checking');
+</script>
+</body>
+</html>
