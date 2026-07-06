@@ -1,0 +1,111 @@
+
+<div style="display:flex;justify-content:center;align-items:flex-start;padding:2rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg)">
+
+<div style="width:280px;background:#fff;border:0.5px solid var(--color-border-tertiary);border-radius:4px;font-family:'Courier New',Courier,monospace;font-size:11px;color:#111;padding:16px 14px;box-shadow:0 2px 12px rgba(0,0,0,0.08)">
+
+  <div style="text-align:center;margin-bottom:10px">
+    <div style="font-size:15px;font-weight:700;letter-spacing:0.5px">AMA'S FRESH PROVISIONS</div>
+    <div style="font-size:10px;color:#555;margin-top:2px">Informal Business</div>
+    <div style="font-size:10px;color:#555">Tel: 0244 100 001</div>
+    <div style="font-size:10px;color:#555">Makola Market, Zone 1, Accra</div>
+    <div style="font-size:10px;color:#555">SKF-GAR-ACC-000271</div>
+  </div>
+
+  <div style="border-top:1px dashed #bbb;margin:8px 0"></div>
+
+  <div style="display:flex;justify-content:space-between;font-size:10px;color:#555;margin-bottom:2px">
+    <span>Date: 15 Jul 2026</span><span>Time: 10:42 AM</span>
+  </div>
+  <div style="font-size:10px;color:#555;margin-bottom:2px">Receipt #: SKF-R-00001</div>
+  <div style="font-size:10px;color:#555">Served by: Ama Boateng</div>
+
+  <div style="border-top:1px dashed #bbb;margin:8px 0"></div>
+
+  <div style="display:flex;font-size:10px;font-weight:700;color:#333;margin-bottom:4px">
+    <span style="flex:2">ITEM</span>
+    <span style="flex:1;text-align:right">QTY</span>
+    <span style="flex:1;text-align:right">PRICE</span>
+    <span style="flex:1;text-align:right">TOTAL</span>
+  </div>
+
+  <div style="border-top:1px dashed #ccc;margin-bottom:6px"></div>
+
+  <div style="display:flex;font-size:10px;margin-bottom:3px">
+    <span style="flex:2">Fresh Tomatoes</span>
+    <span style="flex:1;text-align:right">2 Kg</span>
+    <span style="flex:1;text-align:right">8.00</span>
+    <span style="flex:1;text-align:right">16.00</span>
+  </div>
+  <div style="display:flex;font-size:10px;margin-bottom:3px">
+    <span style="flex:2">Cooking Oil</span>
+    <span style="flex:1;text-align:right">1</span>
+    <span style="flex:1;text-align:right">22.00</span>
+    <span style="flex:1;text-align:right">22.00</span>
+  </div>
+  <div style="display:flex;font-size:10px;margin-bottom:3px">
+    <span style="flex:2">Dried Pepper</span>
+    <span style="flex:1;text-align:right">3 Pck</span>
+    <span style="flex:1;text-align:right">5.00</span>
+    <span style="flex:1;text-align:right">15.00</span>
+  </div>
+
+  <div style="border-top:1px dashed #bbb;margin:8px 0"></div>
+
+  <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+    <span style="color:#555">Subtotal</span><span>GHS 53.00</span>
+  </div>
+
+  <div style="border-top:1px dashed #bbb;margin:8px 0"></div>
+
+  <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:8px">
+    <span>TOTAL DUE</span><span>GHS 53.00</span>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+    <span style="color:#555">Cash Paid</span><span>GHS 60.00</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:2px">
+    <span style="color:#555">MoMo Paid</span><span>GHS 0.00</span>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700">
+    <span>Change</span><span>GHS 7.00</span>
+  </div>
+
+  <div style="border-top:1px dashed #bbb;margin:10px 0"></div>
+
+  <div style="text-align:center;margin-bottom:6px">
+    <div id="qr-container" style="display:inline-block"></div>
+
+    <div style="font-size:9px;color:#777;margin-top:4px">Scan to verify receipt</div>
+    <div style="font-size:9px;color:#777">SKF-R-00001</div>
+  </div>
+
+  <div style="border-top:1px dashed #bbb;margin:10px 0"></div>
+
+  <div style="text-align:center;font-size:9px;color:#555;line-height:1.6">
+    <div>Thank you for your business</div>
+    <div style="margin-top:2px">sikaflow.com</div>
+    <div>support@sikaflow.com | +233 0244 00 00 00</div>
+    <div style="margin-top:6px;font-size:9px;color:#888;border-top:0.5px solid #ddd;padding-top:6px">Powered by Trident Aliska Digital Tech</div>
+  </div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+<script>
+(function tryQR() {
+  if (typeof QRCode === 'undefined') { setTimeout(tryQR, 200); return; }
+  const container = document.getElementById('qr-container');
+  const canvas = document.createElement('canvas');
+  container.appendChild(canvas);
+  QRCode.toCanvas(canvas, 'https://sikaflow.com/verify/SKF-R-00001', {
+    width: 84, margin: 1,
+    color: { dark: '#000000', light: '#ffffff' }
+  }, function(err) {
+    if (err) {
+      container.innerHTML = '<div style="width:84px;height:84px;border:0.5px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:9px;color:#999">QR unavailable</div>';
+    }
+  });
+})();
+</script>
