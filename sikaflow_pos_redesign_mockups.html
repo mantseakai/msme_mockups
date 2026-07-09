@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow POS — Redesign Concepts</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;padding:32px 16px 60px;min-height:100vh;color:#111827;}
+
+.page{max-width:1100px;margin:0 auto;}
+.page-header{margin-bottom:36px;}
+.page-header h1{font-size:22px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.page-header p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+
+.hint{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:32px;display:flex;gap:8px;align-items:center;}
+
+.section{margin-bottom:52px;}
+.section-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #e2e8f0;}
+.concept-badge{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;}
+.section-header h2{font-size:17px;font-weight:500;color:#0d1b3e;margin-bottom:3px;}
+.section-header p{font-size:12px;color:#607191;line-height:1.6;}
+.color-chips{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.chip{font-size:10px;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:20px;font-weight:500;}
+
+.screens-row{display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;}
+
+.phone-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.screen-label{font-size:11px;color:#607191;text-align:center;}
+
+.phone{width:220px;border-radius:28px;overflow:hidden;border:2.5px solid;box-shadow:0 0 0 4px #eef0f4,0 0 0 6px #c8d0dc;}
+.sbar{padding:6px 14px 4px;display:flex;justify-content:space-between;align-items:center;}
+.sbar .t{font-size:10px;font-weight:500;}
+.sbar .ic{display:flex;gap:4px;} .sbar .ic i{font-size:11px;}
+.sync-bar{padding:3px 12px;display:flex;align-items:center;justify-content:flex-end;gap:4px;}
+.sync-bar .dot{width:6px;height:6px;border-radius:50%;}
+.sync-bar span{font-size:9px;font-weight:500;}
+.ptop{padding:10px 13px 12px;display:flex;align-items:center;gap:10px;}
+.ptop .title{font-size:14px;font-weight:500;}
+
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.kpi-cell{padding:9px 13px;}
+.kpi-cell .kl{font-size:9px;margin-bottom:2px;}
+.kpi-cell .kv{font-size:17px;font-weight:500;}
+
+.tile-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px;}
+.tile{border-radius:12px;padding:14px 12px;cursor:pointer;}
+.tile i{font-size:22px;display:block;margin-bottom:8px;}
+.tile .tn{font-size:12px;font-weight:500;margin-bottom:2px;}
+.tile .ts{font-size:10px;}
+
+.tx-section{padding:0 8px 8px;}
+.tx-label{font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;padding:8px 0 5px;}
+.tx-card{border-radius:10px;padding:10px 12px;margin-bottom:6px;}
+.tx-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+.tx-id{font-size:10px;font-weight:500;font-family:'DM Mono',monospace;}
+.badge{font-size:9px;font-weight:500;padding:2px 7px;border-radius:20px;}
+.tx-bot{display:flex;justify-content:space-between;}
+.tx-date{font-size:9px;}
+.tx-amt{font-size:11px;font-weight:500;}
+.show-all{border-radius:10px;padding:10px;text-align:center;font-size:11px;font-weight:500;border:1.5px solid;margin:0 8px 8px;}
+
+.bnav{display:flex;border-top:0.5px solid;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:7px 0;gap:2px;}
+.ni i{font-size:17px;}
+.ni span{font-size:8px;font-weight:500;}
+
+/* RECEIPT */
+.rec-head{padding:12px 14px;text-align:center;}
+.rec-head h3{font-size:15px;font-weight:500;}
+.rec-body{padding:12px 14px;}
+.rec-row{display:flex;justify-content:space-between;padding:6px 0;font-size:11px;border-bottom:0.5px solid;}
+.rec-row:last-child{border-bottom:none;}
+.rec-row .rr-l{font-size:11px;}
+.rec-row .rr-r{font-weight:500;}
+.rec-row.total .rr-l{font-size:12px;font-weight:500;}
+.rec-row.total .rr-r{font-size:14px;font-weight:600;}
+.rec-divider{border:none;border-top:1px dashed;margin:8px 0;}
+.tax-box{border-radius:8px;padding:8px 10px;margin:6px 0;}
+.tax-box-label{font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px;}
+.tax-row{display:flex;justify-content:space-between;font-size:10px;padding:2px 0;}
+.rec-thank{text-align:center;font-size:11px;font-weight:500;padding:6px 0;}
+.rec-dots{display:flex;justify-content:center;gap:7px;padding:5px 0;}
+.rec-dots span{width:7px;height:7px;border-radius:50%;}
+.rec-actions{padding:8px;}
+.rec-btn{width:100%;border-radius:9px;padding:10px;text-align:center;font-size:12px;font-weight:500;margin-bottom:6px;border:1.5px solid;}
+
+/* ═══════════════════════════════════
+   CONCEPT A — BRAND MATCH
+═══════════════════════════════════ */
+.a-phone{border-color:#0B1FBF;}
+.a-sbar{background:#0B1FBF;} .a-sbar .t,.a-sbar .ic i{color:#fff;}
+.a-sync{background:#e6fce8;} .a-sync .dot{background:#1aaa6b;} .a-sync span{color:#1aaa6b;}
+.a-top{background:#0B1FBF;} .a-top .title{color:#fff;} .a-top i{color:#fff;}
+.a-kpi{background:#0B1FBF;border-bottom:0.5px solid rgba(255,255,255,0.12);}
+.a-kpi .kl{color:rgba(255,255,255,0.6);}
+.a-kpi .kv.main{color:#fff;} .a-kpi .kv.hi{color:#4DDD1A;}
+.a-kpi-divider{width:0.5px;background:rgba(255,255,255,0.15);}
+.a-body{background:#f4f6fb;}
+.a-tile-main{background:#0B1FBF;}
+.a-tile-main i,.a-tile-main .tn{color:#4DDD1A;}
+.a-tile-main .ts{color:rgba(77,221,26,0.65);}
+.a-tile-sec{background:#4DDD1A;}
+.a-tile-sec i,.a-tile-sec .tn{color:#0B1FBF;}
+.a-tile-sec .ts{color:rgba(11,31,191,0.65);}
+.a-tile-neu{background:#fff;border:0.5px solid #e2e8f0;}
+.a-tile-neu i,.a-tile-neu .tn{color:#0B1FBF;}
+.a-tile-neu .ts{color:#607191;}
+.a-tx-label{color:#607191;}
+.a-tx-card{background:#fff;border:0.5px solid #e2e8f0;}
+.a-tx-id{color:#0d1b3e;}
+.a-badge-pending{background:#fff0d0;color:#8a5c00;border:0.5px solid #e0a020;}
+.a-tx-date{color:#94a3b8;}
+.a-tx-amt{color:#0B1FBF;}
+.a-show-all{border-color:#0B1FBF;color:#0B1FBF;background:#fff;}
+.a-bnav{background:#fff;border-top-color:#e2e8f0;}
+.a-ni-active i,.a-ni-active span{color:#0B1FBF;}
+.a-ni i,.a-ni span{color:#94a3b8;}
+/* receipt A */
+.a-rec-head{background:#0B1FBF;} .a-rec-head h3{color:#fff;}
+.a-rec-body{background:#fff;}
+.a-rec-row{border-bottom-color:#f1f5f9;} .a-rec-row .rr-l{color:#64748b;} .a-rec-row .rr-r{color:#0d1b3e;}
+.a-rec-row.total .rr-r{color:#0B1FBF;}
+.a-divider{border-top-color:#d4dce8;}
+.a-tax-box{background:#e8f0fe;} .a-tax-box-label{color:#0c447c;} .a-tax-row-l{color:#3a5c9a;} .a-tax-row-r{color:#0B1FBF;}
+.a-thank{color:#0d1b3e;}
+.a-dots span{background:#f1f5f9;}
+.a-btn-print{background:#f4f6fb;border-color:#d4dce8;color:#64748b;}
+.a-btn-new{background:#0B1FBF;border-color:#0B1FBF;color:#fff;}
+.a-btn-void{background:#fff;border-color:#e24b4a;color:#e24b4a;}
+
+/* ═══════════════════════════════════
+   CONCEPT B — DARK PRO
+═══════════════════════════════════ */
+.b-phone{border-color:#1a1a3e;}
+.b-sbar{background:#0d0d2b;} .b-sbar .t,.b-sbar .ic i{color:#fff;}
+.b-sync{background:#0d2b1a;} .b-sync .dot{background:#4DDD1A;} .b-sync span{color:#4DDD1A;}
+.b-top{background:#12122a;border-bottom:0.5px solid rgba(255,255,255,0.08);} .b-top .title{color:#fff;} .b-top i{color:rgba(255,255,255,0.6);}
+.b-kpi{background:#12122a;border-bottom:0.5px solid rgba(255,255,255,0.08);}
+.b-kpi .kl{color:rgba(255,255,255,0.45);}
+.b-kpi .kv.main{color:#fff;} .b-kpi .kv.hi{color:#4DDD1A;}
+.b-kpi-divider{width:0.5px;background:rgba(255,255,255,0.1);}
+.b-body{background:#12122a;}
+.b-tile-main{background:#4DDD1A;}
+.b-tile-main i,.b-tile-main .tn{color:#0d0d1a;}
+.b-tile-main .ts{color:rgba(13,13,26,0.6);}
+.b-tile-sec{background:#1e1e3e;border:0.5px solid rgba(77,221,26,0.25);}
+.b-tile-sec i,.b-tile-sec .tn{color:#4DDD1A;}
+.b-tile-sec .ts{color:rgba(77,221,26,0.55);}
+.b-tile-neu{background:#1e1e3e;border:0.5px solid rgba(255,255,255,0.08);}
+.b-tile-neu i,.b-tile-neu .tn{color:rgba(255,255,255,0.8);}
+.b-tile-neu .ts{color:rgba(255,255,255,0.4);}
+.b-tx-label{color:rgba(255,255,255,0.35);}
+.b-tx-card{background:#1e1e3e;border:0.5px solid rgba(255,255,255,0.08);}
+.b-tx-id{color:#fff;}
+.b-badge-pending{background:rgba(240,192,64,0.15);color:#f0c040;border:0.5px solid rgba(240,192,64,0.3);}
+.b-tx-date{color:rgba(255,255,255,0.35);}
+.b-tx-amt{color:#4DDD1A;}
+.b-show-all{border-color:rgba(77,221,26,0.3);color:#4DDD1A;background:rgba(77,221,26,0.06);}
+.b-bnav{background:#0d0d2b;border-top-color:rgba(255,255,255,0.08);}
+.b-ni-active i,.b-ni-active span{color:#4DDD1A;}
+.b-ni i,.b-ni span{color:rgba(255,255,255,0.3);}
+/* receipt B */
+.b-rec-head{background:#0d0d2b;} .b-rec-head h3{color:#fff;}
+.b-rec-body{background:#12122a;}
+.b-rec-row{border-bottom-color:rgba(255,255,255,0.07);} .b-rec-row .rr-l{color:rgba(255,255,255,0.45);} .b-rec-row .rr-r{color:#fff;}
+.b-rec-row.total .rr-r{color:#4DDD1A;}
+.b-divider{border-top-color:rgba(255,255,255,0.1);}
+.b-tax-box{background:rgba(77,221,26,0.07);border:0.5px solid rgba(77,221,26,0.2);} .b-tax-box-label{color:rgba(77,221,26,0.6);} .b-tax-row-l{color:rgba(255,255,255,0.4);} .b-tax-row-r{color:#4DDD1A;}
+.b-thank{color:#fff;}
+.b-dots span{background:rgba(255,255,255,0.08);}
+.b-btn-print{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.55);}
+.b-btn-new{background:#4DDD1A;border-color:#4DDD1A;color:#0d0d1a;}
+.b-btn-void{background:rgba(226,75,74,0.1);border-color:rgba(226,75,74,0.3);color:#f09595;}
+
+/* ═══════════════════════════════════
+   CONCEPT C — WARM MARKET
+═══════════════════════════════════ */
+.c-phone{border-color:#c24a00;}
+.c-sbar{background:#1a1a1a;} .c-sbar .t,.c-sbar .ic i{color:#fff;}
+.c-sync{background:#e6fce8;} .c-sync .dot{background:#1aaa6b;} .c-sync span{color:#1aaa6b;}
+.c-top{background:#FF6B1A;} .c-top .title{color:#fff;} .c-top i{color:rgba(255,255,255,0.8);}
+.c-kpi{background:#FF6B1A;border-bottom:0.5px solid rgba(0,0,0,0.1);}
+.c-kpi .kl{color:rgba(255,255,255,0.65);}
+.c-kpi .kv.main{color:#fff;} .c-kpi .kv.hi{color:#FFD700;}
+.c-kpi-divider{width:0.5px;background:rgba(0,0,0,0.12);}
+.c-body{background:#f9f5f0;}
+.c-tile-main{background:#1a1a1a;}
+.c-tile-main i,.c-tile-main .tn{color:#FF6B1A;}
+.c-tile-main .ts{color:rgba(255,107,26,0.65);}
+.c-tile-sec{background:#FFD700;}
+.c-tile-sec i,.c-tile-sec .tn{color:#1a1a1a;}
+.c-tile-sec .ts{color:rgba(26,26,26,0.6);}
+.c-tile-neu{background:#fff;border:0.5px solid #ecddd0;}
+.c-tile-neu i,.c-tile-neu .tn{color:#c24a00;}
+.c-tile-neu .ts{color:#a07858;}
+.c-tx-label{color:#a07858;}
+.c-tx-card{background:#fff;border:0.5px solid #ecddd0;}
+.c-tx-id{color:#1a1a1a;}
+.c-badge-pending{background:#fff0d0;color:#8a5000;border:0.5px solid #f0c050;}
+.c-tx-date{color:#b09070;}
+.c-tx-amt{color:#c24a00;}
+.c-show-all{border-color:#FF6B1A;color:#FF6B1A;background:#fff;}
+.c-bnav{background:#fff;border-top-color:#e8d8c8;}
+.c-ni-active i,.c-ni-active span{color:#FF6B1A;}
+.c-ni i,.c-ni span{color:#b09070;}
+/* receipt C */
+.c-rec-head{background:#FF6B1A;} .c-rec-head h3{color:#fff;}
+.c-rec-body{background:#fff;}
+.c-rec-row{border-bottom-color:#f0e4d4;} .c-rec-row .rr-l{color:#a07858;} .c-rec-row .rr-r{color:#1a1a1a;}
+.c-rec-row.total .rr-r{color:#c24a00;}
+.c-divider{border-top-color:#ddc8b0;}
+.c-tax-box{background:#fff8f0;border:0.5px solid #f0d0b0;} .c-tax-box-label{color:#a05020;} .c-tax-row-l{color:#a07858;} .c-tax-row-r{color:#c24a00;}
+.c-thank{color:#1a1a1a;}
+.c-dots span{background:#f0e4d4;}
+.c-btn-print{background:#f9f5f0;border-color:#e0c8b0;color:#a07858;}
+.c-btn-new{background:#FF6B1A;border-color:#FF6B1A;color:#fff;}
+.c-btn-void{background:#fff;border-color:#e24b4a;color:#e24b4a;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="page-header">
+    <h1>Sikaflow POS - Redesign Concepts</h1>
+    <p>Three design directions applied to the current Home and Receipt screens · Share with Vietnam development team</p>
+    <div class="meta">
+      <span>Trident Aliska Digital Tech</span>
+      <span>July 2026</span>
+      <span>Vietnam Dev Team</span>
+    </div>
+  </div>
+
+  <div class="hint">
+    💡 Open in any browser. Use File → Print → Save as PDF to export. Each direction shows the Home screen and Receipt screen side by side.
+  </div>
+
+  <!-- ═══════════════════════════════════
+       CONCEPT A — BRAND MATCH
+  ═══════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="concept-badge" style="background:#e8f0fe;color:#0B1FBF;">A</div>
+      <div>
+        <h2>Direction A: Brand Match</h2>
+        <p>Uses the exact Sikaflow cobalt blue and lime green from the logo. Most consistent with brand identity. Recommended for Phase 1 — lowest implementation risk.</p>
+        <div class="color-chips">
+          <span class="chip" style="background:#0B1FBF;color:#fff;">Primary #0B1FBF</span>
+          <span class="chip" style="background:#4DDD1A;color:#0B1FBF;">Accent #4DDD1A</span>
+          <span class="chip" style="background:#f4f6fb;color:#607191;border:0.5px solid #d4dce8;">Surface #F4F6FB</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="screens-row">
+      <!-- A: Home -->
+      <div class="phone-wrap">
+        <div class="screen-label">Home screen</div>
+        <div class="phone a-phone">
+          <div class="sbar a-sbar"><span class="t">17:15</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+          <div class="sync-bar a-sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="kpi-row a-kpi" style="display:flex;">
+            <div class="kpi-cell" style="flex:1"><div class="kl">Today sales</div><div class="kv main">GHS 0.00</div></div>
+            <div class="a-kpi-divider"></div>
+            <div class="kpi-cell" style="flex:1"><div class="kl">This month</div><div class="kv hi">GHS 0.00</div></div>
+          </div>
+          <div class="a-body">
+            <div class="tile-grid">
+              <div class="tile a-tile-main"><i class="ti ti-device-desktop" aria-hidden="true"></i><div class="tn">POS</div><div class="ts">Sell items</div></div>
+              <div class="tile a-tile-sec"><i class="ti ti-archive" aria-hidden="true"></i><div class="tn">Inventory</div><div class="ts">1 item</div></div>
+              <div class="tile a-tile-neu"><i class="ti ti-chart-bar" aria-hidden="true"></i><div class="tn">Reports</div><div class="ts">1 sale today</div></div>
+              <div class="tile a-tile-neu"><i class="ti ti-coin" aria-hidden="true"></i><div class="tn">Expenses</div><div class="ts">Record expenses</div></div>
+            </div>
+            <div class="tx-section">
+              <div class="tx-label a-tx-label">Recent transactions</div>
+              <div class="tx-card a-tx-card">
+                <div class="tx-top"><span class="tx-id a-tx-id">INV-CASH-302a5858</span><span class="badge a-badge-pending">Pending sync</span></div>
+                <div class="tx-bot"><span class="tx-date a-tx-date">27 May, 2026 · 17:13</span><span class="tx-amt a-tx-amt">GHS 35.00</span></div>
+              </div>
+              <div class="show-all a-show-all">Show all transactions</div>
+            </div>
+          </div>
+          <div class="bnav a-bnav">
+            <div class="ni a-ni-active"><i class="ti ti-home" aria-label="Home"></i><span>Home</span></div>
+            <div class="ni a-ni"><i class="ti ti-device-desktop" aria-label="POS"></i><span>POS</span></div>
+            <div class="ni a-ni"><i class="ti ti-chart-bar" aria-label="Reports"></i><span>Reports</span></div>
+            <div class="ni a-ni"><i class="ti ti-archive" aria-label="Inventory"></i><span>Inventory</span></div>
+            <div class="ni a-ni"><i class="ti ti-menu-2" aria-label="Menu"></i><span>Menu</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- A: Receipt -->
+      <div class="phone-wrap">
+        <div class="screen-label">Receipt screen</div>
+        <div class="phone a-phone">
+          <div class="sbar a-sbar"><span class="t">17:14</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+          <div class="sync-bar a-sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="rec-head a-rec-head"><h3>Receipt</h3></div>
+          <div class="rec-body a-rec-body">
+            <div class="rec-row a-rec-row"><span class="rr-l">Items</span><span class="rr-r" style="color:#94a3b8;font-weight:400;font-size:10px">Price</span></div>
+            <div class="rec-row a-rec-row"><span class="rr-l">x5 bottle water</span><span class="rr-r">GHS 35.00</span></div>
+            <div class="rec-row a-rec-row"><span class="rr-l" style="color:#94a3b8">Subtotal:</span><span class="rr-r">GHS 35.00</span></div>
+            <div class="tax-box a-tax-box">
+              <div class="tax-box-label a-tax-box-label">Taxes collected</div>
+              <div class="tax-row"><span class="a-tax-row-l">MTS (3%)</span><span class="a-tax-row-r">GHS 1.05</span></div>
+              <div class="tax-row"><span class="a-tax-row-l">NHIL (2.5%)</span><span class="a-tax-row-r">GHS 0.88</span></div>
+              <div class="tax-row"><span class="a-tax-row-l">GETFund (2.5%)</span><span class="a-tax-row-r">GHS 0.88</span></div>
+            </div>
+            <div class="rec-row a-rec-row total"><span class="rr-l">Grand Total:</span><span class="rr-r">GHS 37.81</span></div>
+            <hr class="rec-divider a-divider">
+            <div class="rec-row a-rec-row"><span class="rr-l" style="color:#94a3b8">Payment:</span><span class="rr-r">Cash</span></div>
+            <div class="rec-row a-rec-row"><span class="rr-l" style="color:#94a3b8">Tendered:</span><span class="rr-r">GHS 50.00</span></div>
+            <div class="rec-row a-rec-row"><span class="rr-l" style="color:#94a3b8">Change:</span><span class="rr-r">GHS 12.19</span></div>
+            <div class="rec-thank a-thank">Thank you!</div>
+            <div class="rec-dots a-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="rec-actions">
+            <div class="rec-btn a-btn-print">Print receipt</div>
+            <div class="rec-btn a-btn-new">New sale</div>
+            <div class="rec-btn a-btn-void">Void sale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       CONCEPT B — DARK PRO
+  ═══════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="concept-badge" style="background:#1e1e3e;color:#4DDD1A;">B</div>
+      <div>
+        <h2>Direction B: Dark Pro</h2>
+        <p>Deep navy/black canvas with lime green accents. Best readability in bright outdoor market environments — high contrast reduces glare on Sunmi screens in direct sunlight.</p>
+        <div class="color-chips">
+          <span class="chip" style="background:#0d0d2b;color:#fff;">Dark #0D0D2B</span>
+          <span class="chip" style="background:#4DDD1A;color:#0d0d1a;">Accent #4DDD1A</span>
+          <span class="chip" style="background:#1e1e3e;color:#4DDD1A;border:0.5px solid rgba(77,221,26,0.3);">Surface #1E1E3E</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="screens-row">
+      <!-- B: Home -->
+      <div class="phone-wrap">
+        <div class="screen-label">Home screen</div>
+        <div class="phone b-phone">
+          <div class="sbar b-sbar"><span class="t">17:15</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+          <div class="sync-bar b-sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="kpi-row b-kpi" style="display:flex;">
+            <div class="kpi-cell" style="flex:1"><div class="kl">Today sales</div><div class="kv main">GHS 0.00</div></div>
+            <div class="b-kpi-divider"></div>
+            <div class="kpi-cell" style="flex:1"><div class="kl">This month</div><div class="kv hi">GHS 0.00</div></div>
+          </div>
+          <div class="b-body">
+            <div class="tile-grid">
+              <div class="tile b-tile-main"><i class="ti ti-device-desktop" aria-hidden="true"></i><div class="tn">POS</div><div class="ts">Sell items</div></div>
+              <div class="tile b-tile-sec"><i class="ti ti-archive" aria-hidden="true"></i><div class="tn">Inventory</div><div class="ts">1 item</div></div>
+              <div class="tile b-tile-neu"><i class="ti ti-chart-bar" aria-hidden="true"></i><div class="tn">Reports</div><div class="ts">1 sale today</div></div>
+              <div class="tile b-tile-neu"><i class="ti ti-coin" aria-hidden="true"></i><div class="tn">Expenses</div><div class="ts">Record expenses</div></div>
+            </div>
+            <div class="tx-section">
+              <div class="tx-label b-tx-label">Recent transactions</div>
+              <div class="tx-card b-tx-card">
+                <div class="tx-top"><span class="tx-id b-tx-id">INV-CASH-302a5858</span><span class="badge b-badge-pending">Pending sync</span></div>
+                <div class="tx-bot"><span class="tx-date b-tx-date">27 May, 2026 · 17:13</span><span class="tx-amt b-tx-amt">GHS 35.00</span></div>
+              </div>
+              <div class="show-all b-show-all">Show all transactions</div>
+            </div>
+          </div>
+          <div class="bnav b-bnav">
+            <div class="ni b-ni-active"><i class="ti ti-home" aria-label="Home"></i><span>Home</span></div>
+            <div class="ni b-ni"><i class="ti ti-device-desktop" aria-label="POS"></i><span>POS</span></div>
+            <div class="ni b-ni"><i class="ti ti-chart-bar" aria-label="Reports"></i><span>Reports</span></div>
+            <div class="ni b-ni"><i class="ti ti-archive" aria-label="Inventory"></i><span>Inventory</span></div>
+            <div class="ni b-ni"><i class="ti ti-menu-2" aria-label="Menu"></i><span>Menu</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B: Receipt -->
+      <div class="phone-wrap">
+        <div class="screen-label">Receipt screen</div>
+        <div class="phone b-phone">
+          <div class="sbar b-sbar"><span class="t">17:14</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+          <div class="sync-bar b-sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="rec-head b-rec-head"><h3>Receipt</h3></div>
+          <div class="rec-body b-rec-body">
+            <div class="rec-row b-rec-row"><span class="rr-l">Items</span><span class="rr-r" style="color:rgba(255,255,255,0.3);font-weight:400;font-size:10px">Price</span></div>
+            <div class="rec-row b-rec-row"><span class="rr-l">x5 bottle water</span><span class="rr-r">GHS 35.00</span></div>
+            <div class="rec-row b-rec-row"><span class="rr-l">Subtotal:</span><span class="rr-r">GHS 35.00</span></div>
+            <div class="tax-box b-tax-box">
+              <div class="tax-box-label b-tax-box-label">Taxes collected</div>
+              <div class="tax-row"><span class="b-tax-row-l">MTS (3%)</span><span class="b-tax-row-r">GHS 1.05</span></div>
+              <div class="tax-row"><span class="b-tax-row-l">NHIL (2.5%)</span><span class="b-tax-row-r">GHS 0.88</span></div>
+              <div class="tax-row"><span class="b-tax-row-l">GETFund (2.5%)</span><span class="b-tax-row-r">GHS 0.88</span></div>
+            </div>
+            <div class="rec-row b-rec-row total"><span class="rr-l">Grand Total:</span><span class="rr-r">GHS 37.81</span></div>
+            <hr class="rec-divider b-divider">
+            <div class="rec-row b-rec-row"><span class="rr-l">Payment:</span><span class="rr-r">Cash</span></div>
+            <div class="rec-row b-rec-row"><span class="rr-l">Tendered:</span><span class="rr-r">GHS 50.00</span></div>
+            <div class="rec-row b-rec-row"><span class="rr-l">Change:</span><span class="rr-r">GHS 12.19</span></div>
+            <div class="rec-thank b-thank">Thank you!</div>
+            <div class="rec-dots b-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="rec-actions" style="background:#0d0d2b;padding:8px;">
+            <div class="rec-btn b-btn-print">Print receipt</div>
+            <div class="rec-btn b-btn-new">New sale</div>
+            <div class="rec-btn b-btn-void">Void sale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       CONCEPT C — WARM MARKET
+  ═══════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="concept-badge" style="background:#FF6B1A;color:#fff;">C</div>
+      <div>
+        <h2>Direction C: Warm Market</h2>
+        <p>Vibrant orange and gold on a warm off-white canvas. Energetic and approachable — designed for busy market environments. Requires brand sign-off as it diverges from the logo palette.</p>
+        <div class="color-chips">
+          <span class="chip" style="background:#FF6B1A;color:#fff;">Primary #FF6B1A</span>
+          <span class="chip" style="background:#FFD700;color:#1a1a1a;">Accent #FFD700</span>
+          <span class="chip" style="background:#f9f5f0;color:#a07858;border:0.5px solid #ecddd0;">Surface #F9F5F0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="screens-row">
+      <!-- C: Home -->
+      <div class="phone-wrap">
+        <div class="screen-label">Home screen</div>
+        <div class="phone c-phone">
+          <div class="sbar c-sbar"><span class="t">17:15</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+          <div class="sync-bar c-sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="kpi-row c-kpi" style="display:flex;">
+            <div class="kpi-cell" style="flex:1"><div class="kl">Today sales</div><div class="kv main">GHS 0.00</div></div>
+            <div class="c-kpi-divider"></div>
+            <div class="kpi-cell" style="flex:1"><div class="kl">This month</div><div class="kv hi">GHS 0.00</div></div>
+          </div>
+          <div class="c-body">
+            <div class="tile-grid">
+              <div class="tile c-tile-main"><i class="ti ti-device-desktop" aria-hidden="true"></i><div class="tn">POS</div><div class="ts">Sell items</div></div>
+              <div class="tile c-tile-sec"><i class="ti ti-archive" aria-hidden="true"></i><div class="tn">Inventory</div><div class="ts">1 item</div></div>
+              <div class="tile c-tile-neu"><i class="ti ti-chart-bar" aria-hidden="true"></i><div class="tn">Reports</div><div class="ts">1 sale today</div></div>
+              <div class="tile c-tile-neu"><i class="ti ti-coin" aria-hidden="true"></i><div class="tn">Expenses</div><div class="ts">Record expenses</div></div>
+            </div>
+            <div class="tx-section">
+              <div class="tx-label c-tx-label">Recent transactions</div>
+              <div class="tx-card c-tx-card">
+                <div class="tx-top"><span class="tx-id c-tx-id">INV-CASH-302a5858</span><span class="badge c-badge-pending">Pending sync</span></div>
+                <div class="tx-bot"><span class="tx-date c-tx-date">27 May, 2026 · 17:13</span><span class="tx-amt c-tx-amt">GHS 35.00</span></div>
+              </div>
+              <div class="show-all c-show-all">Show all transactions</div>
+            </div>
+          </div>
+          <div class="bnav c-bnav">
+            <div class="ni c-ni-active"><i class="ti ti-home" aria-label="Home"></i><span>Home</span></div>
+            <div class="ni c-ni"><i class="ti ti-device-desktop" aria-label="POS"></i><span>POS</span></div>
+            <div class="ni c-ni"><i class="ti ti-chart-bar" aria-label="Reports"></i><span>Reports</span></div>
+            <div class="ni c-ni"><i class="ti ti-archive" aria-label="Inventory"></i><span>Inventory</span></div>
+            <div class="ni c-ni"><i class="ti ti-menu-2" aria-label="Menu"></i><span>Menu</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- C: Receipt -->
+      <div class="phone-wrap">
+        <div class="screen-label">Receipt screen</div>
+        <div class="phone c-phone">
+          <div class="sbar c-sbar"><span class="t">17:14</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+          <div class="sync-bar c-sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="rec-head c-rec-head"><h3>Receipt</h3></div>
+          <div class="rec-body c-rec-body">
+            <div class="rec-row c-rec-row"><span class="rr-l">Items</span><span class="rr-r" style="color:#b09070;font-weight:400;font-size:10px">Price</span></div>
+            <div class="rec-row c-rec-row"><span class="rr-l">x5 bottle water</span><span class="rr-r">GHS 35.00</span></div>
+            <div class="rec-row c-rec-row"><span class="rr-l">Subtotal:</span><span class="rr-r">GHS 35.00</span></div>
+            <div class="tax-box c-tax-box">
+              <div class="tax-box-label c-tax-box-label">Taxes collected</div>
+              <div class="tax-row"><span class="c-tax-row-l">MTS (3%)</span><span class="c-tax-row-r">GHS 1.05</span></div>
+              <div class="tax-row"><span class="c-tax-row-l">NHIL (2.5%)</span><span class="c-tax-row-r">GHS 0.88</span></div>
+              <div class="tax-row"><span class="c-tax-row-l">GETFund (2.5%)</span><span class="c-tax-row-r">GHS 0.88</span></div>
+            </div>
+            <div class="rec-row c-rec-row total"><span class="rr-l">Grand Total:</span><span class="rr-r">GHS 37.81</span></div>
+            <hr class="rec-divider c-divider">
+            <div class="rec-row c-rec-row"><span class="rr-l">Payment:</span><span class="rr-r">Cash</span></div>
+            <div class="rec-row c-rec-row"><span class="rr-l">Tendered:</span><span class="rr-r">GHS 50.00</span></div>
+            <div class="rec-row c-rec-row"><span class="rr-l">Change:</span><span class="rr-r">GHS 12.19</span></div>
+            <div class="rec-thank c-thank">Thank you!</div>
+            <div class="rec-dots c-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="rec-actions">
+            <div class="rec-btn c-btn-print">Print receipt</div>
+            <div class="rec-btn c-btn-new">New sale</div>
+            <div class="rec-btn c-btn-void">Void sale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="border-top:1px solid #e2e8f0;padding-top:20px;font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;">
+    Sikaflow Programme · POS Redesign Concepts · Trident Aliska Digital Tech · July 2026 · Internal
+  </div>
+
+</div>
+</body>
+</html>
