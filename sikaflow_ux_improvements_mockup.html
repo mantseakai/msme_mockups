@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow POS — UX Improvements Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;padding:32px 16px 60px;color:#111827;}
+.page{max-width:1100px;margin:0 auto;}
+
+.page-header{margin-bottom:36px;}
+.page-header h1{font-size:22px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.page-header p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+.hint{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:32px;display:flex;gap:8px;align-items:center;}
+
+/* ─ layout ─ */
+.section{margin-bottom:56px;}
+.section-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #e2e8f0;}
+.feat-badge{flex-shrink:0;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.section-header h2{font-size:17px;font-weight:500;color:#0d1b3e;margin-bottom:3px;}
+.section-header p{font-size:12px;color:#607191;line-height:1.65;max-width:680px;}
+.flow-label{font-size:11px;font-weight:500;color:#94a3b8;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px;}
+.screens-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start;}
+.phone-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.screen-tag{font-size:10px;font-family:'DM Mono',monospace;color:#607191;background:#fff;border:0.5px solid #d4dce8;padding:2px 8px;border-radius:4px;}
+.arrow-sep{flex-shrink:0;font-size:22px;color:#d4dce8;align-self:center;padding-top:20px;}
+
+/* ─ phone frame ─ */
+.phone{width:210px;border-radius:26px;overflow:hidden;border:2.5px solid #1e3a8a;background:#f4f6f9;box-shadow:0 0 0 4px #eef0f4,0 0 0 6px #b8c4d4;}
+.sbar{background:#1e3a8a;padding:5px 13px 4px;display:flex;justify-content:space-between;align-items:center;}
+.sbar .t{color:#fff;font-size:10px;font-weight:500;}
+.sbar .ic{display:flex;gap:3px;} .sbar .ic i{color:#fff;font-size:11px;}
+.sync-bar{background:#e6fce8;padding:2px 12px;display:flex;align-items:center;justify-content:flex-end;gap:4px;}
+.sync-bar .dot{width:5px;height:5px;border-radius:50%;background:#1aaa6b;}
+.sync-bar span{font-size:8px;font-weight:500;color:#1aaa6b;}
+.ptop{background:#1e3a8a;padding:9px 12px 11px;display:flex;align-items:center;gap:10px;}
+.ptop .back{color:rgba(255,255,255,.7);font-size:17px;}
+.ptop .title{font-size:14px;font-weight:500;color:#fff;flex:1;text-align:center;}
+
+/* ─ common elements ─ */
+.pill{display:inline-block;font-size:9px;font-weight:500;padding:2px 8px;border-radius:20px;}
+.pill.green{background:#e6f7f0;color:#085041;border:.5px solid #9ed8bf;}
+.pill.blue{background:#e8f0fe;color:#0c447c;border:.5px solid #b5d4f4;}
+.pill.amber{background:#fef9e7;color:#7a5000;border:.5px solid #e8c96a;}
+.pill.orange{background:#fff0e6;color:#7a3000;border:.5px solid #f5c09a;}
+.card{background:#fff;border-radius:12px;border:.5px solid #e2e8f0;padding:12px 13px;margin:0 8px 8px;}
+.btn{display:block;width:calc(100% - 16px);margin:0 8px 8px;border-radius:10px;padding:11px 12px;font-size:12px;font-weight:500;text-align:center;border:1.5px solid;}
+.btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a;}
+.btn.outline-blue{background:#fff;color:#1e3a8a;border-color:#1e3a8a;}
+.btn.outline-gray{background:#fff;color:#607191;border-color:#d4dce8;}
+.btn.outline-red{background:#fff;color:#e24b4a;border-color:#e24b4a;}
+.btn.green-solid{background:#1aaa6b;color:#fff;border-color:#1aaa6b;}
+.btn.whatsapp{background:#25D366;color:#fff;border-color:#25D366;display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 16px);margin:0 8px 6px;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:500;}
+.divider{border:none;border-top:1px dashed #d4dce8;margin:8px 0;}
+.row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:11px;border-bottom:.5px solid #f1f5f9;}
+.row:last-child{border-bottom:none;}
+.row .rl{color:#64748b;} .row .rr{font-weight:500;color:#0d1b3e;}
+.row.total .rl{font-size:12px;font-weight:500;color:#0d1b3e;} .row.total .rr{font-size:15px;color:#1e3a8a;}
+.section-label{font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:#94a3b8;padding:8px 8px 4px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="page-header">
+  <h1>Sikaflow POS — UX Improvement Mockups</h1>
+  <p>Three feature updates: digital receipts + WhatsApp sharing, auto-new sale after print, and offline training videos</p>
+  <div class="meta"><span>Trident Aliska </span><span>July 2026</span><span>Vietnam Dev Team</span></div>
+</div>
+
+<div class="hint">💡 Open in any browser. Use File → Print → Save as PDF to share.</div>
+
+
+<!-- ══════════════════════════════════════════════
+     FEATURE 1: DIGITAL RECEIPT + WHATSAPP
+══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="feat-badge" style="background:#e6f7f0;font-size:20px;">📱</div>
+    <div>
+      <h2>Feature 1 — Digital Receipt &amp; WhatsApp Sharing</h2>
+      <p>After a sale, the customer can receive a digital receipt via SMS or WhatsApp. For MoMo payments, the system automatically sends the receipt to the payer's mobile number immediately on confirmation — no manual step required. For cash sales, the Field Agent can tap to share.</p>
+    </div>
+  </div>
+
+  <!-- Flow A: MoMo (automatic) -->
+  <div class="flow-label">Flow A — Mobile Money payment (receipt auto-sent)</div>
+  <div class="screens-row">
+
+    <!-- Cart with MoMo selected -->
+    <div class="phone-wrap">
+      <div class="screen-tag">1 · Cart — MoMo selected</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:04 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">Cart</span></div>
+        <div style="background:#fff7e6;border:.5px solid #f5c09a;border-radius:8px;margin:8px 8px 4px;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+          <i class="ti ti-info-circle" style="font-size:13px;color:#c47f00" aria-hidden="true"></i>
+          <span style="font-size:10px;color:#7a5000">Slide left to remove from cart</span>
+        </div>
+        <div class="card" style="margin-bottom:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+            <span style="font-size:12px;font-weight:500;color:#0d1b3e;">Cap</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:26px;height:26px;border-radius:6px;border:.5px solid #d4dce8;display:flex;align-items:center;justify-content:center;font-size:14px;color:#607191;">−</div>
+              <span style="font-size:13px;font-weight:500;min-width:18px;text-align:center;">1</span>
+              <div style="width:26px;height:26px;border-radius:6px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;">+</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;align-items:center;gap:6px;"><span style="font-size:11px;color:#94a3b8;">GHS 10.00</span><span style="font-size:9px;border:.5px solid #d4dce8;border-radius:4px;padding:1px 6px;color:#607191;">Discount</span></div>
+            <span style="font-size:12px;font-weight:500;color:#1aaa6b;">GHS 10.00</span>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:#64748b;">Subtotal:</span><span style="font-weight:500;">GHS 10.00</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:500;padding:3px 0;"><span>Total:</span><span style="color:#1e3a8a;">GHS 10.80</span></div>
+          <div style="font-size:9px;color:#94a3b8;text-align:right;margin-top:1px;">incl. MTS + NHIL + GETFund</div>
+        </div>
+        <div class="section-label">Payment method</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 8px 8px;">
+          <div style="border:1.5px solid #d4dce8;border-radius:9px;padding:10px 8px;text-align:center;background:#f4f6f9;">
+            <i class="ti ti-cash" style="font-size:18px;color:#94a3b8;display:block;margin-bottom:4px;" aria-hidden="true"></i>
+            <div style="font-size:10px;color:#94a3b8;">Cash</div>
+          </div>
+          <div style="border:2px solid #1aaa6b;border-radius:9px;padding:10px 8px;text-align:center;background:#e6f7f0;">
+            <i class="ti ti-device-mobile" style="font-size:18px;color:#085041;display:block;margin-bottom:4px;" aria-hidden="true"></i>
+            <div style="font-size:10px;font-weight:500;color:#085041;">Mobile Money ✓</div>
+          </div>
+        </div>
+        <div style="background:#e6f7f0;border:.5px solid #9ed8bf;border-radius:8px;margin:0 8px 8px;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+          <i class="ti ti-send" style="font-size:12px;color:#085041;" aria-hidden="true"></i>
+          <span style="font-size:10px;color:#085041;line-height:1.4;">Digital receipt auto-sent to payer's MoMo number on confirmation</span>
+        </div>
+        <div class="btn primary" style="margin-bottom:10px;">Checkout</div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- Processing / auto-send state -->
+    <div class="phone-wrap">
+      <div class="screen-tag">2 · Sending receipt</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:04 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><span class="title">Receipt</span></div>
+        <div style="background:#e6f7f0;border:.5px solid #9ed8bf;border-radius:10px;margin:10px 8px 8px;padding:10px 12px;display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-circle-check" style="font-size:18px;color:#085041;" aria-hidden="true"></i>
+          <div><div style="font-size:11px;font-weight:500;color:#085041;">Payment successful</div><div style="font-size:10px;color:#0f6e56;margin-top:1px;">Digital receipt sent to 0244 123 456</div></div>
+        </div>
+        <div class="card">
+          <div style="text-align:center;margin-bottom:8px;">
+            <div style="font-size:12px;font-weight:500;color:#0d1b3e;">Midas Properties</div>
+            <div style="font-size:10px;color:#94a3b8;">Tel: +233 550 461 427</div>
+          </div>
+          <div style="text-align:center;font-size:9px;color:#94a3b8;margin-bottom:8px;font-family:'DM Mono',monospace;">RCP-MOMO-76d2340c · 22 Jul 2026</div>
+          <div class="divider"></div>
+          <div class="row"><span class="rl">x2 General Item</span><span class="rr">GHS 2.00</span></div>
+          <div class="row"><span class="rl" style="color:#94a3b8;">Subtotal</span><span class="rr">GHS 2.00</span></div>
+          <div style="background:#e8f0fe;border-radius:6px;padding:6px 8px;margin:5px 0;">
+            <div style="font-size:9px;font-weight:500;color:#0c447c;margin-bottom:3px;letter-spacing:.3px;text-transform:uppercase;">Taxes</div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;"><span style="color:#3a5c9a;">MTS 3%</span><span style="color:#1e3a8a;">GHS 0.06</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;"><span style="color:#3a5c9a;">NHIL 2.5%</span><span style="color:#1e3a8a;">GHS 0.05</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;"><span style="color:#3a5c9a;">GETFund 2.5%</span><span style="color:#1e3a8a;">GHS 0.05</span></div>
+          </div>
+          <div class="row total"><span class="rl">Grand Total</span><span class="rr">GHS 2.16</span></div>
+          <div class="divider"></div>
+          <div class="row"><span class="rl">Payment</span><span class="rr">MTN MoMo</span></div>
+          <div class="row"><span class="rl">Ref</span><span class="rr" style="font-family:'DM Mono',monospace;font-size:9px;">SKF-2026-88127</span></div>
+          <div style="text-align:center;font-size:10px;color:#64748b;padding:6px 0;">Thank you!</div>
+        </div>
+        <div class="btn outline-blue" style="display:flex;align-items:center;justify-content:center;gap:6px;"><i class="ti ti-printer" style="font-size:14px;" aria-hidden="true"></i> Print Receipt</div>
+        <div class="btn green-solid" style="margin-top:2px;">New sale</div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- New sale (auto redirect) -->
+    <div class="phone-wrap">
+      <div class="screen-tag">3 · Auto → New sale</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:05 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><span class="title">POS</span></div>
+        <div style="background:#e6f7f0;border:.5px solid #9ed8bf;border-radius:8px;margin:8px 8px 0;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+          <i class="ti ti-check" style="font-size:13px;color:#085041;" aria-hidden="true"></i>
+          <span style="font-size:10px;color:#085041;">Sale complete · Ready for next customer</span>
+        </div>
+        <div style="display:flex;gap:6px;padding:8px 8px 0;">
+          <div style="flex:1;background:#fff;border-radius:9px;border:.5px solid #e2e8f0;padding:7px 10px;display:flex;align-items:center;gap:6px;"><i class="ti ti-search" style="color:#94a3b8;font-size:13px;" aria-hidden="true"></i><span style="font-size:11px;color:#94a3b8;">Search...</span></div>
+          <div style="width:36px;height:36px;background:#fff;border-radius:9px;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;"><i class="ti ti-scan" style="font-size:16px;color:#607191;" aria-hidden="true"></i></div>
+        </div>
+        <div style="display:flex;gap:6px;padding:8px 8px 0;">
+          <div style="background:#1e3a8a;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:500;color:#fff;">All products</div>
+          <div style="background:#fff;border-radius:20px;border:.5px solid #e2e8f0;padding:5px 12px;font-size:10px;color:#607191;">Other</div>
+        </div>
+        <div style="padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:#fff;border-radius:12px;border:.5px solid #e2e8f0;overflow:hidden;">
+            <div style="height:60px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;"><i class="ti ti-photo" style="font-size:22px;color:#d4dce8;" aria-hidden="true"></i></div>
+            <div style="padding:7px 8px;">
+              <div style="font-size:9px;color:#1aaa6b;margin-bottom:2px;">● 3 left</div>
+              <div style="font-size:11px;font-weight:500;color:#0d1b3e;">General Item</div>
+              <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:5px;">GHS 1.00</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:26px;height:26px;border-radius:6px;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#607191;">−</div>
+                <span style="font-size:12px;min-width:16px;text-align:center;">0</span>
+                <div style="width:26px;height:26px;border-radius:6px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;">+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="margin:0 8px;border-top:.5px solid #e2e8f0;padding-top:8px;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:9px;color:#94a3b8;">Bottom nav</div>
+        </div>
+        <div style="display:flex;border-top:.5px solid #e2e8f0;background:#fff;">
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-home" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Home</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-device-desktop" style="font-size:16px;color:#1e3a8a;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#1e3a8a;font-weight:500;">POS</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-chart-bar" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Reports</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-archive" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Inventory</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-menu-2" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Menu</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Flow B: Cash (manual share) -->
+  <div class="flow-label" style="margin-top:28px;">Flow B — Cash payment (manual share)</div>
+  <div class="screens-row">
+
+    <!-- Cash receipt with share options -->
+    <div class="phone-wrap">
+      <div class="screen-tag">Receipt — Cash sale</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:14 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><span class="title">Receipt</span></div>
+        <div style="background:#e6f7f0;border:.5px solid #9ed8bf;border-radius:10px;margin:8px 8px 6px;padding:9px 12px;display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-circle-check" style="font-size:18px;color:#085041;" aria-hidden="true"></i>
+          <span style="font-size:11px;font-weight:500;color:#085041;">Accepted — Payment successful</span>
+        </div>
+        <div class="card" style="margin-bottom:6px;">
+          <div style="text-align:center;margin-bottom:6px;">
+            <div style="font-size:12px;font-weight:500;color:#0d1b3e;">Midas Properties</div>
+            <div style="font-size:9px;color:#94a3b8;">Tel: +233 550 461 427</div>
+            <div style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace;margin-top:4px;">RCP-CASH-76d2340c · 22 Jul 2026</div>
+          </div>
+          <div class="divider"></div>
+          <div class="row"><span class="rl">x2 General Item</span><span class="rr">GHS 2.00</span></div>
+          <div class="row"><span class="rl" style="color:#94a3b8;">Subtotal</span><span class="rr">GHS 2.00</span></div>
+          <div class="row total"><span class="rl">Grand Total</span><span class="rr">GHS 2.00</span></div>
+          <div class="divider"></div>
+          <div class="row"><span class="rl">Payment</span><span class="rr">Cash</span></div>
+          <div class="row"><span class="rl">Tendered</span><span class="rr">GHS 2.00</span></div>
+          <div class="row"><span class="rl">Change</span><span class="rr">GHS 0.00</span></div>
+          <div style="text-align:center;font-size:10px;color:#64748b;padding:5px 0;">Thank you!</div>
+        </div>
+        <!-- Share section -->
+        <div style="padding:0 8px 4px;">
+          <div style="font-size:9px;font-weight:500;color:#94a3b8;letter-spacing:.5px;text-transform:uppercase;margin-bottom:7px;">Share digital receipt</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+            <div style="border:1.5px solid #d4dce8;border-radius:9px;padding:9px 8px;text-align:center;background:#fff;cursor:pointer;">
+              <i class="ti ti-message" style="font-size:16px;color:#1e3a8a;display:block;margin-bottom:3px;" aria-hidden="true"></i>
+              <div style="font-size:10px;font-weight:500;color:#1e3a8a;">SMS</div>
+            </div>
+            <div style="border:1.5px solid #25D366;border-radius:9px;padding:9px 8px;text-align:center;background:#f0fdf4;cursor:pointer;">
+              <i class="ti ti-brand-whatsapp" style="font-size:16px;color:#25D366;display:block;margin-bottom:3px;" aria-hidden="true"></i>
+              <div style="font-size:10px;font-weight:500;color:#166534;">WhatsApp</div>
+            </div>
+          </div>
+          <div style="border:.5px solid #e2e8f0;border-radius:8px;background:#f8fafc;padding:7px 10px;display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:10px;color:#1e3a8a;font-weight:500;">GHS</span>
+            <input type="text" placeholder="Customer phone (optional)" style="border:none;background:transparent;font-size:11px;color:#374151;outline:none;flex:1;">
+          </div>
+        </div>
+        <div class="btn outline-blue" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:5px;"><i class="ti ti-printer" style="font-size:14px;" aria-hidden="true"></i> Print Receipt</div>
+        <div class="btn green-solid">New sale</div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- WhatsApp share sheet -->
+    <div class="phone-wrap">
+      <div class="screen-tag">WhatsApp share — phone entry</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:14 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div style="background:#1e3a8a;padding:10px 12px 12px;display:flex;align-items:center;gap:10px;">
+          <i class="ti ti-arrow-left" style="color:rgba(255,255,255,.7);font-size:17px;" aria-label="Back"></i>
+          <span style="font-size:14px;font-weight:500;color:#fff;">Share Receipt</span>
+        </div>
+        <div style="padding:12px 12px 0;">
+          <div style="font-size:11px;font-weight:500;color:#0d1b3e;margin-bottom:8px;">Send to customer</div>
+          <div style="border:1.5px solid #1e3a8a;border-radius:10px;padding:10px 12px;background:#fff;margin-bottom:10px;">
+            <div style="font-size:9px;color:#94a3b8;margin-bottom:4px;">Customer phone number</div>
+            <div style="font-size:14px;font-weight:500;color:#0d1b3e;">0244 123 456</div>
+          </div>
+          <!-- Receipt preview -->
+          <div style="background:#f0f4f8;border-radius:10px;padding:10px 12px;margin-bottom:10px;border:.5px solid #e2e8f0;">
+            <div style="font-size:9px;font-weight:500;color:#607191;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;">Message preview</div>
+            <div style="font-size:10px;color:#374151;line-height:1.7;font-family:'DM Mono',monospace;background:#fff;border-radius:7px;padding:8px 10px;border:.5px solid #e2e8f0;">
+              Midas Properties receipt<br>
+              Inv: RCP-CASH-76d2340c<br>
+              22 Jul 2026, 2:14 PM<br>
+              ─────────────────<br>
+              x2 General Item: GHS 2.00<br>
+              Grand Total: GHS 2.00<br>
+              Payment: Cash<br>
+              ─────────────────<br>
+              Thank you! 🛒<br>
+              <span style="color:#1e3a8a;">sikaflow.app/r/76d2340c</span>
+            </div>
+          </div>
+          <div style="background:#25D366;border-radius:10px;padding:12px;text-align:center;color:#fff;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:7px;">
+            <i class="ti ti-brand-whatsapp" style="font-size:16px;" aria-hidden="true"></i> Send via WhatsApp
+          </div>
+          <div style="border:1.5px solid #1e3a8a;border-radius:10px;padding:11px;text-align:center;color:#1e3a8a;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i class="ti ti-message" style="font-size:14px;" aria-hidden="true"></i> Send SMS instead
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- Sent confirmation -->
+    <div class="phone-wrap">
+      <div class="screen-tag">Receipt sent ✓</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:14 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div style="background:#1e3a8a;padding:10px 12px 12px;"><span style="font-size:14px;font-weight:500;color:#fff;">Share Receipt</span></div>
+        <div style="padding:12px;">
+          <div style="background:#e6f7f0;border:.5px solid #9ed8bf;border-radius:12px;padding:16px 14px;text-align:center;margin-bottom:10px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:#1aaa6b;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;"><i class="ti ti-check" style="font-size:22px;color:#fff;" aria-hidden="true"></i></div>
+            <div style="font-size:13px;font-weight:500;color:#085041;margin-bottom:3px;">Receipt sent!</div>
+            <div style="font-size:10px;color:#0f6e56;">Delivered to 0244 123 456</div>
+          </div>
+          <div style="background:#f0fdf4;border:.5px solid #bbf7d0;border-radius:10px;padding:10px 12px;margin-bottom:10px;">
+            <div style="font-size:9px;color:#166534;margin-bottom:2px;font-weight:500;">Sent via WhatsApp</div>
+            <div style="font-size:10px;color:#15803d;">2:14 PM · View link: sikaflow.app/r/76d2340c</div>
+          </div>
+        </div>
+        <div class="btn green-solid" style="margin-top:0;">New sale</div>
+        <div class="btn outline-gray">Back to receipt</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     FEATURE 2: AUTO NEW SALE AFTER PRINT
+══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="feat-badge" style="background:#e8f0fe;font-size:20px;">⚡</div>
+    <div>
+      <h2>Feature 2 — Auto New Sale After Printing</h2>
+      <p>After the receipt is printed, a 3-second countdown bar plays and the screen automatically returns to the POS product screen. The trader can tap "Stay on receipt" to cancel if needed. This removes the extra tap and speeds up throughput for busy traders.</p>
+    </div>
+  </div>
+
+  <div class="screens-row">
+
+    <!-- Print tapped -->
+    <div class="phone-wrap">
+      <div class="screen-tag">1 · Print tapped</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:14 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><span class="title">Receipt</span></div>
+        <div style="background:#e6f7f0;border:.5px solid #9ed8bf;border-radius:10px;margin:8px 8px 6px;padding:9px 12px;display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-circle-check" style="font-size:18px;color:#085041;" aria-hidden="true"></i>
+          <span style="font-size:11px;font-weight:500;color:#085041;">Accepted — Payment successful</span>
+        </div>
+        <div class="card" style="margin-bottom:6px;">
+          <div style="text-align:center;margin-bottom:6px;">
+            <div style="font-size:12px;font-weight:500;color:#0d1b3e;">Midas Properties</div>
+            <div style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace;margin-top:3px;">RCP-CASH-76d2340c · 22 Jul 2026</div>
+          </div>
+          <div class="divider"></div>
+          <div class="row"><span class="rl">x2 General Item</span><span class="rr">GHS 2.00</span></div>
+          <div class="row total"><span class="rl">Grand Total</span><span class="rr">GHS 2.00</span></div>
+          <div class="divider"></div>
+          <div class="row"><span class="rl">Payment</span><span class="rr">Cash</span></div>
+          <div style="text-align:center;font-size:10px;color:#64748b;padding:5px 0;">Thank you!</div>
+        </div>
+        <!-- Printing state -->
+        <div style="background:#e8f0fe;border:.5px solid #b5d4f4;border-radius:8px;margin:0 8px 8px;padding:9px 12px;display:flex;align-items:center;gap:8px;">
+          <i class="ti ti-loader-2" style="font-size:16px;color:#1e3a8a;animation:spin 1s linear infinite;" aria-hidden="true"></i>
+          <div>
+            <div style="font-size:11px;font-weight:500;color:#1e3a8a;">Printing...</div>
+            <div style="font-size:9px;color:#3a5c9a;">Sending to Sunmi printer</div>
+          </div>
+        </div>
+        <div class="btn outline-gray">New sale</div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- Printed — countdown -->
+    <div class="phone-wrap">
+      <div class="screen-tag">2 · Printed — countdown</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:14 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><span class="title">Receipt</span></div>
+        <!-- Print success + auto-advance banner -->
+        <div style="background:#1e3a8a;border-radius:10px;margin:8px 8px 0;overflow:hidden;">
+          <div style="padding:10px 12px;display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-printer" style="font-size:16px;color:#4DDD1A;" aria-hidden="true"></i>
+            <div style="flex:1;">
+              <div style="font-size:11px;font-weight:500;color:#fff;">Receipt printed ✓</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.65);">Going to new sale in 3s…</div>
+            </div>
+            <div style="font-size:18px;font-weight:600;color:#4DDD1A;min-width:22px;text-align:center;">3</div>
+          </div>
+          <!-- countdown bar -->
+          <div style="height:4px;background:rgba(255,255,255,.12);">
+            <div style="height:100%;width:66%;background:#4DDD1A;border-radius:2px;"></div>
+          </div>
+          <div style="padding:6px 12px 8px;">
+            <div style="background:rgba(255,255,255,.1);border-radius:6px;padding:5px 10px;text-align:center;font-size:10px;color:rgba(255,255,255,.7);cursor:pointer;">Stay on receipt</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:8px;">
+          <div style="text-align:center;margin-bottom:5px;">
+            <div style="font-size:12px;font-weight:500;color:#0d1b3e;">Midas Properties</div>
+            <div style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace;margin-top:3px;">RCP-CASH-76d2340c</div>
+          </div>
+          <div class="divider"></div>
+          <div class="row"><span class="rl">x2 General Item</span><span class="rr">GHS 2.00</span></div>
+          <div class="row total"><span class="rl">Grand Total</span><span class="rr">GHS 2.00</span></div>
+          <div style="text-align:center;font-size:10px;color:#64748b;padding:5px 0;">Thank you!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- Auto POS -->
+    <div class="phone-wrap">
+      <div class="screen-tag">3 · Auto → POS screen</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:15 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><span class="title">POS</span></div>
+        <div style="background:#e6f7f0;border:.5px solid #9ed8bf;border-radius:8px;margin:8px 8px 0;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+          <i class="ti ti-check" style="font-size:12px;color:#085041;" aria-hidden="true"></i>
+          <span style="font-size:10px;color:#085041;">Ready for next customer</span>
+        </div>
+        <div style="display:flex;gap:6px;padding:8px 8px 0;">
+          <div style="flex:1;background:#fff;border-radius:9px;border:.5px solid #e2e8f0;padding:7px 10px;display:flex;align-items:center;gap:6px;"><i class="ti ti-search" style="color:#94a3b8;font-size:13px;" aria-hidden="true"></i><span style="font-size:11px;color:#94a3b8;">Search...</span></div>
+          <div style="width:36px;height:36px;background:#fff;border-radius:9px;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;"><i class="ti ti-scan" style="font-size:16px;color:#607191;" aria-hidden="true"></i></div>
+        </div>
+        <div style="display:flex;gap:6px;padding:8px 8px 0;">
+          <div style="background:#1e3a8a;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:500;color:#fff;">All products</div>
+          <div style="background:#fff;border-radius:20px;border:.5px solid #e2e8f0;padding:5px 12px;font-size:10px;color:#607191;">Other</div>
+        </div>
+        <div style="padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:#fff;border-radius:12px;border:.5px solid #e2e8f0;overflow:hidden;">
+            <div style="height:60px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;"><i class="ti ti-photo" style="font-size:22px;color:#d4dce8;" aria-hidden="true"></i></div>
+            <div style="padding:7px 8px;">
+              <div style="font-size:9px;color:#1aaa6b;margin-bottom:2px;">● 3 left</div>
+              <div style="font-size:11px;font-weight:500;color:#0d1b3e;">General Item</div>
+              <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:5px;">GHS 1.00</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:26px;height:26px;border-radius:6px;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#607191;">−</div>
+                <span style="font-size:12px;min-width:16px;text-align:center;">0</span>
+                <div style="width:26px;height:26px;border-radius:6px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;">+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;border-top:.5px solid #e2e8f0;background:#fff;">
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-home" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Home</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-device-desktop" style="font-size:16px;color:#1e3a8a;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#1e3a8a;font-weight:500;">POS</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-chart-bar" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Reports</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-archive" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Inventory</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-menu-2" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Menu</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     FEATURE 3: OFFLINE TRAINING VIDEOS
+══════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="feat-badge" style="background:#faeeda;font-size:20px;">🎓</div>
+    <div>
+      <h2>Feature 3 — Offline Training Videos</h2>
+      <p>Training videos are accessible from the Menu tab and stored locally on the Sunmi device so they play without internet. Videos are pre-loaded on the device before deployment and can be updated when the device is online. Accessible from two entry points: Menu → Training, and a persistent "?" help button on the POS screen.</p>
+    </div>
+  </div>
+
+  <div class="screens-row">
+
+    <!-- Menu screen with Training entry -->
+    <div class="phone-wrap">
+      <div class="screen-tag">Menu — training entry point</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:15 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><span class="title">Menu</span></div>
+        <div style="padding:8px;">
+          <!-- Account section -->
+          <div style="background:#fff;border-radius:12px;border:.5px solid #e2e8f0;overflow:hidden;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:11px 12px;border-bottom:.5px solid #f1f5f9;">
+              <div style="width:36px;height:36px;border-radius:50%;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#fff;flex-shrink:0;">AM</div>
+              <div><div style="font-size:12px;font-weight:500;color:#0d1b3e;">Ama's Fresh Foods</div><div style="font-size:10px;color:#94a3b8;">SKF-GAR-ACC-008271</div></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;">
+              <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-chart-dots-2" style="font-size:16px;color:#1e3a8a;" aria-hidden="true"></i><span style="font-size:12px;color:#374151;">Profile completion</span></div>
+              <div style="display:flex;align-items:center;gap:6px;"><div style="width:60px;height:5px;background:#e2e8f0;border-radius:3px;overflow:hidden;"><div style="width:40%;height:100%;background:#1e3a8a;border-radius:3px;"></div></div><span style="font-size:10px;color:#1e3a8a;font-weight:500;">40%</span></div>
+            </div>
+          </div>
+          <!-- Menu items -->
+          <div style="background:#fff;border-radius:12px;border:.5px solid #e2e8f0;overflow:hidden;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-bottom:.5px solid #f1f5f9;">
+              <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-settings" style="font-size:15px;color:#607191;" aria-hidden="true"></i><span style="font-size:12px;color:#374151;">Settings</span></div>
+              <i class="ti ti-chevron-right" style="font-size:14px;color:#d4dce8;" aria-hidden="true"></i>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border-bottom:.5px solid #f1f5f9;">
+              <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-help" style="font-size:15px;color:#607191;" aria-hidden="true"></i><span style="font-size:12px;color:#374151;">Support</span></div>
+              <i class="ti ti-chevron-right" style="font-size:14px;color:#d4dce8;" aria-hidden="true"></i>
+            </div>
+            <!-- TRAINING — highlighted -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px;background:#faeeda;border-bottom:.5px solid #fde8c0;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="width:28px;height:28px;border-radius:7px;background:#f5c040;display:flex;align-items:center;justify-content:center;"><i class="ti ti-player-play" style="font-size:14px;color:#7a4e00;" aria-hidden="true"></i></div>
+                <div><div style="font-size:12px;font-weight:500;color:#7a4e00;">Training Videos</div><div style="font-size:9px;color:#a06a00;">6 videos · stored offline</div></div>
+              </div>
+              <i class="ti ti-chevron-right" style="font-size:14px;color:#f5c040;" aria-hidden="true"></i>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 12px;">
+              <div style="display:flex;align-items:center;gap:8px;"><i class="ti ti-logout" style="font-size:15px;color:#e24b4a;" aria-hidden="true"></i><span style="font-size:12px;color:#e24b4a;">Log out</span></div>
+              <i class="ti ti-chevron-right" style="font-size:14px;color:#d4dce8;" aria-hidden="true"></i>
+            </div>
+          </div>
+          <!-- App version / storage -->
+          <div style="background:#f4f6f9;border-radius:8px;padding:8px 12px;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;">
+            <span>Sikaflow v2.1.4</span>
+            <span>Videos: 312 MB stored</span>
+          </div>
+        </div>
+        <div style="display:flex;border-top:.5px solid #e2e8f0;background:#fff;">
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-home" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Home</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-device-desktop" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">POS</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-chart-bar" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Reports</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-archive" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Inventory</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-menu-2" style="font-size:16px;color:#1e3a8a;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#1e3a8a;font-weight:500;">Menu</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- Training video list -->
+    <div class="phone-wrap">
+      <div class="screen-tag">Training — video list</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:16 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div style="background:#1e3a8a;padding:10px 12px 12px;display:flex;align-items:center;gap:10px;">
+          <i class="ti ti-arrow-left" style="color:rgba(255,255,255,.7);font-size:17px;" aria-label="Back"></i>
+          <div style="flex:1;"><div style="font-size:14px;font-weight:500;color:#fff;">Training Videos</div><div style="font-size:9px;color:rgba(255,255,255,.55);">All stored on device · play offline</div></div>
+          <div style="background:rgba(77,221,26,.2);border:.5px solid rgba(77,221,26,.4);border-radius:6px;padding:3px 7px;font-size:9px;color:#4DDD1A;font-weight:500;">Offline ✓</div>
+        </div>
+        <div style="padding:8px;">
+          <!-- category -->
+          <div style="font-size:9px;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;">Getting started</div>
+
+          <div style="background:#fff;border-radius:10px;border:.5px solid #e2e8f0;overflow:hidden;margin-bottom:8px;">
+            <!-- video row -->
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:.5px solid #f1f5f9;">
+              <div style="width:44px;height:34px;border-radius:7px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="font-size:16px;color:#fff;" aria-hidden="true"></i></div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Welcome to Sikaflow</div><div style="font-size:9px;color:#94a3b8;margin-top:1px;">2:34 · Introduction</div></div>
+              <i class="ti ti-circle-check" style="font-size:16px;color:#1aaa6b;" aria-hidden="true"></i>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:.5px solid #f1f5f9;">
+              <div style="width:44px;height:34px;border-radius:7px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="font-size:16px;color:#fff;" aria-hidden="true"></i></div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:500;color:#0d1b3e;">How to make a sale</div><div style="font-size:9px;color:#94a3b8;margin-top:1px;">4:12 · POS basics</div></div>
+              <i class="ti ti-circle-check" style="font-size:16px;color:#1aaa6b;" aria-hidden="true"></i>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;">
+              <div style="width:44px;height:34px;border-radius:7px;background:#f0f4f8;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="font-size:16px;color:#607191;" aria-hidden="true"></i></div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Using Mobile Money</div><div style="font-size:9px;color:#94a3b8;margin-top:1px;">3:55 · Payments</div></div>
+              <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #d4dce8;flex-shrink:0;"></div>
+            </div>
+          </div>
+
+          <div style="font-size:9px;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;">Tax &amp; compliance</div>
+
+          <div style="background:#fff;border-radius:10px;border:.5px solid #e2e8f0;overflow:hidden;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:.5px solid #f1f5f9;">
+              <div style="width:44px;height:34px;border-radius:7px;background:#f0f4f8;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="font-size:16px;color:#607191;" aria-hidden="true"></i></div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Understanding MTS</div><div style="font-size:9px;color:#94a3b8;margin-top:1px;">5:18 · Tax basics</div></div>
+              <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #d4dce8;flex-shrink:0;"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;">
+              <div style="width:44px;height:34px;border-radius:7px;background:#f0f4f8;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="ti ti-player-play" style="font-size:16px;color:#607191;" aria-hidden="true"></i></div>
+              <div style="flex:1;"><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Filing your tax return</div><div style="font-size:9px;color:#94a3b8;margin-top:1px;">6:40 · GRA submission</div></div>
+              <div style="width:16px;height:16px;border-radius:50%;border:1.5px solid #d4dce8;flex-shrink:0;"></div>
+            </div>
+          </div>
+
+          <div style="background:#e8f0fe;border:.5px solid #b5d4f4;border-radius:8px;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+            <i class="ti ti-cloud-download" style="font-size:13px;color:#1e3a8a;" aria-hidden="true"></i>
+            <span style="font-size:10px;color:#0c447c;">New videos available — connect to WiFi to update</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- Video player -->
+    <div class="phone-wrap">
+      <div class="screen-tag">Video player (offline)</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:18 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div style="background:#000;height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;">
+          <!-- Video area -->
+          <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
+            <i class="ti ti-player-pause" style="font-size:22px;color:#fff;" aria-hidden="true"></i>
+          </div>
+          <!-- progress -->
+          <div style="position:absolute;bottom:8px;left:12px;right:12px;">
+            <div style="height:3px;background:rgba(255,255,255,.2);border-radius:2px;margin-bottom:5px;"><div style="width:35%;height:100%;background:#fff;border-radius:2px;"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:9px;color:rgba(255,255,255,.7);">
+              <span>1:28</span>
+              <span>4:12</span>
+            </div>
+          </div>
+          <div style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.5);border-radius:4px;padding:2px 6px;font-size:9px;color:rgba(255,255,255,.8);">Offline</div>
+        </div>
+        <div style="padding:10px 12px 0;">
+          <div style="font-size:12px;font-weight:500;color:#0d1b3e;margin-bottom:2px;">How to make a sale</div>
+          <div style="font-size:10px;color:#94a3b8;margin-bottom:10px;">POS basics · 4:12</div>
+          <!-- chapters -->
+          <div style="font-size:9px;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px;">Chapters</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;gap:8px;background:#e8f0fe;border-radius:7px;padding:7px 10px;">
+              <span style="font-size:9px;font-family:'DM Mono',monospace;color:#1e3a8a;min-width:28px;">0:00</span>
+              <span style="font-size:11px;color:#1e3a8a;font-weight:500;">Opening the POS screen</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;">
+              <span style="font-size:9px;font-family:'DM Mono',monospace;color:#94a3b8;min-width:28px;">1:20</span>
+              <span style="font-size:11px;color:#374151;">Adding items to cart</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;">
+              <span style="font-size:9px;font-family:'DM Mono',monospace;color:#94a3b8;min-width:28px;">2:45</span>
+              <span style="font-size:11px;color:#374151;">Taking payment</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;">
+              <span style="font-size:9px;font-family:'DM Mono',monospace;color:#94a3b8;min-width:28px;">3:30</span>
+              <span style="font-size:11px;color:#374151;">Printing the receipt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Second entry point -->
+  <div class="flow-label" style="margin-top:28px;">Second entry point — help button on POS screen</div>
+  <div class="screens-row">
+    <div class="phone-wrap">
+      <div class="screen-tag">POS screen — help "?" button</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">2:15 PM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-2" aria-hidden="true"></i></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div style="background:#1e3a8a;padding:9px 12px 11px;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:14px;font-weight:500;color:#fff;">POS</span>
+          <!-- Help button -->
+          <div style="background:rgba(255,255,255,.15);border-radius:20px;padding:4px 10px;display:flex;align-items:center;gap:5px;cursor:pointer;">
+            <i class="ti ti-help-circle" style="font-size:13px;color:#fff;" aria-hidden="true"></i>
+            <span style="font-size:10px;color:#fff;font-weight:500;">Help</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;padding:8px 8px 0;">
+          <div style="flex:1;background:#fff;border-radius:9px;border:.5px solid #e2e8f0;padding:7px 10px;display:flex;align-items:center;gap:6px;"><i class="ti ti-search" style="color:#94a3b8;font-size:13px;" aria-hidden="true"></i><span style="font-size:11px;color:#94a3b8;">Search...</span></div>
+          <div style="width:36px;height:36px;background:#fff;border-radius:9px;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;"><i class="ti ti-scan" style="font-size:16px;color:#607191;" aria-hidden="true"></i></div>
+        </div>
+        <div style="display:flex;gap:6px;padding:8px 8px 0;">
+          <div style="background:#1e3a8a;border-radius:20px;padding:5px 12px;font-size:10px;font-weight:500;color:#fff;">All products</div>
+          <div style="background:#fff;border-radius:20px;border:.5px solid #e2e8f0;padding:5px 12px;font-size:10px;color:#607191;">Other</div>
+        </div>
+        <div style="padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:#fff;border-radius:12px;border:.5px solid #e2e8f0;overflow:hidden;">
+            <div style="height:60px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;"><i class="ti ti-photo" style="font-size:22px;color:#d4dce8;" aria-hidden="true"></i></div>
+            <div style="padding:7px 8px;">
+              <div style="font-size:9px;color:#1aaa6b;margin-bottom:2px;">● 3 left</div>
+              <div style="font-size:11px;font-weight:500;color:#0d1b3e;">General Item</div>
+              <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:5px;">GHS 1.00</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <div style="width:26px;height:26px;border-radius:6px;border:.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#607191;">−</div>
+                <span style="font-size:12px;min-width:16px;text-align:center;">0</span>
+                <div style="width:26px;height:26px;border-radius:6px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;">+</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="height:50px;"></div>
+        <div style="display:flex;border-top:.5px solid #e2e8f0;background:#fff;">
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-home" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Home</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-device-desktop" style="font-size:16px;color:#1e3a8a;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#1e3a8a;font-weight:500;">POS</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-chart-bar" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Reports</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-archive" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Inventory</span></div>
+          <div style="flex:1;padding:8px 0;text-align:center;"><i class="ti ti-menu-2" style="font-size:16px;color:#94a3b8;display:block;" aria-hidden="true"></i><span style="font-size:8px;color:#94a3b8;">Menu</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="align-self:center;padding-top:0;color:#d4dce8;font-size:22px;padding:0 4px;">→</div>
+    <div style="align-self:center;font-size:11px;color:#607191;max-width:160px;line-height:1.6;padding-top:0;">Tapping "Help" navigates directly to the Training Videos list screen — same destination as Menu → Training Videos.</div>
+  </div>
+
+</div>
+
+<!-- Notes -->
+<div style="border-top:1px solid #e2e8f0;padding-top:20px;margin-top:8px;">
+  <div style="font-size:12px;font-weight:500;color:#0d1b3e;margin-bottom:10px;">Implementation notes for Vietnam team</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;">
+      <div style="font-size:11px;font-weight:500;color:#1e3a8a;margin-bottom:6px;">📱 Digital receipt — MoMo</div>
+      <div style="font-size:11px;color:#607191;line-height:1.6;">Trigger SMS/WhatsApp send in the PSP/FI payment confirmed webhook, not in the app. Use the payer phone from the MoMo transaction object. Receipt link = sikaflow.app/r/{invoice_id}.</div>
+    </div>
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;">
+      <div style="font-size:11px;font-weight:500;color:#1e3a8a;margin-bottom:6px;">⚡ Auto new sale</div>
+      <div style="font-size:11px;color:#607191;line-height:1.6;">After print callback fires, start a 3s Timer in Flutter. On tick, Navigator.pushReplacement to POS screen. Tapping "Stay on receipt" cancels the timer. Only trigger on successful print — not on print error.</div>
+    </div>
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;">
+      <div style="font-size:11px;font-weight:500;color:#1e3a8a;margin-bottom:6px;">🎓 Offline videos</div>
+      <div style="font-size:11px;color:#607191;line-height:1.6;">Bundle videos as device assets pre-loaded by Trident Aliska before deployment. Use video_player Flutter package. Store metadata (title, duration, chapters, watched) in Drift SQLite. Show update banner when new versions detected on WiFi sync.</div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;">
+  Sikaflow Programme · POS UX Improvements · Trident Aliska  · July 2026 · Internal
+</div>
+
+<style>
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+
+</div>
+</body>
+</html>
