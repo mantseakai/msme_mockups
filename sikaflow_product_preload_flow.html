@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow — Product Pre-load & Onboarding Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;padding:28px 16px 60px;color:#111827;}
+.page{max-width:1200px;margin:0 auto;}
+
+/* page header */
+.page-header{margin-bottom:28px;}
+.page-header h1{font-size:21px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.page-header p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+.hint{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:28px;display:flex;gap:8px;align-items:center;}
+
+/* section */
+.section{margin-bottom:48px;}
+.section-head{margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #e2e8f0;display:flex;align-items:flex-start;gap:12px;}
+.section-num{width:30px;height:30px;border-radius:8px;background:#0d1b3e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;margin-top:1px;}
+.section-head h2{font-size:16px;font-weight:500;color:#0d1b3e;margin-bottom:3px;}
+.section-head p{font-size:12px;color:#607191;line-height:1.65;max-width:700px;}
+.flow-label{font-size:10px;font-weight:500;color:#94a3b8;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;}
+.screens-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start;}
+.arrow-sep{flex-shrink:0;font-size:20px;color:#d4dce8;align-self:center;margin-top:16px;}
+
+/* phone */
+.phone-wrap{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.screen-tag{font-size:10px;font-family:'DM Mono',monospace;color:#607191;background:#fff;border:0.5px solid #d4dce8;padding:2px 8px;border-radius:4px;text-align:center;}
+.phone{width:220px;border-radius:26px;overflow:hidden;border:2.5px solid #1e3a8a;background:#f4f6f9;box-shadow:0 0 0 3px #eef0f4,0 0 0 5px #b8c4d4;}
+.sbar{background:#1e3a8a;padding:5px 13px 4px;display:flex;justify-content:space-between;align-items:center;}
+.sbar .t{color:#fff;font-size:10px;font-weight:500;}
+.sbar .ic{display:flex;gap:3px;align-items:center;} .sbar .ic i{color:#fff;font-size:11px;} .sbar .bat{color:#fff;font-size:9px;}
+.sync-bar{background:#e6fce8;padding:2px 10px;display:flex;align-items:center;justify-content:flex-end;gap:3px;}
+.sync-bar .dot{width:5px;height:5px;border-radius:50%;background:#1aaa6b;}
+.sync-bar span{font-size:8px;font-weight:500;color:#1aaa6b;}
+.ptop{background:#1e3a8a;padding:9px 12px 11px;display:flex;align-items:center;gap:8px;}
+.ptop .back{color:rgba(255,255,255,.65);font-size:16px;}
+.ptop .title{font-size:13px;font-weight:500;color:#fff;flex:1;text-align:center;}
+.ptop .action{font-size:11px;font-weight:500;color:#4DDD1A;}
+.pbody{background:#f4f6f9;max-height:520px;overflow-y:auto;}
+.pbody::-webkit-scrollbar{display:none;}
+
+/* ─ common UI pieces ─ */
+.card{background:#fff;border-radius:10px;border:0.5px solid #e2e8f0;padding:10px 12px;margin:8px 8px 0;}
+.btn{display:block;border-radius:9px;padding:10px 12px;font-size:12px;font-weight:500;text-align:center;border:1.5px solid;}
+.btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a;}
+.btn.outline{background:#fff;color:#1e3a8a;border-color:#1e3a8a;}
+.btn.ghost{background:#fff;color:#607191;border-color:#d4dce8;}
+.btn.green{background:#1aaa6b;color:#fff;border-color:#1aaa6b;}
+.btn.skip{background:transparent;color:#94a3b8;border:none;font-size:11px;}
+.badge{display:inline-block;font-size:9px;font-weight:500;padding:2px 7px;border-radius:20px;}
+.badge.green{background:#e6f7f0;color:#085041;border:0.5px solid #9ed8bf;}
+.badge.blue{background:#e8f0fe;color:#0c447c;border:0.5px solid #b5d4f4;}
+.badge.amber{background:#fef9e7;color:#7a5000;border:0.5px solid #e8c96a;}
+.badge.gray{background:#f4f6f9;color:#607191;border:0.5px solid #d4dce8;}
+.divider{border:none;border-top:0.5px solid #e2e8f0;margin:7px 0;}
+.section-label{font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:#94a3b8;padding:7px 8px 3px;}
+
+/* bottom sheet overlay */
+.bottom-sheet-bg{background:rgba(0,0,0,0.3);position:relative;}
+.bottom-sheet{background:#fff;border-radius:16px 16px 0 0;padding:12px 12px 14px;position:relative;}
+.bs-handle{width:32px;height:3px;border-radius:2px;background:#d4dce8;margin:0 auto 10px;}
+.bs-title{font-size:13px;font-weight:500;color:#0d1b3e;text-align:center;margin-bottom:12px;}
+
+/* inventory screen */
+.inv-header{background:#1e3a8a;padding:10px 12px 12px;display:flex;align-items:center;justify-content:space-between;}
+.inv-header .title{font-size:14px;font-weight:500;color:#fff;}
+.search-row{display:flex;gap:6px;padding:8px 8px 0;}
+.search-box{flex:1;background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;padding:7px 10px;display:flex;align-items:center;gap:5px;}
+.search-box i{font-size:13px;color:#94a3b8;}
+.search-box span{font-size:11px;color:#9ca3af;}
+.scan-btn{width:34px;height:34px;background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;}
+.filter-row{display:flex;gap:6px;padding:7px 8px 0;}
+.filter-pill{font-size:10px;padding:4px 10px;border-radius:20px;font-weight:500;}
+.filter-pill.active{background:#1e3a8a;color:#fff;}
+.filter-pill.inactive{background:#fff;color:#607191;border:0.5px solid #e2e8f0;}
+.filter-pill.warn{background:#fff;color:#e24b4a;border:0.5px solid #f7c1c1;}
+.prod-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:0.5px solid #f1f5f9;}
+.prod-img{width:36px;height:36px;border-radius:8px;background:#e8f0fe;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.prod-img i{font-size:18px;color:#607191;}
+.prod-info{flex:1;}
+.prod-name{font-size:11px;font-weight:500;color:#0d1b3e;}
+.prod-cat{font-size:9px;color:#94a3b8;}
+.prod-stock-green{font-size:9px;color:#1aaa6b;font-weight:500;}
+.prod-stock-amber{font-size:9px;color:#c47f00;font-weight:500;}
+.restock-btn{font-size:10px;border:1px solid #1e3a8a;border-radius:6px;padding:4px 8px;color:#1e3a8a;background:#fff;}
+
+/* sector cards */
+.sector-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:8px;}
+.sector-card{border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 8px;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
+.sector-card.selected{border-color:#1e3a8a;background:#e8f0fe;}
+.sector-card .sc-icon{font-size:24px;}
+.sector-card .sc-name{font-size:10px;font-weight:500;color:#374151;}
+.sector-card .sc-sub{font-size:9px;color:#94a3b8;}
+.sector-card.selected .sc-name{color:#1e3a8a;}
+
+/* product suggestion list */
+.prod-suggest-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:0.5px solid #f1f5f9;}
+.psr-check{width:18px;height:18px;border-radius:5px;border:1.5px solid;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.psr-check.checked{background:#1e3a8a;border-color:#1e3a8a;}
+.psr-check.checked i{font-size:11px;color:#fff;}
+.psr-check.unchecked{border-color:#d1d5db;background:#fff;}
+.psr-info{flex:1;}
+.psr-name{font-size:11px;font-weight:500;color:#0d1b3e;}
+.psr-detail{font-size:9px;color:#94a3b8;}
+.psr-price{font-size:11px;font-weight:500;color:#1e3a8a;}
+.psr-edit{font-size:11px;color:#607191;}
+.select-all-row{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-bottom:0.5px solid #e2e8f0;}
+.select-all-row span{font-size:10px;font-weight:500;color:#1e3a8a;}
+.select-count{font-size:10px;color:#607191;}
+
+/* edit inline */
+.inline-edit{background:#e8f0fe;border-radius:8px;padding:8px 10px;margin:0 8px 8px;}
+.ie-label{font-size:9px;color:#607191;margin-bottom:3px;}
+.ie-input{background:#fff;border:1px solid #b5d4f4;border-radius:6px;padding:6px 9px;font-size:11px;color:#0d1b3e;width:100%;margin-bottom:4px;}
+.ie-price-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+
+/* add product bottom sheet with new option */
+.add-opt{display:flex;align-items:center;gap:10px;border:1.5px solid #e2e8f0;border-radius:10px;padding:12px 12px;margin-bottom:8px;background:#fff;cursor:pointer;}
+.add-opt.highlight{border-color:#1e3a8a;background:#e8f0fe;}
+.ao-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ao-icon i{font-size:18px;}
+.ao-info .ao-title{font-size:12px;font-weight:500;color:#0d1b3e;}
+.ao-info .ao-sub{font-size:10px;color:#94a3b8;margin-top:1px;}
+.add-opt.highlight .ao-info .ao-title{color:#1e3a8a;}
+
+/* progress bar onboarding */
+.onb-progress{display:flex;gap:4px;padding:8px 8px 0;}
+.onb-step{flex:1;height:3px;border-radius:2px;}
+.onb-step.done{background:#1e3a8a;}
+.onb-step.active{background:#1e3a8a;opacity:0.5;}
+.onb-step.todo{background:#e2e8f0;}
+.onb-label{font-size:9px;color:#94a3b8;padding:3px 8px 0;}
+
+/* success screen */
+.success-wrap{padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.success-icon{width:52px;height:52px;border-radius:50%;background:#e6f7f0;border:2px solid #1aaa6b;display:flex;align-items:center;justify-content:center;}
+.success-icon i{font-size:24px;color:#1aaa6b;}
+
+/* impl notes */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:32px;}
+.note-card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;}
+.note-card h4{font-size:11px;font-weight:500;color:#1e3a8a;margin-bottom:6px;}
+.note-card p{font-size:11px;color:#607191;line-height:1.7;}
+code{font-family:'DM Mono',monospace;background:#f4f6f9;padding:1px 4px;border-radius:3px;font-size:10px;}
+
+@media(max-width:700px){.notes-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="page-header">
+  <h1>Product Pre-load &amp; Onboarding (Mockup)</h1>
+  <p>Sector-based product suggestions during onboarding + updated "Add product" entry point for existing traders</p>
+  <div class="meta"><span>Trident Aliska</span><span>July 2026</span><span>Vietnam Dev Team</span></div>
+</div>
+<div class="hint">💡 Two flows: (A) onboarding; sector selection → suggested products; (B) existing trader, updated Inventory "Add new product" sheet with new pre-load option.</div>
+
+
+<!-- ══════════════════════════════════════
+     FLOW A: ONBOARDING
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-num">A</div>
+    <div>
+      <h2>Onboarding flow: sector → product pre-load</h2>
+      <p>Triggered after registration is complete (20% profile). The system asks the trader to pick their sector, then shows a pre-loaded product list they can accept, edit, or skip. Designed to get traders to their first sale in under 3 minutes.</p>
+    </div>
+  </div>
+  <div class="flow-label">Steps 1 – 7 · Registration complete → first product loaded → POS ready</div>
+  <div class="screens-row">
+
+    <!-- A1: Registration success -->
+    <div class="phone-wrap">
+      <div class="screen-tag">A1 · Registration done</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:00 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">85%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="pbody">
+          <div class="success-wrap" style="padding-top:18px;">
+            <div class="success-icon"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div style="font-size:14px;font-weight:500;color:#0d1b3e;text-align:center;">Welcome to Sikaflow!</div>
+            <div style="font-size:11px;color:#607191;text-align:center;line-height:1.6;">Ama's Fresh Foods is registered.<br>Let's get your products set up.</div>
+            <!-- Completion bar -->
+            <div style="width:100%;">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px;"><span style="color:#607191;">Profile completion</span><span style="color:#1e3a8a;font-weight:500;">20%</span></div>
+              <div style="height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;"><div style="width:20%;height:100%;background:#1e3a8a;border-radius:3px;"></div></div>
+            </div>
+            <!-- Next steps -->
+            <div style="width:100%;background:#e8f0fe;border-radius:10px;padding:10px 12px;">
+              <div style="font-size:10px;font-weight:500;color:#0c447c;margin-bottom:8px;">To reach 65% and unlock Tax Wallet:</div>
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;align-items:center;gap:7px;font-size:10px;color:#374151;"><i class="ti ti-circle-check" style="color:#1aaa6b;font-size:13px;" aria-hidden="true"></i>Business registered</div>
+                <div style="display:flex;align-items:center;gap:7px;font-size:10px;color:#374151;"><i class="ti ti-circle" style="color:#d4dce8;font-size:13px;" aria-hidden="true"></i>Add your products</div>
+                <div style="display:flex;align-items:center;gap:7px;font-size:10px;color:#374151;"><i class="ti ti-circle" style="color:#d4dce8;font-size:13px;" aria-hidden="true"></i>Submit TIN</div>
+              </div>
+            </div>
+            <div class="btn primary" style="width:100%;margin-top:4px;">Set up my products →</div>
+            <div class="btn skip" style="width:100%;">Skip for now — I'll do this later</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- A2: Pick sector -->
+    <div class="phone-wrap">
+      <div class="screen-tag">A2 · Pick your sector</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:01 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">85%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">What do you sell?</span></div>
+        <div class="pbody">
+          <div style="font-size:11px;color:#607191;padding:8px 10px 0;text-align:center;line-height:1.5;">We'll suggest products that match your business. You can always change these later.</div>
+          <div class="sector-grid">
+            <div class="sector-card selected">
+              <div class="sc-icon">🛒</div>
+              <div class="sc-name">Provisions &amp; Groceries</div>
+              <div class="sc-sub">Tinned food, drinks, rice…</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">🥬</div>
+              <div class="sc-name">Fresh Produce</div>
+              <div class="sc-sub">Vegetables, fruit, meat…</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">👗</div>
+              <div class="sc-name">Clothing &amp; Textiles</div>
+              <div class="sc-sub">Fabric, garments, shoes…</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">🔧</div>
+              <div class="sc-name">Hardware &amp; Tools</div>
+              <div class="sc-sub">Building materials, tools…</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">💊</div>
+              <div class="sc-name">Pharmacy &amp; Health</div>
+              <div class="sc-sub">Medicine, supplements…</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">🍽️</div>
+              <div class="sc-name">Food &amp; Beverages</div>
+              <div class="sc-sub">Cooked food, drinks…</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">📱</div>
+              <div class="sc-name">Electronics</div>
+              <div class="sc-sub">Phones, accessories…</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">➕</div>
+              <div class="sc-name">Other</div>
+              <div class="sc-sub">I'll describe my business</div>
+            </div>
+          </div>
+          <div style="padding:8px;">
+            <div class="btn primary">See suggested products →</div>
+            <div class="btn skip" style="margin-top:5px;display:block;text-align:center;">Skip — I'll add products manually</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- A3: Suggested product list -->
+    <div class="phone-wrap">
+      <div class="screen-tag">A3 · Review suggestions</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:01 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">85%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">Your suggested products</span><span class="action">Done</span></div>
+        <div class="pbody">
+          <div style="background:#e8f0fe;border:0.5px solid #b5d4f4;border-radius:8px;margin:8px 8px 0;padding:8px 10px;display:flex;align-items:flex-start;gap:6px;">
+            <i class="ti ti-sparkles" style="font-size:14px;color:#1e3a8a;flex-shrink:0;margin-top:1px;" aria-hidden="true"></i>
+            <div style="font-size:10px;color:#0c447c;line-height:1.5;">We suggested <strong>18 products</strong> for <strong>Provisions &amp; Groceries</strong>. Tick the ones you sell — edit prices to match your own.</div>
+          </div>
+          <!-- select all row -->
+          <div class="select-all-row">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+              <span style="font-size:10px;font-weight:500;color:#1e3a8a;">Select all</span>
+            </div>
+            <span class="select-count">14 of 18 selected</span>
+          </div>
+          <!-- product rows -->
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Bottled Water 500ml</div><div class="psr-detail">Beverages · Each</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 3.00</div><div class="psr-edit" style="font-size:9px;">tap to edit</div></div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Sachet Water (bag)</div><div class="psr-detail">Beverages · Bag of 30</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 5.00</div><div class="psr-edit" style="font-size:9px;">tap to edit</div></div>
+          </div>
+          <!-- inline edit expanded -->
+          <div class="inline-edit">
+            <div style="font-size:10px;font-weight:500;color:#1e3a8a;margin-bottom:6px;">Edit: Milo Chocolate 400g</div>
+            <div class="ie-label">Product name</div>
+            <input class="ie-input" value="Milo Chocolate 400g">
+            <div class="ie-price-row">
+              <div><div class="ie-label">Selling price (GHS)</div><input class="ie-input" value="22.00"></div>
+              <div><div class="ie-label">What you paid (GHS)</div><input class="ie-input" value="18.00"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;">
+              <div style="background:#fff;border:1px solid #b5d4f4;border-radius:6px;padding:5px 8px;font-size:10px;font-weight:500;color:#1e3a8a;text-align:center;">Save</div>
+              <div style="background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:10px;color:#e24b4a;text-align:center;">Remove</div>
+            </div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check unchecked"></div>
+            <div class="psr-info"><div class="psr-name" style="color:#94a3b8;">Ovaltine 400g</div><div class="psr-detail">Beverages</div></div>
+            <div style="text-align:right;"><div class="psr-price" style="color:#94a3b8;">GHS 20.00</div></div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Peak Milk 160g</div><div class="psr-detail">Dairy · Each</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 8.00</div><div class="psr-edit" style="font-size:9px;">tap to edit</div></div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Indomie Noodles</div><div class="psr-detail">Dry goods · Each</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 3.50</div></div>
+          </div>
+          <div style="padding:8px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <i class="ti ti-plus-circle" style="font-size:14px;color:#1e3a8a;" aria-hidden="true"></i>
+            <span style="font-size:11px;color:#1e3a8a;font-weight:500;">Add a product not in this list</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- A4: Confirm & stock -->
+    <div class="phone-wrap">
+      <div class="screen-tag">A4 · Add opening stock</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:03 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">85%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">How many do you have?</span><span class="action">Skip</span></div>
+        <div class="pbody">
+          <div style="font-size:11px;color:#607191;padding:7px 10px 0;text-align:center;">Enter your opening stock for each product. You can update this anytime.</div>
+          <div style="background:#fff;margin:8px 8px 0;border-radius:10px;border:0.5px solid #e2e8f0;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:0.5px solid #f1f5f9;">
+              <div><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Bottled Water 500ml</div><div style="font-size:9px;color:#94a3b8;">GHS 3.00 each</div></div>
+              <div style="display:flex;align-items:center;gap:0;border:1.5px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#f4f6f9;">
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#1e3a8a;">−</div>
+                <div style="min-width:32px;text-align:center;font-size:13px;font-weight:500;color:#0d1b3e;">24</div>
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#1e3a8a;background:#1e3a8a;color:#fff;">+</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:0.5px solid #f1f5f9;">
+              <div><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Sachet Water (bag)</div><div style="font-size:9px;color:#94a3b8;">GHS 5.00</div></div>
+              <div style="display:flex;align-items:center;gap:0;border:1.5px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#f4f6f9;">
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#1e3a8a;">−</div>
+                <div style="min-width:32px;text-align:center;font-size:13px;font-weight:500;color:#0d1b3e;">10</div>
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;background:#1e3a8a;color:#fff;">+</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-bottom:0.5px solid #f1f5f9;">
+              <div><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Milo Chocolate 400g</div><div style="font-size:9px;color:#94a3b8;">GHS 22.00</div></div>
+              <div style="display:flex;align-items:center;gap:0;border:1.5px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#f4f6f9;">
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#1e3a8a;">−</div>
+                <div style="min-width:32px;text-align:center;font-size:13px;font-weight:500;color:#0d1b3e;">6</div>
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;background:#1e3a8a;color:#fff;">+</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;">
+              <div><div style="font-size:11px;font-weight:500;color:#0d1b3e;">Peak Milk 160g</div><div style="font-size:9px;color:#94a3b8;">GHS 8.00</div></div>
+              <div style="display:flex;align-items:center;gap:0;border:1.5px solid #e2e8f0;border-radius:8px;overflow:hidden;background:#f4f6f9;">
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#1e3a8a;">−</div>
+                <div style="min-width:32px;text-align:center;font-size:13px;font-weight:500;color:#0d1b3e;">0</div>
+                <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:16px;background:#1e3a8a;color:#fff;">+</div>
+              </div>
+            </div>
+          </div>
+          <div style="padding:8px;">
+            <div class="btn primary">Confirm &amp; finish setup →</div>
+            <div class="btn skip" style="display:block;text-align:center;margin-top:5px;">Skip stock entry</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- A5: All done -->
+    <div class="phone-wrap">
+      <div class="screen-tag">A5 · Setup complete</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">10:04 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">85%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="pbody">
+          <div class="success-wrap" style="padding-top:22px;">
+            <div class="success-icon" style="width:60px;height:60px;"><i class="ti ti-check" style="font-size:28px;" aria-hidden="true"></i></div>
+            <div style="font-size:15px;font-weight:500;color:#0d1b3e;text-align:center;">You're ready to sell!</div>
+            <div style="font-size:11px;color:#607191;text-align:center;line-height:1.6;">14 products loaded into your catalogue.</div>
+            <!-- Completion updated -->
+            <div style="width:100%;">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:4px;"><span style="color:#607191;">Profile completion</span><span style="color:#1aaa6b;font-weight:500;">65%</span></div>
+              <div style="height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;"><div style="width:65%;height:100%;background:#1aaa6b;border-radius:3px;"></div></div>
+            </div>
+            <div style="background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:10px;padding:10px 12px;width:100%;">
+              <div style="font-size:10px;font-weight:500;color:#085041;margin-bottom:6px;">What just happened:</div>
+              <div style="display:flex;flex-direction:column;gap:5px;">
+                <div style="display:flex;align-items:center;gap:7px;font-size:10px;color:#085041;"><i class="ti ti-circle-check" style="font-size:13px;" aria-hidden="true"></i>14 products added to catalogue</div>
+                <div style="display:flex;align-items:center;gap:7px;font-size:10px;color:#085041;"><i class="ti ti-circle-check" style="font-size:13px;" aria-hidden="true"></i>Opening stock recorded</div>
+                <div style="display:flex;align-items:center;gap:7px;font-size:10px;color:#085041;"><i class="ti ti-circle-check" style="font-size:13px;" aria-hidden="true"></i>Profile at 65% — Tax Wallet unlocked</div>
+              </div>
+            </div>
+            <div class="btn green" style="width:100%;">Go to POS — Start selling →</div>
+            <div class="btn ghost" style="width:100%;">View my inventory</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     FLOW B: EXISTING TRADER — INVENTORY
+══════════════════════════════════════ -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-num">B</div>
+    <div>
+      <h2>Existing trader: updated "Add new product" sheet</h2>
+      <p>The Inventory screen already has an "Add new product" bottom sheet with Import CSV and Add manually. This adds a third option: <strong>Load from suggestions</strong>, which takes the trader through the same sector → product list flow without the onboarding wrapper.</p>
+    </div>
+  </div>
+  <div class="flow-label">Updated Inventory → Add product entry point</div>
+  <div class="screens-row">
+
+    <!-- B1: Inventory screen -->
+    <div class="phone-wrap">
+      <div class="screen-tag">B1 · Inventory</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:23 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="inv-header">
+          <div class="title">Inventory</div>
+          <i class="ti ti-menu-2" style="color:#fff;font-size:18px;" aria-label="Menu"></i>
+        </div>
+        <div class="pbody">
+          <div class="search-row">
+            <div class="search-box"><i class="ti ti-search" aria-hidden="true"></i><span>Search products...</span></div>
+            <div class="scan-btn"><i class="ti ti-scan" style="font-size:16px;color:#607191;" aria-hidden="true"></i></div>
+          </div>
+          <div style="padding:5px 8px 0;font-size:11px;font-weight:500;color:#0d1b3e;">Products (8)</div>
+          <div class="filter-row">
+            <div class="filter-pill active">All</div>
+            <div class="filter-pill inactive">Low Stock</div>
+            <div class="filter-pill warn">Out of Stock ● 1</div>
+          </div>
+          <!-- product rows -->
+          <div style="background:#fff;margin:6px 8px 0;border-radius:10px;border:0.5px solid #e2e8f0;overflow:hidden;">
+            <div class="prod-row">
+              <div class="prod-img"><i class="ti ti-milk" aria-hidden="true"></i></div>
+              <div class="prod-info">
+                <div class="prod-stock-green">● 248 left</div>
+                <div class="prod-name">General Product</div>
+                <div class="prod-cat">Other</div>
+              </div>
+              <div class="restock-btn">Restock</div>
+            </div>
+            <div class="prod-row">
+              <div class="prod-img" style="background:#f0f9e8;"><i class="ti ti-shopping-bag" aria-hidden="true"></i></div>
+              <div class="prod-info">
+                <div class="prod-stock-amber">● 20 left (low)</div>
+                <div class="prod-name">Gift paper bags</div>
+                <div class="prod-cat">Other</div>
+              </div>
+              <div class="restock-btn">Restock</div>
+            </div>
+          </div>
+          <!-- FAB -->
+          <div style="position:relative;margin:10px 8px 0;background:#1e3a8a;border-radius:10px;padding:11px;text-align:center;font-size:12px;font-weight:500;color:#fff;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <i class="ti ti-plus" aria-hidden="true"></i> Add new product
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- B2: Updated bottom sheet with 3 options -->
+    <div class="phone-wrap">
+      <div class="screen-tag">B2 · Updated add sheet</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:23 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="inv-header"><div class="title">Inventory</div><i class="ti ti-menu-2" style="color:#fff;font-size:18px;" aria-hidden="true"></i></div>
+        <!-- phone body as relative container so sheet stays inside -->
+        <div style="position:relative;height:430px;overflow:hidden;background:#f4f6f9;">
+          <!-- dimmed inventory content behind sheet -->
+          <div style="position:absolute;inset:0;background:rgba(0,0,0,0.32);z-index:1;"></div>
+          <div style="padding:8px;opacity:.45;pointer-events:none;">
+            <div class="search-row"><div class="search-box"><i class="ti ti-search" aria-hidden="true"></i><span>Search products...</span></div></div>
+            <div style="padding:5px 8px 0;font-size:11px;font-weight:500;color:#0d1b3e;">Products (8)</div>
+            <div style="background:#fff;margin:6px 0;border-radius:10px;border:0.5px solid #e2e8f0;overflow:hidden;">
+              <div class="prod-row">
+                <div class="prod-img"><i class="ti ti-milk" aria-hidden="true"></i></div>
+                <div class="prod-info"><div class="prod-stock-green">● 248 left</div><div class="prod-name">General Product</div><div class="prod-cat">Other</div></div>
+                <div class="restock-btn">Restock</div>
+              </div>
+              <div class="prod-row">
+                <div class="prod-img" style="background:#f0f9e8;"><i class="ti ti-shopping-bag" aria-hidden="true"></i></div>
+                <div class="prod-info"><div class="prod-stock-amber">● 20 left</div><div class="prod-name">Gift paper bags</div><div class="prod-cat">Other</div></div>
+                <div class="restock-btn">Restock</div>
+              </div>
+            </div>
+          </div>
+          <!-- bottom sheet pinned to bottom of container -->
+          <div style="position:absolute;bottom:0;left:0;right:0;z-index:2;background:#fff;border-radius:16px 16px 0 0;padding:12px 12px 14px;box-shadow:0 -4px 24px rgba(0,0,0,0.15);">
+            <div class="bs-handle"></div>
+            <div class="bs-title">Add new product</div>
+            <!-- Load from suggestions — highlighted first -->
+            <div class="add-opt highlight">
+              <div class="ao-icon" style="background:#dbeafe;"><i class="ti ti-sparkles" style="color:#1e3a8a;" aria-hidden="true"></i></div>
+              <div class="ao-info">
+                <div class="ao-title">Load suggested products</div>
+                <div class="ao-sub">Pick your sector — we'll suggest products</div>
+              </div>
+              <i class="ti ti-chevron-right" style="font-size:14px;color:#1e3a8a;margin-left:auto;" aria-hidden="true"></i>
+            </div>
+            <!-- Add manually -->
+            <div class="add-opt">
+              <div class="ao-icon" style="background:#f4f6f9;"><i class="ti ti-plus" style="color:#607191;" aria-hidden="true"></i></div>
+              <div class="ao-info">
+                <div class="ao-title">Add manually</div>
+                <div class="ao-sub">Enter name, price, stock yourself</div>
+              </div>
+              <i class="ti ti-chevron-right" style="font-size:14px;color:#d4dce8;margin-left:auto;" aria-hidden="true"></i>
+            </div>
+            <!-- Import CSV -->
+            <div class="add-opt" style="margin-bottom:0;">
+              <div class="ao-icon" style="background:#f4f6f9;"><i class="ti ti-file-spreadsheet" style="color:#607191;" aria-hidden="true"></i></div>
+              <div class="ao-info">
+                <div class="ao-title">Import CSV</div>
+                <div class="ao-sub">Upload a spreadsheet of products</div>
+              </div>
+              <i class="ti ti-chevron-right" style="font-size:14px;color:#d4dce8;margin-left:auto;" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- B3: Sector pick (same as A2 but without onboarding wrapper) -->
+    <div class="phone-wrap">
+      <div class="screen-tag">B3 · Pick sector</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:24 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">What do you sell?</span></div>
+        <div class="pbody">
+          <div style="font-size:11px;color:#607191;padding:8px 10px 0;text-align:center;line-height:1.5;">Choose a sector to see suggested products.</div>
+          <div class="sector-grid">
+            <div class="sector-card">
+              <div class="sc-icon">🛒</div>
+              <div class="sc-name">Provisions &amp; Groceries</div>
+            </div>
+            <div class="sector-card selected">
+              <div class="sc-icon">🥬</div>
+              <div class="sc-name">Fresh Produce</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">👗</div>
+              <div class="sc-name">Clothing &amp; Textiles</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">🔧</div>
+              <div class="sc-name">Hardware &amp; Tools</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">💊</div>
+              <div class="sc-name">Pharmacy &amp; Health</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">🍽️</div>
+              <div class="sc-name">Food &amp; Beverages</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">📱</div>
+              <div class="sc-name">Electronics</div>
+            </div>
+            <div class="sector-card">
+              <div class="sc-icon">➕</div>
+              <div class="sc-name">Other</div>
+            </div>
+          </div>
+          <div style="padding:8px;">
+            <div class="btn primary">See suggested products →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-sep">→</div>
+
+    <!-- B4: Product list for Fresh Produce -->
+    <div class="phone-wrap">
+      <div class="screen-tag">B4 · Fresh Produce list</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:24 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+        <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">Fresh Produce</span><span class="action">Add all</span></div>
+        <div class="pbody">
+          <div style="background:#e8f0fe;border:0.5px solid #b5d4f4;border-radius:8px;margin:8px 8px 0;padding:8px 10px;font-size:10px;color:#0c447c;line-height:1.5;">
+            <i class="ti ti-sparkles" style="font-size:12px;" aria-hidden="true"></i> <strong>22 products</strong> for Fresh Produce. Select what you sell.
+          </div>
+          <div class="select-all-row">
+            <div style="display:flex;align-items:center;gap:6px;"><div class="psr-check unchecked"></div><span style="font-size:10px;color:#607191;">Select all</span></div>
+            <span class="select-count">0 selected</span>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Tomatoes (kg)</div><div class="psr-detail">Vegetables · Per kg</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 8.00</div><div style="font-size:9px;color:#94a3b8;">tap to edit</div></div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Onions (kg)</div><div class="psr-detail">Vegetables · Per kg</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 10.00</div></div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check unchecked"></div>
+            <div class="psr-info"><div class="psr-name" style="color:#94a3b8;">Pepper (kg)</div><div class="psr-detail">Vegetables · Per kg</div></div>
+            <div style="text-align:right;"><div class="psr-price" style="color:#94a3b8;">GHS 12.00</div></div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Plantain (bunch)</div><div class="psr-detail">Fruits · Bunch</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 25.00</div></div>
+          </div>
+          <div class="prod-suggest-row">
+            <div class="psr-check checked"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div class="psr-info"><div class="psr-name">Yam (kg)</div><div class="psr-detail">Tubers · Per kg</div></div>
+            <div style="text-align:right;"><div class="psr-price">GHS 6.00</div></div>
+          </div>
+          <div style="padding:6px 10px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <i class="ti ti-plus-circle" style="font-size:13px;color:#1e3a8a;" aria-hidden="true"></i>
+            <span style="font-size:10px;color:#1e3a8a;font-weight:500;">Add something not in this list</span>
+          </div>
+          <div style="padding:0 8px 8px;">
+            <div class="btn primary" style="margin-top:6px;">Add 4 selected products →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ IMPL NOTES ═══ -->
+<div style="padding-top:24px;border-top:1px solid #e2e8f0;">
+  <div style="font-size:14px;font-weight:500;color:#0d1b3e;margin-bottom:14px;">Implementation notes for Vietnam team</div>
+  <div class="notes-grid">
+    <div class="note-card">
+      <h4>🗄️ Product template database</h4>
+      <p>Create a <code>product_templates</code> table with columns: <code>sector</code>, <code>name</code>, <code>default_price</code>, <code>category</code>, <code>unit</code>, <code>tax_type</code>. Pre-seed with ~20 products per sector (8 sectors = ~160 rows). This is managed by Trident Aliska, not editable by traders. Templates are read-only; accepted products are copied into the MSME's own <code>products</code> table.</p>
+    </div>
+    <div class="note-card">
+      <h4>⚡ Trigger points</h4>
+      <p>The sector-select + pre-load flow triggers in two places: (1) automatically after registration completes, shown as an optional onboarding step after the success screen. (2) from Inventory → Add new product → "Load suggested products". Both routes navigate to the same <code>SectorPickerScreen</code> → <code>ProductSuggestionsScreen</code>. Pass an <code>isOnboarding: bool</code> flag to adjust the heading and skip behaviour.</p>
+    </div>
+    <div class="note-card">
+      <h4>✏️ Inline edit</h4>
+      <p>Each product row in the suggestions list is tappable. Tapping expands an inline editor showing name, selling price, and "what did you pay" fields. The default prices in the template are regional estimates, traders are expected to edit them to match their own prices. Editing is optional; tapping the checkbox and moving on is also fine.</p>
+    </div>
+    <div class="note-card">
+      <h4>📦 Stock entry step</h4>
+      <p>After the trader confirms their selection, show one more screen with − / + steppers for opening stock quantity per product. This is optional (skippable). Products with stock = 0 are still created in the catalogue, the trader can restock later via Inventory. Writing stock at setup gets them to Group 3 (25% completion) immediately.</p>
+    </div>
+    <div class="note-card">
+      <h4>🔁 Skippable at every step</h4>
+      <p>Every screen in this flow has a "Skip" / "Do this later" option in the top-right or below the primary CTA. If skipped at any point, the partial state is saved (e.g. if sector was chosen but products weren't confirmed, save the sector). The onboarding progress banner on the Home screen should show "Add products" as an incomplete step with a tap-to-resume link.</p>
+    </div>
+    <div class="note-card">
+      <h4>🏷️ Sector from registration</h4>
+      <p>The MSME's sector is already captured at registration (Step 1 of the onboarding form). Where available, pre-select this sector automatically in the SectorPickerScreen and skip straight to the suggestions list. Only show the sector picker if the sector is missing or the trader wants to change it. Check <code>msme.sector</code> in the JWT or profile API response.</p>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;border-top:1px solid #e2e8f0;padding-top:14px;">
+  Sikaflow Programme · Product Pre-load &amp; Onboarding Flow · Trident Aliska · July 2026 · Internal
+</div>
+
+</div>
+</body>
+</html>
