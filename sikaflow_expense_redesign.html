@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow — Expense Screen Redesign</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;padding:28px 16px 60px;color:#111827;}
+.page{max-width:1200px;margin:0 auto;}
+
+.page-header{margin-bottom:26px;}
+.page-header h1{font-size:21px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.page-header p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+.hint{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:26px;display:flex;gap:8px;align-items:center;}
+
+.section{margin-bottom:48px;}
+.section-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #e2e8f0;}
+.sec-badge{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;flex-shrink:0;margin-top:1px;}
+.section-head h2{font-size:15px;font-weight:500;color:#0d1b3e;margin-bottom:3px;}
+.section-head p{font-size:12px;color:#607191;line-height:1.65;max-width:700px;}
+.priority-tag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:5px;}
+
+.flow-label{font-size:10px;font-weight:500;color:#94a3b8;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;}
+.screens-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start;}
+.arrow{flex-shrink:0;font-size:20px;color:#d4dce8;align-self:center;margin-top:16px;}
+
+/* PHONE */
+.pw{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.stag{font-size:10px;font-family:'DM Mono',monospace;color:#607191;background:#fff;border:0.5px solid #d4dce8;padding:2px 8px;border-radius:4px;text-align:center;}
+.phone{width:224px;border-radius:26px;overflow:hidden;border:2.5px solid #1e3a8a;background:#f4f6f9;box-shadow:0 0 0 3px #eef0f4,0 0 0 5px #b8c4d4;}
+.sbar{background:#1e3a8a;padding:5px 13px 4px;display:flex;justify-content:space-between;align-items:center;}
+.sbar .t{color:#fff;font-size:10px;font-weight:500;}
+.sbar .ic{display:flex;gap:3px;align-items:center;} .sbar .ic i{color:#fff;font-size:11px;} .sbar .bat{color:#fff;font-size:9px;}
+.sync{background:#e6fce8;padding:2px 10px;display:flex;align-items:center;justify-content:flex-end;gap:3px;}
+.sync .dot{width:5px;height:5px;border-radius:50%;background:#1aaa6b;}
+.sync span{font-size:8px;font-weight:500;color:#1aaa6b;}
+.ptop{background:#1e3a8a;padding:9px 12px 11px;display:flex;align-items:center;gap:8px;}
+.ptop .bk{color:rgba(255,255,255,.65);font-size:16px;}
+.ptop .ti{font-size:13px;font-weight:500;color:#fff;flex:1;text-align:center;}
+.ptop .ac{font-size:11px;font-weight:500;color:#4DDD1A;}
+.body{background:#f4f6f9;overflow-y:auto;max-height:530px;}
+.body::-webkit-scrollbar{display:none;}
+
+/* COMMON */
+.divider{border:none;border-top:0.5px solid #e2e8f0;margin:6px 0;}
+.badge{display:inline-block;font-size:9px;font-weight:500;padding:2px 7px;border-radius:20px;}
+.badge.green{background:#e6f7f0;color:#085041;border:0.5px solid #9ed8bf;}
+.badge.blue{background:#e8f0fe;color:#0c447c;border:0.5px solid #b5d4f4;}
+.badge.amber{background:#fef9e7;color:#7a5000;border:0.5px solid #e8c96a;}
+.badge.purple{background:#f3f0fd;color:#4c1d95;border:0.5px solid #c4b5fd;}
+.badge.red{background:#fee2e2;color:#991b1b;border:0.5px solid #fca5a5;}
+
+/* OLD expense list */
+.exp-date-header{padding:8px 12px 4px;font-size:11px;font-weight:500;color:#1e3a8a;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:0.5px solid #e2e8f0;}
+.exp-date-header i{font-size:13px;color:#94a3b8;}
+.exp-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:#fff;border-bottom:0.5px solid #f1f5f9;}
+.exp-icon{width:34px;height:34px;border-radius:9px;background:#f4f6f9;border:0.5px solid #e2e8f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.exp-icon i{font-size:17px;color:#607191;}
+.exp-info{flex:1;}
+.exp-name{font-size:11px;font-weight:500;color:#0d1b3e;}
+.exp-sub{font-size:9px;color:#94a3b8;margin-top:1px;}
+.exp-amt{font-size:12px;font-weight:500;color:#e24b4a;}
+
+/* NEW category grid */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:8px;}
+.cat-tile{border:1.5px solid #e2e8f0;border-radius:10px;padding:10px 6px;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
+.cat-tile.active{border-color:#1e3a8a;background:#e8f0fe;}
+.cat-tile.custom{border-color:#9ed8bf;background:#e6f7f0;}
+.cat-tile.add-new{border-style:dashed;border-color:#94a3b8;background:#f8fafc;}
+.cat-icon{font-size:20px;}
+.cat-name{font-size:9px;font-weight:500;color:#374151;line-height:1.3;}
+.cat-tile.active .cat-name{color:#1e3a8a;}
+.cat-tile.custom .cat-name{color:#085041;}
+.cat-tile.add-new .cat-name{color:#94a3b8;}
+
+/* bottom sheet */
+.bs-wrap{position:relative;height:440px;overflow:hidden;background:#f4f6f9;}
+.bs-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.3);z-index:1;}
+.bs-behind{padding:8px;opacity:.45;pointer-events:none;}
+.bs{position:absolute;bottom:0;left:0;right:0;z-index:2;background:#fff;border-radius:16px 16px 0 0;padding:12px 12px 16px;box-shadow:0 -4px 20px rgba(0,0,0,0.12);}
+.bs-handle{width:30px;height:3px;border-radius:2px;background:#d4dce8;margin:0 auto 10px;}
+.bs-title{font-size:13px;font-weight:500;color:#0d1b3e;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.bs-title .cat-chip{font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;background:#e8f0fe;color:#1e3a8a;}
+.amount-display{background:#f4f6f9;border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.amount-display .currency{font-size:16px;font-weight:500;color:#1e3a8a;}
+.amount-display .value{font-size:28px;font-weight:600;color:#0d1b3e;flex:1;}
+.amount-display .edit-icon{font-size:16px;color:#94a3b8;}
+.numpad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;}
+.nk{background:#f4f6f9;border-radius:8px;padding:9px;text-align:center;font-size:15px;font-weight:500;color:#0d1b3e;cursor:pointer;}
+.nk.action{background:#1e3a8a;color:#fff;}
+.nk.del{font-size:13px;color:#607191;}
+.bs-fields{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;}
+.bs-field-label{font-size:10px;font-weight:500;color:#607191;margin-bottom:3px;}
+.bs-input{width:100%;background:#f4f6f9;border:1px solid #e2e8f0;border-radius:8px;padding:8px 11px;font-size:12px;color:#374151;}
+.bs-input.placeholder{color:#9ca3af;}
+.save-btn{width:100%;background:#1e3a8a;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:500;color:#fff;text-align:center;}
+.save-btn.green{background:#1aaa6b;}
+.cancel-link{text-align:center;font-size:11px;color:#94a3b8;margin-top:8px;cursor:pointer;}
+
+/* create category sheet */
+.create-cat-form{display:flex;flex-direction:column;gap:8px;}
+.cc-input{width:100%;background:#f4f6f9;border:1.5px solid #e2e8f0;border-radius:9px;padding:10px 12px;font-size:13px;color:#374151;}
+.icon-picker{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;margin-bottom:4px;}
+.icon-opt{width:32px;height:32px;border-radius:8px;border:1.5px solid #e2e8f0;background:#f8fafc;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;}
+.icon-opt.sel{border-color:#1e3a8a;background:#e8f0fe;}
+
+/* comparison table */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
+.compare-card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+.cc-head{padding:10px 14px;border-bottom:0.5px solid #e2e8f0;font-size:12px;font-weight:500;}
+.cc-head.old{background:#fee2e2;color:#991b1b;}
+.cc-head.new{background:#e6f7f0;color:#085041;}
+.cc-body{padding:10px 14px;display:flex;flex-direction:column;gap:5px;}
+.cc-item{font-size:11px;color:#374151;display:flex;align-items:center;gap:6px;}
+.cc-item i{font-size:12px;flex-shrink:0;}
+
+/* impl notes */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:28px;}
+.note-card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;}
+.note-card h4{font-size:11px;font-weight:500;color:#1e3a8a;margin-bottom:6px;}
+.note-card p{font-size:11px;color:#607191;line-height:1.7;}
+code{font-family:'DM Mono',monospace;background:#f4f6f9;padding:1px 4px;border-radius:3px;font-size:10px;}
+
+@media(max-width:700px){.notes-grid{grid-template-columns:1fr;}.compare-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="page-header">
+  <h1>Expense Screen — Redesign Mockup</h1>
+  <p>Three changes: updated category list, contextual bottom sheet entry, and custom category creation</p>
+  <div class="meta"><span>Trident Aliska</span><span>July 2026</span><span>Vietnam Dev Team</span></div>
+</div>
+<div class="hint">💡 Open in browser · File → Print → Save as PDF to share · Three sections below — one per change</div>
+
+
+<!-- ══════════════════════════
+     SECTION 1: CATEGORY LIST UPDATE
+══════════════════════════ -->
+<div class="section">
+  <div class="section-head">
+    <div class="sec-badge" style="background:#fef9e7;color:#7a5000;">1</div>
+    <div>
+      <div class="priority-tag" style="background:#fef9e7;color:#7a5000;border:0.5px solid #e8c96a;">P1 · Low · Category list update</div>
+      <h2>Updated default expense categories</h2>
+      <p>The current category list uses generic accounting terms. The new list is built around how informal Ghanaian market traders actually spend money — stall fees, market levies, porter fees, MoMo charges.</p>
+    </div>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="cc-head old">❌ Current list — generic, not market-appropriate</div>
+      <div class="cc-body">
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Rent</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Transport</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Utilities</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Purchases</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Salary</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Bank Fees</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>MoMo Fees</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Packaging</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Repairs</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Licence</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Comms</div>
+        <div class="cc-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>Insurance</div>
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="cc-head new">✅ New list — built for Ghanaian market traders</div>
+      <div class="cc-body">
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>🛍️ Cost of Goods</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>🏛️ Market Levy / Tolls</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>🏪 Rent / Stall Fees</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>🚚 Transport / Delivery</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>📱 MoMo / Bank Charges</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>💡 Utilities (Light / Water)</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>👷 Labour / Porter</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>📦 Packaging</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>📞 Phone / Airtime</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>🔧 Equipment / Tools</div>
+        <div class="cc-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>➕ Other</div>
+        <div class="cc-item"><i class="ti ti-plus-circle" style="color:#607191;" aria-hidden="true"></i><em style="color:#607191;">+ Create custom category</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREENS: current vs new category grid -->
+  <div class="flow-label" style="margin-top:24px;">Category screen — current vs updated</div>
+  <div class="screens-row">
+
+    <!-- Current -->
+    <div class="pw">
+      <div class="stag">Current — generic tiles</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:18 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="body">
+          <div style="background:#fff;border-radius:10px;border:0.5px solid #e2e8f0;margin:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:14px;font-weight:500;color:#1e3a8a;">GHS</span>
+            <span style="font-size:22px;font-weight:600;color:#1e3a8a;">252</span>
+            <i class="ti ti-pencil" style="font-size:14px;color:#94a3b8;" aria-hidden="true"></i>
+          </div>
+          <div style="padding:4px 8px 2px;font-size:11px;font-weight:500;color:#374151;">Category <span style="color:#e24b4a;">*</span></div>
+          <div class="cat-grid">
+            <div class="cat-tile"><div class="cat-icon">🏠</div><div class="cat-name">Rent</div></div>
+            <div class="cat-tile"><div class="cat-icon">🚗</div><div class="cat-name">Transport</div></div>
+            <div class="cat-tile"><div class="cat-icon">💡</div><div class="cat-name">Utilities</div></div>
+            <div class="cat-tile"><div class="cat-icon">🛍️</div><div class="cat-name">Purchases</div></div>
+            <div class="cat-tile active"><div class="cat-icon">👥</div><div class="cat-name" style="color:#1e3a8a;">Salary</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏦</div><div class="cat-name">Bank Fees</div></div>
+            <div class="cat-tile"><div class="cat-icon">📱</div><div class="cat-name">MoMo Fees</div></div>
+            <div class="cat-tile"><div class="cat-icon">📦</div><div class="cat-name">Packaging</div></div>
+            <div class="cat-tile"><div class="cat-icon">🔧</div><div class="cat-name">Repairs</div></div>
+            <div class="cat-tile"><div class="cat-icon">🪪</div><div class="cat-name">Licence</div></div>
+            <div class="cat-tile"><div class="cat-icon">📡</div><div class="cat-name">Comms</div></div>
+            <div class="cat-tile"><div class="cat-icon">🛡️</div><div class="cat-name">Insurance</div></div>
+          </div>
+          <div style="background:#1e3a8a;margin:0 8px 8px;border-radius:8px;padding:10px;text-align:center;font-size:12px;font-weight:500;color:#fff;">Please fill in all required fields</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- Updated category grid -->
+    <div class="pw">
+      <div class="stag">Updated — market-appropriate</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:18 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="body">
+          <div style="background:#fff;border-radius:10px;border:0.5px solid #e2e8f0;margin:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:14px;font-weight:500;color:#1e3a8a;">GHS</span>
+            <span style="font-size:22px;font-weight:600;color:#1e3a8a;">252</span>
+            <i class="ti ti-pencil" style="font-size:14px;color:#94a3b8;" aria-hidden="true"></i>
+          </div>
+          <div style="padding:4px 8px 2px;font-size:11px;font-weight:500;color:#374151;">What was this expense for?</div>
+          <div class="cat-grid">
+            <div class="cat-tile"><div class="cat-icon">🛍️</div><div class="cat-name">Cost of Goods</div></div>
+            <div class="cat-tile active"><div class="cat-icon">🏛️</div><div class="cat-name">Market Levy / Tolls</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏪</div><div class="cat-name">Rent / Stall Fees</div></div>
+            <div class="cat-tile"><div class="cat-icon">🚚</div><div class="cat-name">Transport / Delivery</div></div>
+            <div class="cat-tile"><div class="cat-icon">📱</div><div class="cat-name">MoMo / Bank Charges</div></div>
+            <div class="cat-tile"><div class="cat-icon">💡</div><div class="cat-name">Utilities</div></div>
+            <div class="cat-tile"><div class="cat-icon">👷</div><div class="cat-name">Labour / Porter</div></div>
+            <div class="cat-tile"><div class="cat-icon">📦</div><div class="cat-name">Packaging</div></div>
+            <div class="cat-tile"><div class="cat-icon">📞</div><div class="cat-name">Phone / Airtime</div></div>
+            <div class="cat-tile"><div class="cat-icon">🔧</div><div class="cat-name">Equipment / Tools</div></div>
+            <div class="cat-tile"><div class="cat-icon">➕</div><div class="cat-name">Other</div></div>
+            <div class="cat-tile add-new"><div class="cat-icon" style="font-size:16px;color:#94a3b8;">＋</div><div class="cat-name">Create new</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 2: BOTTOM SHEET ENTRY FLOW
+══════════════════════════ -->
+<div class="section">
+  <div class="section-head">
+    <div class="sec-badge" style="background:#e8f0fe;color:#0c447c;">2</div>
+    <div>
+      <div class="priority-tag" style="background:#e8f0fe;color:#0c447c;border:0.5px solid #b5d4f4;">P1 · Medium · Contextual entry redesign</div>
+      <h2>Bottom sheet entry — tap category, sheet slides up</h2>
+      <p>Instead of navigating to a separate form, tapping a category tile slides up a focused bottom sheet. Trader enters amount on a large numpad and optionally adds a supplier and note. Two taps from the Expenses list to a saved record.</p>
+    </div>
+  </div>
+
+  <div class="flow-label">Full entry flow — 5 screens</div>
+  <div class="screens-row">
+
+    <!-- Screen 1: Expense list -->
+    <div class="pw">
+      <div class="stag">1 · Expenses list</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:17 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Expenses</span><i class="ti ti-adjustments-horizontal" style="color:rgba(255,255,255,.7);font-size:16px;" aria-label="Filter"></i></div>
+        <div class="body">
+          <!-- summary strip -->
+          <div style="background:#fff;margin:8px 8px 0;border-radius:10px;border:0.5px solid #e2e8f0;padding:10px 12px;">
+            <div style="font-size:9px;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;">This month</div>
+            <div style="font-size:20px;font-weight:600;color:#e24b4a;">GHS 1,020.00</div>
+            <div style="height:4px;background:#f1f5f9;border-radius:2px;margin-top:7px;overflow:hidden;"><div style="width:68%;height:100%;background:#e24b4a;border-radius:2px;"></div></div>
+          </div>
+          <!-- date group -->
+          <div class="exp-date-header">16/07/2026 <i class="ti ti-chevron-up" aria-hidden="true"></i></div>
+          <div class="exp-row">
+            <div class="exp-icon"><i class="ti ti-home" aria-hidden="true"></i></div>
+            <div class="exp-info"><div class="exp-name">YEA</div><div class="exp-sub">Rent / Stall Fees · 16 Jul, 14:27</div></div>
+            <div style="text-align:right;"><span class="badge green" style="display:block;margin-bottom:3px;">Synced</span><div class="exp-amt">GHS 1,000.00</div></div>
+          </div>
+          <div class="exp-date-header" style="margin-top:6px;">07/07/2026 <i class="ti ti-chevron-up" aria-hidden="true"></i></div>
+          <div class="exp-row">
+            <div class="exp-icon"><i class="ti ti-bulb" aria-hidden="true"></i></div>
+            <div class="exp-info"><div class="exp-name">EGC</div><div class="exp-sub">Utilities · 7 Jul, 16:37</div></div>
+            <div style="text-align:right;"><span class="badge green" style="display:block;margin-bottom:3px;">Synced</span><div class="exp-amt">GHS 20.00</div></div>
+          </div>
+          <!-- FAB -->
+          <div style="position:relative;margin-top:16px;display:flex;justify-content:flex-end;padding-right:8px;">
+            <div style="width:44px;height:44px;border-radius:14px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(30,58,138,0.35);">
+              <i class="ti ti-plus" style="font-size:20px;color:#fff;" aria-label="Add expense"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- Screen 2: Category grid (tap triggers sheet) -->
+    <div class="pw">
+      <div class="stag">2 · Pick category</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:18 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="body">
+          <div style="padding:8px 8px 2px;font-size:11px;color:#607191;">What was this expense for?</div>
+          <div class="cat-grid">
+            <div class="cat-tile"><div class="cat-icon">🛍️</div><div class="cat-name">Cost of Goods</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏛️</div><div class="cat-name">Market Levy / Tolls</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏪</div><div class="cat-name">Rent / Stall Fees</div></div>
+            <div class="cat-tile"><div class="cat-icon">🚚</div><div class="cat-name">Transport / Delivery</div></div>
+            <div class="cat-tile"><div class="cat-icon">📱</div><div class="cat-name">MoMo / Bank Charges</div></div>
+            <div class="cat-tile active" style="position:relative;">
+              <div style="position:absolute;inset:-1px;border:2px solid #1e3a8a;border-radius:10px;animation:pulse 1.5s infinite;"></div>
+              <div class="cat-icon">💡</div><div class="cat-name" style="color:#1e3a8a;">Utilities</div>
+            </div>
+            <div class="cat-tile"><div class="cat-icon">👷</div><div class="cat-name">Labour / Porter</div></div>
+            <div class="cat-tile"><div class="cat-icon">📦</div><div class="cat-name">Packaging</div></div>
+            <div class="cat-tile"><div class="cat-icon">📞</div><div class="cat-name">Phone / Airtime</div></div>
+            <div class="cat-tile"><div class="cat-icon">🔧</div><div class="cat-name">Equipment / Tools</div></div>
+            <div class="cat-tile"><div class="cat-icon">➕</div><div class="cat-name">Other</div></div>
+            <div class="cat-tile add-new"><div class="cat-icon" style="font-size:16px;color:#94a3b8;">＋</div><div class="cat-name">Create new</div></div>
+          </div>
+          <div style="padding:0 8px;font-size:10px;color:#94a3b8;text-align:center;">Tap a category — sheet slides up to enter amount</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- Screen 3: Bottom sheet — numpad -->
+    <div class="pw">
+      <div class="stag">3 · Enter amount (sheet)</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:18 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="bs-wrap">
+          <!-- dimmed cat grid behind -->
+          <div class="bs-overlay"></div>
+          <div class="bs-behind">
+            <div style="padding:4px 0 2px;font-size:11px;color:#607191;">What was this expense for?</div>
+            <div class="cat-grid">
+              <div class="cat-tile" style="opacity:.6;"><div class="cat-icon">🛍️</div><div class="cat-name">Cost of Goods</div></div>
+              <div class="cat-tile" style="opacity:.6;"><div class="cat-icon">🏛️</div><div class="cat-name">Market Levy</div></div>
+              <div class="cat-tile active"><div class="cat-icon">💡</div><div class="cat-name">Utilities</div></div>
+            </div>
+          </div>
+          <!-- BOTTOM SHEET -->
+          <div class="bs">
+            <div class="bs-handle"></div>
+            <div class="bs-title">💡 <span class="cat-chip">Utilities (Light / Water)</span></div>
+            <div class="amount-display">
+              <span class="currency">GHS</span>
+              <span class="value">20</span>
+              <i class="ti ti-backspace" class="edit-icon" style="font-size:16px;color:#94a3b8;" aria-label="Delete"></i>
+            </div>
+            <div class="numpad">
+              <div class="nk">1</div><div class="nk">2</div><div class="nk">3</div>
+              <div class="nk">4</div><div class="nk">5</div><div class="nk">6</div>
+              <div class="nk">7</div><div class="nk">8</div><div class="nk">9</div>
+              <div class="nk">.</div><div class="nk">0</div><div class="nk del">⌫</div>
+            </div>
+            <div class="bs-fields">
+              <div>
+                <div class="bs-field-label">Supplier / paid to <span style="color:#94a3b8;">(optional)</span></div>
+                <div class="bs-input">EGC</div>
+              </div>
+              <div>
+                <div class="bs-field-label">Note <span style="color:#94a3b8;">(optional)</span></div>
+                <div class="bs-input placeholder">Add a note…</div>
+              </div>
+            </div>
+            <div class="save-btn">Save expense</div>
+            <div class="cancel-link">Cancel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- Screen 4: Saved confirmation -->
+    <div class="pw">
+      <div class="stag">4 · Saved ✓</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:18 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Expenses</span><i class="ti ti-adjustments-horizontal" style="color:rgba(255,255,255,.7);font-size:16px;" aria-hidden="true"></i></div>
+        <div class="body">
+          <!-- success toast -->
+          <div style="background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;margin:8px 8px 0;padding:9px 12px;display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-circle-check" style="font-size:16px;color:#085041;" aria-hidden="true"></i>
+            <div><div style="font-size:11px;font-weight:500;color:#085041;">Expense saved</div><div style="font-size:10px;color:#0f6e56;margin-top:1px;">Utilities · GHS 20.00 · EGC</div></div>
+          </div>
+          <div style="background:#fff;margin:6px 8px 0;border-radius:10px;border:0.5px solid #e2e8f0;overflow:hidden;">
+            <!-- new entry at top -->
+            <div class="exp-row" style="background:#f0fbf6;border-left:3px solid #1aaa6b;">
+              <div class="exp-icon" style="background:#e6f7f0;border-color:#9ed8bf;"><i class="ti ti-bulb" style="color:#085041;" aria-hidden="true"></i></div>
+              <div class="exp-info"><div class="exp-name">EGC</div><div class="exp-sub">Utilities · just now</div></div>
+              <div style="text-align:right;"><span class="badge green" style="display:block;margin-bottom:3px;">Saved</span><div class="exp-amt">GHS 20.00</div></div>
+            </div>
+            <div class="exp-date-header">16/07/2026 <i class="ti ti-chevron-up" aria-hidden="true"></i></div>
+            <div class="exp-row">
+              <div class="exp-icon"><i class="ti ti-home" aria-hidden="true"></i></div>
+              <div class="exp-info"><div class="exp-name">YEA</div><div class="exp-sub">Rent / Stall · 16 Jul, 14:27</div></div>
+              <div style="text-align:right;"><span class="badge green" style="display:block;margin-bottom:3px;">Synced</span><div class="exp-amt">GHS 1,000.00</div></div>
+            </div>
+          </div>
+          <div style="position:relative;margin-top:12px;display:flex;justify-content:flex-end;padding-right:8px;">
+            <div style="width:44px;height:44px;border-radius:14px;background:#1e3a8a;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(30,58,138,0.35);">
+              <i class="ti ti-plus" style="font-size:20px;color:#fff;" aria-label="Add expense"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 3: CUSTOM CATEGORIES
+══════════════════════════ -->
+<div class="section">
+  <div class="section-head">
+    <div class="sec-badge" style="background:#f3f0fd;color:#4c1d95;">3</div>
+    <div>
+      <div class="priority-tag" style="background:#f3f0fd;color:#4c1d95;border:0.5px solid #c4b5fd;">P1 · Medium · Custom categories</div>
+      <h2>Create custom expense categories</h2>
+      <p>"Create new" at the end of the category grid slides up a sheet where the trader types a name and picks an emoji icon. Custom categories are stored per MSME and appear alongside the defaults. Programme Admin can see all custom categories across MSMEs in the portal.</p>
+    </div>
+  </div>
+
+  <div class="flow-label">Custom category creation flow</div>
+  <div class="screens-row">
+
+    <!-- Tap "Create new" -->
+    <div class="pw">
+      <div class="stag">1 · Tap "Create new"</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:20 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="body">
+          <div style="padding:8px 8px 2px;font-size:11px;color:#607191;">What was this expense for?</div>
+          <div class="cat-grid">
+            <div class="cat-tile"><div class="cat-icon">🛍️</div><div class="cat-name">Cost of Goods</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏛️</div><div class="cat-name">Market Levy</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏪</div><div class="cat-name">Rent / Stall</div></div>
+            <div class="cat-tile"><div class="cat-icon">🚚</div><div class="cat-name">Transport</div></div>
+            <div class="cat-tile"><div class="cat-icon">📱</div><div class="cat-name">MoMo / Bank</div></div>
+            <div class="cat-tile"><div class="cat-icon">💡</div><div class="cat-name">Utilities</div></div>
+            <div class="cat-tile"><div class="cat-icon">👷</div><div class="cat-name">Labour / Porter</div></div>
+            <div class="cat-tile"><div class="cat-icon">📦</div><div class="cat-name">Packaging</div></div>
+            <div class="cat-tile"><div class="cat-icon">📞</div><div class="cat-name">Phone / Airtime</div></div>
+            <div class="cat-tile"><div class="cat-icon">🔧</div><div class="cat-name">Equipment</div></div>
+            <div class="cat-tile"><div class="cat-icon">➕</div><div class="cat-name">Other</div></div>
+            <!-- highlighted -->
+            <div class="cat-tile add-new" style="border-color:#1e3a8a;background:#e8f0fe;">
+              <div class="cat-icon" style="font-size:16px;color:#1e3a8a;">＋</div>
+              <div class="cat-name" style="color:#1e3a8a;font-weight:500;">Create new</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- Create category sheet -->
+    <div class="pw">
+      <div class="stag">2 · Name + icon sheet</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:20 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="bs-wrap" style="height:460px;">
+          <div class="bs-overlay"></div>
+          <div class="bs-behind">
+            <div class="cat-grid" style="opacity:.4;">
+              <div class="cat-tile"><div class="cat-icon">🛍️</div><div class="cat-name">Cost of Goods</div></div>
+              <div class="cat-tile"><div class="cat-icon">🏛️</div><div class="cat-name">Market Levy</div></div>
+              <div class="cat-tile"><div class="cat-icon">🏪</div><div class="cat-name">Rent / Stall</div></div>
+            </div>
+          </div>
+          <div class="bs" style="padding-bottom:14px;">
+            <div class="bs-handle"></div>
+            <div class="bs-title" style="margin-bottom:10px;">Create a new category</div>
+            <div class="create-cat-form">
+              <div>
+                <div class="bs-field-label">Category name <span style="color:#e24b4a;">*</span></div>
+                <div class="cc-input" style="border-color:#1e3a8a;background:#fff;">Generator Fuel</div>
+              </div>
+              <div>
+                <div class="bs-field-label">Pick an icon</div>
+                <div class="icon-picker">
+                  <div class="icon-opt">⚡</div>
+                  <div class="icon-opt sel">⛽</div>
+                  <div class="icon-opt">🔥</div>
+                  <div class="icon-opt">🪣</div>
+                  <div class="icon-opt">🏗️</div>
+                  <div class="icon-opt">💰</div>
+                  <div class="icon-opt">🧹</div>
+                  <div class="icon-opt">🪴</div>
+                  <div class="icon-opt">🎯</div>
+                  <div class="icon-opt">📋</div>
+                  <div class="icon-opt">🏷️</div>
+                  <div class="icon-opt">⭐</div>
+                </div>
+              </div>
+              <!-- Preview -->
+              <div style="background:#f4f6f9;border-radius:8px;padding:8px 12px;display:flex;align-items:center;gap:10px;">
+                <div style="font-size:11px;color:#607191;">Preview:</div>
+                <div class="cat-tile custom" style="width:72px;flex-shrink:0;padding:8px 4px;">
+                  <div class="cat-icon">⛽</div>
+                  <div class="cat-name">Generator Fuel</div>
+                </div>
+                <div style="font-size:10px;color:#607191;flex:1;line-height:1.5;">This will appear in your category list and be saved to your account.</div>
+              </div>
+            </div>
+            <div class="save-btn" style="margin-top:10px;background:#1aaa6b;">Create category</div>
+            <div class="cancel-link">Cancel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- Category appears in grid, custom badge -->
+    <div class="pw">
+      <div class="stag">3 · New category in grid</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:21 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="body">
+          <div style="background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;margin:6px 8px 0;padding:7px 10px;display:flex;align-items:center;gap:6px;">
+            <i class="ti ti-circle-check" style="font-size:13px;color:#085041;" aria-hidden="true"></i>
+            <span style="font-size:10px;color:#085041;font-weight:500;">"Generator Fuel" added to your categories</span>
+          </div>
+          <div style="padding:6px 8px 2px;font-size:11px;color:#607191;">What was this expense for?</div>
+          <div class="cat-grid">
+            <div class="cat-tile"><div class="cat-icon">🛍️</div><div class="cat-name">Cost of Goods</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏛️</div><div class="cat-name">Market Levy</div></div>
+            <div class="cat-tile"><div class="cat-icon">🏪</div><div class="cat-name">Rent / Stall</div></div>
+            <div class="cat-tile"><div class="cat-icon">🚚</div><div class="cat-name">Transport</div></div>
+            <div class="cat-tile"><div class="cat-icon">📱</div><div class="cat-name">MoMo / Bank</div></div>
+            <div class="cat-tile"><div class="cat-icon">💡</div><div class="cat-name">Utilities</div></div>
+            <div class="cat-tile"><div class="cat-icon">👷</div><div class="cat-name">Labour / Porter</div></div>
+            <div class="cat-tile"><div class="cat-icon">📦</div><div class="cat-name">Packaging</div></div>
+            <div class="cat-tile"><div class="cat-icon">📞</div><div class="cat-name">Phone / Airtime</div></div>
+            <!-- CUSTOM — highlighted with green ring -->
+            <div class="cat-tile custom active" style="border-color:#1aaa6b;background:#e6f7f0;">
+              <div class="cat-icon">⛽</div>
+              <div class="cat-name" style="color:#085041;">Generator Fuel</div>
+              <span style="font-size:8px;background:#9ed8bf;color:#085041;padding:1px 4px;border-radius:4px;margin-top:1px;">My category</span>
+            </div>
+            <div class="cat-tile"><div class="cat-icon">🔧</div><div class="cat-name">Equipment</div></div>
+            <div class="cat-tile add-new"><div class="cat-icon" style="font-size:16px;color:#94a3b8;">＋</div><div class="cat-name">Create new</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">→</div>
+
+    <!-- Tap custom category → sheet slides up -->
+    <div class="pw">
+      <div class="stag">4 · Enter amount — custom cat</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:21 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">59%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Add Expense</span></div>
+        <div class="bs-wrap" style="height:430px;">
+          <div class="bs-overlay"></div>
+          <div class="bs-behind">
+            <div class="cat-grid" style="opacity:.4;">
+              <div class="cat-tile custom" style="border-color:#9ed8bf;background:#e6f7f0;"><div class="cat-icon">⛽</div><div class="cat-name" style="color:#085041;">Generator Fuel</div></div>
+            </div>
+          </div>
+          <div class="bs">
+            <div class="bs-handle"></div>
+            <div class="bs-title">⛽ <span class="cat-chip" style="background:#e6f7f0;color:#085041;border:0.5px solid #9ed8bf;">Generator Fuel</span> <span class="badge purple" style="font-size:8px;">My category</span></div>
+            <div class="amount-display">
+              <span class="currency">GHS</span>
+              <span class="value">80</span>
+              <i class="ti ti-backspace" style="font-size:16px;color:#94a3b8;" aria-label="Delete"></i>
+            </div>
+            <div class="numpad">
+              <div class="nk">1</div><div class="nk">2</div><div class="nk">3</div>
+              <div class="nk">4</div><div class="nk">5</div><div class="nk">6</div>
+              <div class="nk">7</div><div class="nk">8</div><div class="nk">9</div>
+              <div class="nk">.</div><div class="nk">0</div><div class="nk del">⌫</div>
+            </div>
+            <div class="bs-fields">
+              <div>
+                <div class="bs-field-label">Supplier / paid to <span style="color:#94a3b8;">(optional)</span></div>
+                <div class="bs-input placeholder">e.g. Fuel station name…</div>
+              </div>
+            </div>
+            <div class="save-btn">Save expense</div>
+            <div class="cancel-link">Cancel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ IMPL NOTES ═══ -->
+<div style="padding-top:22px;border-top:1px solid #e2e8f0;">
+  <div style="font-size:14px;font-weight:500;color:#0d1b3e;margin-bottom:14px;">Implementation notes for Vietnam team</div>
+  <div class="notes-grid">
+    <div class="note-card">
+      <h4>🗄️ Data model — custom categories</h4>
+      <p>Add a <code>expense_categories</code> table: <code>id</code>, <code>msme_id</code> (null = system default), <code>name</code>, <code>icon_emoji</code>, <code>is_custom</code> bool, <code>created_at</code>. System defaults have <code>msme_id = null</code>. Trader's custom categories have their <code>msme_id</code>. When loading the category grid, fetch <code>WHERE msme_id IS NULL OR msme_id = :current_msme</code>, ordered defaults first, then custom.</p>
+    </div>
+    <div class="note-card">
+      <h4>⚡ Bottom sheet behaviour</h4>
+      <p>Use Flutter's <code>showModalBottomSheet</code> with <code>isScrollControlled: true</code> so the sheet can expand when the keyboard opens. Numpad is custom (not the system keyboard) — keeps layout predictable on all Sunmi screen sizes. Sheet dismisses on save or cancel. Back button on the phone closes the sheet, not the screen. Date defaults to today; no date picker needed in the sheet (keep it fast).</p>
+    </div>
+    <div class="note-card">
+      <h4>🔒 Category management rules</h4>
+      <p>System default categories: read-only, cannot be edited or deleted by any trader. Custom categories: trader can rename or delete from a long-press menu on the tile. Deleting a category does not delete historical expense records that used it — they retain the category name as a string. Programme Admin portal: add a <code>GET /admin/expense-categories/custom</code> endpoint returning all custom categories grouped by MSME for reporting.</p>
+    </div>
+    <div class="note-card">
+      <h4>📋 Updated default category seed data</h4>
+      <p>Seed the <code>expense_categories</code> table with these 11 defaults on deployment: Cost of Goods 🛍️, Market Levy / Tolls 🏛️, Rent / Stall Fees 🏪, Transport / Delivery 🚚, MoMo / Bank Charges 📱, Utilities 💡, Labour / Porter 👷, Packaging 📦, Phone / Airtime 📞, Equipment / Tools 🔧, Other ➕. The "Create new" tile is not a category row — it's a hardcoded UI action.</p>
+    </div>
+    <div class="note-card">
+      <h4>💡 Amount entry</h4>
+      <p>Amount is required. Save button is disabled until amount &gt; 0. Supplier name and note are optional — shown in the sheet but not blocking. Date is always today (no date picker in the quick sheet — trader can edit from the expense list if needed). Payment method defaults to Cash for now; can be added as a field in Phase 2. Write <code>created_by_user_id</code> from JWT on every expense record.</p>
+    </div>
+    <div class="note-card">
+      <h4>📊 Portal — custom category visibility</h4>
+      <p>Portal must expose custom categories in reporting. Add a "Custom Categories" section to the Expenses report: total spend per custom category across all MSMEs, list of unique category names with count of MSMEs using each. This lets the programme team see what categories traders are creating (e.g. "Generator Fuel" appearing 40 times = add it to the default list next sprint).</p>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;border-top:1px solid #e2e8f0;padding-top:14px;">
+  Sikaflow Programme · Expense Screen Redesign · Trident Aliska · July 2026 · Internal
+</div>
+
+<style>
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+</style>
+
+</div>
+</body>
+</html>
