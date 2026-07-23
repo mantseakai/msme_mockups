@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow  Invoice Generation (Phase 2)</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;padding:28px 16px 60px;color:#111827;}
+.page{max-width:1200px;margin:0 auto;}
+
+.ph{margin-bottom:26px;}
+.ph h1{font-size:21px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.ph p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+.hint{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:24px;display:flex;gap:8px;align-items:center;}
+.p2-banner{background:#f3f0fd;border:0.5px solid #c4b5fd;border-radius:8px;padding:10px 14px;font-size:12px;color:#4c1d95;margin-bottom:26px;display:flex;gap:8px;align-items:center;}
+
+.section{margin-bottom:48px;}
+.sh{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #e2e8f0;}
+.sn{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;margin-top:1px;}
+.sh h2{font-size:15px;font-weight:500;color:#0d1b3e;margin-bottom:3px;}
+.sh p{font-size:12px;color:#607191;line-height:1.65;max-width:720px;}
+
+.fl{font-size:10px;font-weight:500;color:#94a3b8;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;}
+.sr{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start;}
+.arr{flex-shrink:0;font-size:20px;color:#d4dce8;align-self:center;margin-top:16px;}
+
+/* PHONE */
+.pw{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.stg{font-size:10px;font-family:'DM Mono',monospace;color:#607191;background:#fff;border:0.5px solid #d4dce8;padding:2px 8px;border-radius:4px;text-align:center;}
+.phone{width:224px;border-radius:26px;overflow:hidden;border:2.5px solid #1e3a8a;background:#f4f6f9;box-shadow:0 0 0 3px #eef0f4,0 0 0 5px #b8c4d4;}
+.sb{background:#1e3a8a;padding:5px 13px 4px;display:flex;justify-content:space-between;align-items:center;}
+.sb .t{color:#fff;font-size:10px;font-weight:500;}
+.sb .ic{display:flex;gap:3px;align-items:center;} .sb .ic i{color:#fff;font-size:11px;} .bat{color:#fff;font-size:9px;}
+.sy{background:#e6fce8;padding:2px 10px;display:flex;align-items:center;justify-content:flex-end;gap:3px;}
+.sy .dot{width:5px;height:5px;border-radius:50%;background:#1aaa6b;}
+.sy span{font-size:8px;font-weight:500;color:#1aaa6b;}
+.ptop{background:#1e3a8a;padding:9px 12px 11px;display:flex;align-items:center;gap:8px;}
+.ptop .bk{color:rgba(255,255,255,.65);font-size:16px;}
+.ptop .ti{font-size:13px;font-weight:500;color:#fff;flex:1;text-align:center;}
+.ptop .ac{font-size:11px;font-weight:500;color:#4DDD1A;}
+.bd{background:#f4f6f9;overflow-y:auto;max-height:540px;}
+.bd::-webkit-scrollbar{display:none;}
+
+/* receipt base (current) */
+.rec-card{background:#fff;border-radius:10px;margin:8px 8px 0;border:0.5px solid #e2e8f0;overflow:hidden;}
+.rec-head{padding:12px 14px 10px;text-align:center;border-bottom:1px dashed #e2e8f0;}
+.rec-head h3{font-size:13px;font-weight:600;color:#0d1b3e;}
+.rec-head .tel{font-size:10px;color:#94a3b8;margin-top:2px;}
+.rec-meta{padding:7px 14px;border-bottom:1px dashed #e2e8f0;text-align:center;}
+.rec-meta .inv{font-size:10px;color:#374151;font-family:'DM Mono',monospace;}
+.rec-meta .dt{font-size:10px;color:#94a3b8;margin-top:1px;}
+.rec-items{padding:8px 14px;}
+.rec-col{display:flex;justify-content:space-between;font-size:9px;font-weight:500;color:#94a3b8;padding:0 0 5px;border-bottom:0.5px solid #e2e8f0;margin-bottom:5px;}
+.rec-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:11px;}
+.rec-row .rl{color:#374151;} .rec-row .rr{font-weight:500;color:#0d1b3e;}
+.rec-row.sub .rl{color:#94a3b8;font-size:10px;} .rec-row.sub .rr{font-size:10px;}
+.rec-row.total .rl{font-size:12px;font-weight:500;color:#0d1b3e;} .rec-row.total .rr{font-size:14px;color:#1e3a8a;}
+.rec-divider{border:none;border-top:1px dashed #e2e8f0;margin:7px 0;}
+.rec-pay{padding:6px 14px 8px;}
+.rec-pay .rp-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;}
+.rec-pay .rp-row .rl{color:#94a3b8;} .rec-pay .rp-row .rr{color:#374151;}
+.rec-thank{text-align:center;font-size:11px;color:#607191;padding:6px 14px 4px;}
+.rec-dots{display:flex;justify-content:center;gap:7px;padding:6px 0;}
+.rec-dots span{width:7px;height:7px;border-radius:50%;background:#e2e8f0;}
+
+/* action buttons */
+.act-btn{display:flex;align-items:center;justify-content:center;gap:6px;border-radius:9px;padding:10px;font-size:12px;font-weight:500;margin:0 8px 6px;border:1.5px solid;}
+.act-btn.outline{background:#fff;color:#1e3a8a;border-color:#1e3a8a;}
+.act-btn.primary{background:#1e3a8a;color:#fff;border-color:#1e3a8a;}
+.act-btn.danger{background:#fff;color:#e24b4a;border-color:#e24b4a;}
+.act-btn.green{background:#1aaa6b;color:#fff;border-color:#1aaa6b;}
+.act-btn.amber{background:#fff;color:#7a5000;border-color:#e8c96a;}
+.act-btn.ghost{background:#f4f6f9;color:#607191;border-color:#e2e8f0;}
+
+/* NEW: invoice card */
+.inv-card{background:#fff;border-radius:10px;margin:8px 8px 0;border:0.5px solid #d4dce8;overflow:hidden;}
+.inv-header-bar{background:#1e3a8a;padding:10px 12px;display:flex;justify-content:space-between;align-items:flex-start;}
+.inv-header-bar .biz-name{font-size:11px;font-weight:500;color:#fff;}
+.inv-header-bar .biz-tel{font-size:9px;color:rgba(255,255,255,.6);margin-top:1px;}
+.inv-header-bar .inv-type{font-size:9px;font-weight:500;background:#4DDD1A;color:#0d1b3e;padding:2px 7px;border-radius:4px;}
+.inv-meta-row{display:flex;justify-content:space-between;padding:8px 12px 6px;border-bottom:0.5px solid #f1f5f9;}
+.inv-meta-cell .imc-label{font-size:8px;color:#94a3b8;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;}
+.inv-meta-cell .imc-val{font-size:10px;font-weight:500;color:#0d1b3e;font-family:'DM Mono',monospace;}
+.inv-meta-cell .imc-val.overdue{color:#e24b4a;}
+.inv-meta-cell .imc-val.due{color:#c47f00;}
+.bill-section{padding:6px 12px;border-bottom:0.5px solid #f1f5f9;}
+.bill-label{font-size:8px;color:#94a3b8;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;}
+.bill-name{font-size:11px;font-weight:500;color:#0d1b3e;}
+.bill-detail{font-size:9px;color:#94a3b8;margin-top:1px;}
+.inv-items-head{display:flex;justify-content:space-between;padding:5px 12px;background:#f8fafc;font-size:8px;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.3px;}
+.inv-item-row{display:flex;align-items:center;padding:6px 12px;border-bottom:0.5px solid #f8fafc;}
+.inv-item-row .ir-name{flex:1;font-size:10px;color:#374151;}
+.inv-item-row .ir-qty{font-size:10px;color:#607191;min-width:24px;text-align:center;}
+.inv-item-row .ir-unit{font-size:10px;color:#607191;min-width:36px;text-align:right;}
+.inv-item-row .ir-total{font-size:10px;font-weight:500;color:#0d1b3e;min-width:46px;text-align:right;}
+.inv-totals{padding:6px 12px;}
+.inv-total-row{display:flex;justify-content:space-between;font-size:10px;padding:3px 0;}
+.inv-total-row .tl{color:#94a3b8;}
+.inv-total-row .tr{color:#374151;}
+.inv-total-row.grand .tl{font-size:11px;font-weight:500;color:#0d1b3e;}
+.inv-total-row.grand .tr{font-size:13px;font-weight:600;color:#1e3a8a;}
+.inv-tax-box{background:#e8f0fe;border-radius:6px;padding:5px 8px;margin:4px 0;}
+.inv-tax-box .itb-label{font-size:8px;color:#0c447c;font-weight:500;margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;}
+.inv-tax-row{display:flex;justify-content:space-between;font-size:9px;}
+.inv-tax-row .tl{color:#3a5c9a;}
+.inv-tax-row .tr{color:#1e3a8a;font-weight:500;}
+.inv-payment-section{padding:6px 12px;border-top:0.5px solid #e2e8f0;}
+.inv-pmt-label{font-size:8px;color:#94a3b8;text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px;}
+.inv-pmt-row{display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:0.5px solid #f8fafc;}
+.inv-pmt-row:last-child{border-bottom:none;}
+.inv-pmt-icon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.inv-pmt-icon i{font-size:11px;}
+.inv-pmt-name{font-size:9px;font-weight:500;color:#374151;flex:1;}
+.inv-pmt-detail{font-size:9px;color:#607191;font-family:'DM Mono',monospace;}
+.inv-footer{text-align:center;padding:7px 12px;font-size:9px;color:#94a3b8;border-top:0.5px solid #f1f5f9;line-height:1.5;}
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:500;padding:2px 7px;border-radius:20px;}
+.status-badge.pending{background:#fef9e7;color:#7a5000;border:0.5px solid #e8c96a;}
+.status-badge.paid{background:#e6f7f0;color:#085041;border:0.5px solid #9ed8bf;}
+.status-badge.overdue{background:#fee2e2;color:#991b1b;border:0.5px solid #fca5a5;}
+.status-badge.draft{background:#f4f6f9;color:#607191;border:0.5px solid #d4dce8;}
+
+/* invoice form */
+.form-section{padding:8px 8px 0;}
+.form-label{font-size:10px;font-weight:500;color:#607191;margin-bottom:3px;display:flex;align-items:center;gap:4px;}
+.form-label .req{color:#e24b4a;font-size:12px;}
+.form-input{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:8px 11px;font-size:12px;color:#374151;margin-bottom:8px;}
+.form-input.filled{color:#0d1b3e;}
+.form-input.auto{background:#f0fbf6;border-color:#9ed8bf;color:#1a5c3a;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.form-select{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:8px 11px;font-size:12px;color:#374151;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.form-select i{font-size:13px;color:#94a3b8;}
+.item-row-form{display:flex;align-items:center;gap:5px;margin-bottom:6px;background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;padding:7px 8px;}
+.irf-name{flex:1;font-size:11px;color:#374151;}
+.irf-qty{width:28px;text-align:center;font-size:11px;color:#374151;}
+.irf-price{width:56px;text-align:right;font-size:11px;color:#374151;}
+.irf-del{font-size:14px;color:#94a3b8;cursor:pointer;}
+.add-item-row{display:flex;align-items:center;gap:5px;padding:4px 0;cursor:pointer;}
+.add-item-row i{font-size:14px;color:#1e3a8a;}
+.add-item-row span{font-size:11px;color:#1e3a8a;font-weight:500;}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:0.5px solid #f1f5f9;margin-top:2px;}
+.toggle-row label{font-size:11px;color:#374151;}
+.toggle{width:32px;height:18px;border-radius:9px;position:relative;}
+.toggle.on{background:#1e3a8a;}
+.toggle.off{background:#d1d5db;}
+.toggle-thumb{width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:2px;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+.toggle.on .toggle-thumb{right:2px;}
+.toggle.off .toggle-thumb{left:2px;}
+
+/* invoice list screen */
+.inv-list-row{background:#fff;border-radius:10px;border:0.5px solid #e2e8f0;margin:0 8px 6px;padding:10px 12px;}
+.ilr-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;}
+.ilr-num{font-size:10px;font-family:'DM Mono',monospace;color:#607191;}
+.ilr-client{font-size:12px;font-weight:500;color:#0d1b3e;}
+.ilr-due{font-size:9px;color:#94a3b8;margin-top:2px;}
+.ilr-amount{font-size:13px;font-weight:600;color:#1e3a8a;}
+
+/* comparison */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.comp-card{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+.comp-head{padding:10px 14px;border-bottom:0.5px solid #e2e8f0;font-size:12px;font-weight:500;}
+.comp-head.old{background:#fee2e2;color:#991b1b;}
+.comp-head.new{background:#e6f7f0;color:#085041;}
+.comp-body{padding:10px 14px;display:flex;flex-direction:column;gap:5px;}
+.comp-item{font-size:11px;color:#374151;display:flex;align-items:flex-start;gap:6px;line-height:1.5;}
+.comp-item i{font-size:12px;flex-shrink:0;margin-top:1px;}
+
+/* bs */
+.bs-wrap{position:relative;height:420px;overflow:hidden;background:#f4f6f9;}
+.bs-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.3);z-index:1;}
+.bs{position:absolute;bottom:0;left:0;right:0;z-index:2;background:#fff;border-radius:16px 16px 0 0;padding:12px 12px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.12);}
+.bs-handle{width:30px;height:3px;border-radius:2px;background:#d4dce8;margin:0 auto 10px;}
+.bs-title{font-size:13px;font-weight:500;color:#0d1b3e;margin-bottom:10px;}
+
+/* notes */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.nc{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;}
+.nc h4{font-size:11px;font-weight:500;color:#1e3a8a;margin-bottom:6px;}
+.nc p{font-size:11px;color:#607191;line-height:1.7;}
+code{font-family:'DM Mono',monospace;background:#f4f6f9;padding:1px 4px;border-radius:3px;font-size:10px;}
+.field-tag{display:inline-block;font-size:9px;padding:1px 6px;border-radius:4px;font-family:'DM Mono',monospace;}
+.field-tag.required{background:#fee2e2;color:#991b1b;}
+.field-tag.optional{background:#f4f6f9;color:#607191;}
+.field-tag.auto{background:#e6f7f0;color:#085041;}
+
+@media(max-width:700px){.notes-grid{grid-template-columns:1fr;}.comp-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="ph">
+  <h1>Invoice Generation  Phase 2 Design</h1>
+  <p>Formal invoice document for wholesale transactions · Built on top of the current receipt flow</p>
+  <div class="meta"><span>Trident Aliska</span><span>July 2026</span><span>Phase 2</span><span>Vietnam Dev Team</span></div>
+</div>
+
+<div class="p2-banner">
+  <i class="ti ti-clock-2" style="font-size:16px;flex-shrink:0;" aria-hidden="true"></i>
+  <div><strong>Phase 2  not in pilot scope.</strong> The receipt covers all retail use cases for Makola pilot. Invoices are needed for wholesale traders only. Build after pilot go-live. This document is the specification for sprint planning.</div>
+</div>
+
+<div class="hint">💡 Open in browser · File → Print → Save as PDF · Four sections: receipt vs invoice comparison, creation flow, invoice document, invoice management</div>
+
+
+<!-- ══════════════════════════
+     SECTION 1: RECEIPT vs INVOICE
+══════════════════════════ -->
+<div class="section">
+  <div class="sh">
+    <div class="sn" style="background:#e8f0fe;color:#0c447c;">1</div>
+    <div>
+      <h2>Receipt vs Invoice, what changes and why</h2>
+      <p>The current receipt is a proof-of-payment document issued after money changes hands. An invoice is a payment request, it comes before payment, includes a due date, customer details, tax breakdown, and the trader's bank/MoMo details so the buyer can pay later.</p>
+    </div>
+  </div>
+
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-head old">🧾 Current receipt: retail (pilot, Phase 1)</div>
+      <div class="comp-body">
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Issued after payment</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Business name + tel</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Invoice/receipt number</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Date + time</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Itemised list</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Grand total</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Payment method + change</div>
+        <div class="comp-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>No customer name/address</div>
+        <div class="comp-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>No due date</div>
+        <div class="comp-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>No tax breakdown (MTS lines not yet shown)</div>
+        <div class="comp-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>No bank/MoMo payment details</div>
+        <div class="comp-item"><i class="ti ti-x" style="color:#e24b4a;" aria-hidden="true"></i>No payment status tracking</div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-head new">📄 New invoice: wholesale (Phase 2)</div>
+      <div class="comp-body">
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Issued before or at time of delivery</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Trader business name + address</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Unique invoice number (INV-XXXX)</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Issue date + <strong>due date</strong></div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i><strong>Customer name + contact</strong> (bill to)</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Itemised list with unit price + qty</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Subtotal, MTS + NHIL + GETFund tax lines</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Total due (incl. tax)</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i><strong>Bank + MoMo payment details</strong></div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Status: Draft → Sent → Paid → Overdue</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Share via WhatsApp / link / PDF</div>
+        <div class="comp-item"><i class="ti ti-check" style="color:#1aaa6b;" aria-hidden="true"></i>Mark as paid when payment received</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- side by side: current receipt vs new invoice -->
+  <div class="fl">Current receipt (Phase 1) vs New invoice document (Phase 2)</div>
+  <div class="sr">
+
+    <!-- Current receipt -->
+    <div class="pw">
+      <div class="stg">Current receipt</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:49 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div style="background:#1e3a8a;padding:9px 12px 11px;text-align:center;"><span style="font-size:13px;font-weight:500;color:#fff;">Receipt</span></div>
+        <div class="bd">
+          <div style="background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;margin:8px 8px 0;padding:8px 10px;display:flex;align-items:center;gap:6px;">
+            <i class="ti ti-circle-check" style="font-size:14px;color:#085041;" aria-hidden="true"></i>
+            <span style="font-size:10px;font-weight:500;color:#085041;">Accepted — Payment successful</span>
+          </div>
+          <div class="rec-card">
+            <div class="rec-head"><h3>Ama Kojo Provision store</h3><div class="tel">Tel: +233545256379</div></div>
+            <div class="rec-meta"><div class="inv">Invoice No: RCP-CASH-2680d274</div><div class="dt">Date: 23 Jul 2026, 11:49 AM</div></div>
+            <div class="rec-items">
+              <div class="rec-col"><span>Items</span><span>Price</span></div>
+              <div class="rec-row"><span class="rl">x3 Guinness Malt</span><span class="rr">GHS 45.00</span></div>
+              <div class="rec-row"><span class="rl">x2 Lele rice 50 kg</span><span class="rr">GHS 100.00</span></div>
+              <div class="rec-divider"></div>
+              <div class="rec-row sub"><span class="rl">Subtotal:</span><span class="rr">GHS 145.00</span></div>
+              <div class="rec-row total"><span class="rl">Grand Total:</span><span class="rr">GHS 145.00</span></div>
+            </div>
+            <div class="rec-pay">
+              <div class="rec-divider"></div>
+              <div class="rp-row"><span class="rl">Payment:</span><span class="rr">Cash</span></div>
+              <div class="rp-row"><span class="rl">Tendered:</span><span class="rr">GHS 200.00</span></div>
+              <div class="rp-row"><span class="rl">Change:</span><span class="rr">GHS 55.00</span></div>
+            </div>
+            <div class="rec-thank">Thank you!</div>
+            <div class="rec-dots"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="act-btn outline"><i class="ti ti-printer" aria-hidden="true"></i> Print Receipt</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr" style="font-size:14px;color:#94a3b8;">Phase 2 →</div>
+
+    <!-- New invoice document -->
+    <div class="pw">
+      <div class="stg">New invoice document</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:49 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Invoice</span><span class="ac">Share</span></div>
+        <div class="bd">
+          <!-- status bar -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 8px 0;">
+            <span class="status-badge pending"><i class="ti ti-clock" style="font-size:9px;" aria-hidden="true"></i> Payment pending</span>
+            <span style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace;">INV-2026-0047</span>
+          </div>
+          <div class="inv-card">
+            <!-- header -->
+            <div class="inv-header-bar">
+              <div><div class="biz-name">Ama Kojo Provision store</div><div class="biz-tel">Tel: +233545256379 · Makola Zone B</div></div>
+              <div class="inv-type">INVOICE</div>
+            </div>
+            <!-- meta row -->
+            <div class="inv-meta-row">
+              <div class="inv-meta-cell"><div class="imc-label">Invoice No</div><div class="imc-val">INV-2026-0047</div></div>
+              <div class="inv-meta-cell"><div class="imc-label">Issue date</div><div class="imc-val">23 Jul 2026</div></div>
+              <div class="inv-meta-cell"><div class="imc-label">Due date</div><div class="imc-val due">30 Jul 2026</div></div>
+            </div>
+            <!-- bill to -->
+            <div class="bill-section">
+              <div class="bill-label">Bill to</div>
+              <div class="bill-name">Kofi Mensah Wholesale</div>
+              <div class="bill-detail">0244 123 456 · Accra Central Market</div>
+            </div>
+            <!-- items -->
+            <div class="inv-items-head"><span>Item</span><span>Qty</span><span>Unit</span><span>Total</span></div>
+            <div class="inv-item-row">
+              <div class="ir-name">Guinness Malt</div>
+              <div class="ir-qty">3</div>
+              <div class="ir-unit">15.00</div>
+              <div class="ir-total">45.00</div>
+            </div>
+            <div class="inv-item-row">
+              <div class="ir-name">Lele Rice 50kg</div>
+              <div class="ir-qty">2</div>
+              <div class="ir-unit">50.00</div>
+              <div class="ir-total">100.00</div>
+            </div>
+            <!-- totals -->
+            <div class="inv-totals">
+              <div style="border-top:0.5px solid #f1f5f9;padding-top:5px;">
+                <div class="inv-total-row"><span class="tl">Subtotal</span><span class="tr">GHS 145.00</span></div>
+                <div class="inv-tax-box">
+                  <div class="itb-label">Taxes (MTS agent)</div>
+                  <div class="inv-tax-row"><span class="tl">MTS 3%</span><span class="tr">GHS 4.35</span></div>
+                  <div class="inv-tax-row"><span class="tl">NHIL 2.5%</span><span class="tr">GHS 3.63</span></div>
+                  <div class="inv-tax-row"><span class="tl">GETFund 2.5%</span><span class="tr">GHS 3.63</span></div>
+                </div>
+                <div class="inv-total-row grand"><span class="tl">Total due</span><span class="tr">GHS 156.61</span></div>
+              </div>
+            </div>
+            <!-- payment details -->
+            <div class="inv-payment-section">
+              <div class="inv-pmt-label">Pay to</div>
+              <div class="inv-pmt-row">
+                <div class="inv-pmt-icon" style="background:#ffe0a0;"><i class="ti ti-device-mobile" style="color:#8a5000;" aria-hidden="true"></i></div>
+                <div class="inv-pmt-name">MTN MoMo</div>
+                <div class="inv-pmt-detail">0545 256 379</div>
+              </div>
+              <div class="inv-pmt-row">
+                <div class="inv-pmt-icon" style="background:#e8f0fe;"><i class="ti ti-building-bank" style="color:#1e3a8a;" aria-hidden="true"></i></div>
+                <div class="inv-pmt-name">GCB Bank</div>
+                <div class="inv-pmt-detail">1234567890</div>
+              </div>
+            </div>
+            <div class="inv-footer">Reference your invoice number when paying.<br>sikaflow.app/inv/INV-2026-0047</div>
+          </div>
+          <div class="act-btn green"><i class="ti ti-circle-check" aria-hidden="true"></i> Mark as Paid</div>
+          <div class="act-btn outline"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Send to Customer</div>
+          <div class="act-btn ghost"><i class="ti ti-printer" aria-hidden="true"></i> Print</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 2: CREATION FLOW
+══════════════════════════ -->
+<div class="section">
+  <div class="sh">
+    <div class="sn" style="background:#e6f7f0;color:#085041;">2</div>
+    <div>
+      <h2>Invoice creation flow: entry points and form</h2>
+      <p>Traders access invoice creation from two places: the receipt screen after a sale ("Create Invoice" instead of just printing), and from a new "Invoices" tab in the menu. The form is a simplified version of the cart — fill in customer, add items, set due date, add payment details.</p>
+    </div>
+  </div>
+  <div class="fl">Flow: receipt → create invoice → form → preview → send</div>
+  <div class="sr">
+
+    <!-- Entry point 1: receipt screen with invoice option -->
+    <div class="pw">
+      <div class="stg">1 · Receipt: invoice entry point</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:51 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div style="background:#1e3a8a;padding:9px 12px 11px;text-align:center;"><span style="font-size:13px;font-weight:500;color:#fff;">Receipt</span></div>
+        <div class="bd">
+          <div class="rec-card" style="margin-top:8px;">
+            <div class="rec-head"><h3>Ama Kojo Provision store</h3><div class="tel">RCP-CASH-2680d274 · 23 Jul 2026</div></div>
+            <div class="rec-items">
+              <div class="rec-row"><span class="rl">x3 Guinness Malt</span><span class="rr">GHS 45.00</span></div>
+              <div class="rec-row"><span class="rl">x2 Lele rice 50 kg</span><span class="rr">GHS 100.00</span></div>
+              <div class="rec-divider"></div>
+              <div class="rec-row total"><span class="rl">Grand Total:</span><span class="rr">GHS 145.00</span></div>
+            </div>
+            <div class="rec-pay">
+              <div class="rp-row"><span class="rl">Payment:</span><span class="rr">Cash</span></div>
+              <div class="rp-row"><span class="rl">Tendered:</span><span class="rr">GHS 200.00</span></div>
+            </div>
+            <div class="rec-thank">Thank you!</div>
+            <div class="rec-dots"><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+          <!-- action buttons — updated with invoice option -->
+          <div class="act-btn outline" style="margin-top:6px;"><i class="ti ti-printer" aria-hidden="true"></i> Print Receipt</div>
+          <div class="act-btn primary"><i class="ti ti-file-invoice" aria-hidden="true"></i> Generate Invoice</div>
+          <div class="act-btn ghost">New Sale</div>
+          <div class="act-btn danger">Void Sale</div>
+          <!-- Phase 2 tag -->
+          <div style="text-align:center;margin-bottom:8px;"><span style="font-size:9px;background:#f3f0fd;color:#4c1d95;border:0.5px solid #c4b5fd;padding:2px 8px;border-radius:4px;">Phase 2 — Generate Invoice</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Form Step 1: Customer + dates -->
+    <div class="pw">
+      <div class="stg">2 · Invoice form: customer</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:52 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">New Invoice</span><span class="ac">Preview</span></div>
+        <div class="bd">
+          <!-- progress dots -->
+          <div style="display:flex;gap:4px;padding:8px 8px 0;">
+            <div style="flex:1;height:3px;border-radius:2px;background:#1e3a8a;"></div>
+            <div style="flex:1;height:3px;border-radius:2px;background:#e2e8f0;"></div>
+            <div style="flex:1;height:3px;border-radius:2px;background:#e2e8f0;"></div>
+          </div>
+          <div style="font-size:9px;color:#94a3b8;padding:3px 8px 0;">Step 1 of 3 · Customer &amp; dates</div>
+          <div class="form-section">
+            <div class="form-label">Invoice number <span style="font-size:9px;background:#e6f7f0;color:#085041;border:0.5px solid #9ed8bf;padding:1px 5px;border-radius:4px;margin-left:4px;">Auto</span></div>
+            <div class="form-input auto">INV-2026-0047</div>
+            <div class="form-label">Bill to — customer name <span class="req">*</span></div>
+            <div class="form-input filled">Kofi Mensah Wholesale</div>
+            <div class="form-label">Customer phone</div>
+            <div class="form-input filled">0244 123 456</div>
+            <div class="form-row-2">
+              <div>
+                <div class="form-label">Issue date</div>
+                <div class="form-input auto">23 Jul 2026</div>
+              </div>
+              <div>
+                <div class="form-label">Due date <span class="req">*</span></div>
+                <div class="form-select"><span style="font-size:12px;color:#0d1b3e;">30 Jul 2026</span><i class="ti ti-calendar" aria-hidden="true"></i></div>
+              </div>
+            </div>
+            <div class="form-label">Quick due date</div>
+            <div style="display:flex;gap:5px;margin-bottom:8px;">
+              <div style="border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:10px;color:#607191;background:#f4f6f9;">7 days</div>
+              <div style="border:1.5px solid #1e3a8a;border-radius:6px;padding:5px 8px;font-size:10px;color:#1e3a8a;background:#e8f0fe;font-weight:500;">30 days</div>
+              <div style="border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:10px;color:#607191;background:#f4f6f9;">On delivery</div>
+            </div>
+            <div class="act-btn primary" style="margin:6px 0 0;">Next: Add items →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Form Step 2: Items -->
+    <div class="pw">
+      <div class="stg">3 · Invoice form: items</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:53 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">New Invoice</span><span class="ac">Preview</span></div>
+        <div class="bd">
+          <div style="display:flex;gap:4px;padding:8px 8px 0;">
+            <div style="flex:1;height:3px;border-radius:2px;background:#1aaa6b;"></div>
+            <div style="flex:1;height:3px;border-radius:2px;background:#1e3a8a;"></div>
+            <div style="flex:1;height:3px;border-radius:2px;background:#e2e8f0;"></div>
+          </div>
+          <div style="font-size:9px;color:#94a3b8;padding:3px 8px 0;">Step 2 of 3 · Items</div>
+          <div class="form-section">
+            <!-- item rows -->
+            <div style="background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;overflow:hidden;margin-bottom:8px;">
+              <div style="display:flex;background:#f8fafc;padding:5px 10px;font-size:8px;font-weight:500;color:#94a3b8;gap:4px;text-transform:uppercase;letter-spacing:.3px;justify-content:space-between;"><span style="flex:1;">Item</span><span style="width:28px;text-align:center;">Qty</span><span style="width:50px;text-align:right;">Price</span><span style="width:50px;text-align:right;">Total</span><span style="width:18px;"></span></div>
+              <div class="item-row-form"><div class="irf-name">Guinness Malt</div><div class="irf-qty">3</div><div class="irf-price">15.00</div><div style="min-width:46px;text-align:right;font-size:10px;font-weight:500;color:#1e3a8a;">45.00</div><i class="ti ti-x irf-del" aria-hidden="true"></i></div>
+              <div class="item-row-form"><div class="irf-name">Lele Rice 50kg</div><div class="irf-qty">2</div><div class="irf-price">50.00</div><div style="min-width:46px;text-align:right;font-size:10px;font-weight:500;color:#1e3a8a;">100.00</div><i class="ti ti-x irf-del" aria-hidden="true"></i></div>
+            </div>
+            <div class="add-item-row"><i class="ti ti-plus-circle" aria-hidden="true"></i><span>Add item from catalogue</span></div>
+            <div style="height:0.5px;background:#e2e8f0;margin:8px 0;"></div>
+            <!-- tax toggle -->
+            <div class="toggle-row">
+              <label>Include MTS / tax lines</label>
+              <div class="toggle on"><div class="toggle-thumb"></div></div>
+            </div>
+            <!-- running total -->
+            <div style="background:#e8f0fe;border-radius:8px;padding:8px 10px;margin-top:7px;">
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#3a5c9a;">Subtotal</span><span style="color:#1e3a8a;">GHS 145.00</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;"><span style="color:#3a5c9a;">MTS + NHIL + GETFund</span><span style="color:#1e3a8a;">GHS 11.61</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:500;"><span style="color:#0c447c;">Total due</span><span style="color:#1e3a8a;">GHS 156.61</span></div>
+            </div>
+            <div class="act-btn primary" style="margin-top:8px;">Next: Payment details →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Form Step 3: Payment details -->
+    <div class="pw">
+      <div class="stg">4 · Payment details</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:54 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">New Invoice</span><span class="ac">Preview</span></div>
+        <div class="bd">
+          <div style="display:flex;gap:4px;padding:8px 8px 0;">
+            <div style="flex:1;height:3px;border-radius:2px;background:#1aaa6b;"></div>
+            <div style="flex:1;height:3px;border-radius:2px;background:#1aaa6b;"></div>
+            <div style="flex:1;height:3px;border-radius:2px;background:#1e3a8a;"></div>
+          </div>
+          <div style="font-size:9px;color:#94a3b8;padding:3px 8px 0;">Step 3 of 3 · Payment details</div>
+          <div class="form-section">
+            <div style="background:#fef9e7;border:0.5px solid #e8c96a;border-radius:7px;padding:7px 10px;margin-bottom:8px;font-size:10px;color:#7a5000;display:flex;gap:5px;">
+              <i class="ti ti-info-circle" style="font-size:12px;flex-shrink:0;" aria-hidden="true"></i>
+              Add how your customer should pay you. These details print on the invoice.
+            </div>
+            <!-- MoMo -->
+            <div style="background:#fff;border:0.5px solid #e2e8f0;border-radius:9px;padding:9px 11px;margin-bottom:7px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <div style="display:flex;align-items:center;gap:6px;"><div style="width:22px;height:22px;border-radius:6px;background:#ffe0a0;display:flex;align-items:center;justify-content:center;"><i class="ti ti-device-mobile" style="font-size:12px;color:#8a5000;" aria-hidden="true"></i></div><span style="font-size:11px;font-weight:500;color:#374151;">Mobile Money</span></div>
+                <div class="toggle on"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="form-input filled" style="margin-bottom:5px;">MTN MoMo</div>
+              <div class="form-input auto">0545 256 379</div>
+            </div>
+            <!-- Bank -->
+            <div style="background:#fff;border:0.5px solid #e2e8f0;border-radius:9px;padding:9px 11px;margin-bottom:7px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                <div style="display:flex;align-items:center;gap:6px;"><div style="width:22px;height:22px;border-radius:6px;background:#e8f0fe;display:flex;align-items:center;justify-content:center;"><i class="ti ti-building-bank" style="font-size:12px;color:#1e3a8a;" aria-hidden="true"></i></div><span style="font-size:11px;font-weight:500;color:#374151;">Bank Transfer</span></div>
+                <div class="toggle on"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="form-input filled" style="margin-bottom:5px;">GCB Bank</div>
+              <div class="form-input filled">1234567890</div>
+            </div>
+            <!-- Note -->
+            <div class="form-label">Notes / terms <span style="color:#94a3b8;font-size:9px;">(optional)</span></div>
+            <div class="form-input" style="color:#9ca3af;height:44px;">e.g. Goods once sold are not returnable…</div>
+            <div class="act-btn green" style="margin-top:8px;"><i class="ti ti-eye" aria-hidden="true"></i> Preview &amp; Send Invoice</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 3: INVOICE MANAGEMENT
+══════════════════════════ -->
+<div class="section">
+  <div class="sh">
+    <div class="sn" style="background:#fef9e7;color:#7a5000;">3</div>
+    <div>
+      <h2>Invoice management: list, statuses, and actions</h2>
+      <p>A new "Invoices" section in the Menu tab shows all invoices grouped by status. Traders can mark invoices as paid when money arrives, send reminders, or view the invoice detail to re-share.</p>
+    </div>
+  </div>
+  <div class="fl">Invoice list, status flow, and sharing</div>
+  <div class="sr">
+
+    <!-- Invoice list -->
+    <div class="pw">
+      <div class="stg">Invoice list</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:55 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Invoices</span><span class="ac" style="font-size:18px;">+</span></div>
+        <div class="bd">
+          <!-- summary strip -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:8px 8px 0;">
+            <div style="background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;padding:8px 8px;text-align:center;">
+              <div style="font-size:9px;color:#94a3b8;margin-bottom:3px;">Outstanding</div>
+              <div style="font-size:13px;font-weight:600;color:#c47f00;">GHS 430</div>
+            </div>
+            <div style="background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;padding:8px 8px;text-align:center;">
+              <div style="font-size:9px;color:#94a3b8;margin-bottom:3px;">Overdue</div>
+              <div style="font-size:13px;font-weight:600;color:#e24b4a;">GHS 156</div>
+            </div>
+            <div style="background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;padding:8px 8px;text-align:center;">
+              <div style="font-size:9px;color:#94a3b8;margin-bottom:3px;">Paid (Jul)</div>
+              <div style="font-size:13px;font-weight:600;color:#1aaa6b;">GHS 890</div>
+            </div>
+          </div>
+          <!-- filter pills -->
+          <div style="display:flex;gap:5px;padding:8px 8px 0;">
+            <div style="background:#1e3a8a;border-radius:20px;padding:4px 10px;font-size:10px;font-weight:500;color:#fff;">All</div>
+            <div style="background:#fff;border-radius:20px;border:0.5px solid #e8c96a;padding:4px 10px;font-size:10px;color:#7a5000;">Pending</div>
+            <div style="background:#fff;border-radius:20px;border:0.5px solid #fca5a5;padding:4px 10px;font-size:10px;color:#991b1b;">Overdue</div>
+            <div style="background:#fff;border-radius:20px;border:0.5px solid #9ed8bf;padding:4px 10px;font-size:10px;color:#085041;">Paid</div>
+          </div>
+          <!-- invoice rows -->
+          <div style="padding:6px 8px 0;">
+            <!-- overdue -->
+            <div class="inv-list-row" style="border-left:3px solid #e24b4a;">
+              <div class="ilr-top"><div><div class="ilr-num">INV-2026-0044</div><div class="ilr-client">Kwame Bros Suppliers</div><div class="ilr-due" style="color:#e24b4a;">⚠️ Overdue · was due 16 Jul</div></div><div style="text-align:right;"><span class="status-badge overdue">Overdue</span><div class="ilr-amount" style="color:#e24b4a;">GHS 156.61</div></div></div>
+            </div>
+            <!-- pending -->
+            <div class="inv-list-row" style="border-left:3px solid #e8c96a;">
+              <div class="ilr-top"><div><div class="ilr-num">INV-2026-0047</div><div class="ilr-client">Kofi Mensah Wholesale</div><div class="ilr-due">Due 30 Jul 2026</div></div><div style="text-align:right;"><span class="status-badge pending">Pending</span><div class="ilr-amount">GHS 156.61</div></div></div>
+            </div>
+            <!-- pending -->
+            <div class="inv-list-row" style="border-left:3px solid #e8c96a;">
+              <div class="ilr-top"><div><div class="ilr-num">INV-2026-0046</div><div class="ilr-client">Abena Fashion House</div><div class="ilr-due">Due 25 Jul 2026</div></div><div style="text-align:right;"><span class="status-badge pending">Pending</span><div class="ilr-amount">GHS 273.40</div></div></div>
+            </div>
+            <!-- paid -->
+            <div class="inv-list-row" style="border-left:3px solid #9ed8bf;opacity:.8;">
+              <div class="ilr-top"><div><div class="ilr-num">INV-2026-0043</div><div class="ilr-client">Mansa Provisions</div><div class="ilr-due" style="color:#1aaa6b;">Paid 14 Jul 2026</div></div><div style="text-align:right;"><span class="status-badge paid">Paid</span><div class="ilr-amount" style="color:#1aaa6b;">GHS 89.00</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Invoice detail with actions -->
+    <div class="pw">
+      <div class="stg">Invoice detail + actions</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:56 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Invoice</span><span class="ac">•••</span></div>
+        <div class="bd">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 8px 0;">
+            <span class="status-badge pending"><i class="ti ti-clock" style="font-size:9px;" aria-hidden="true"></i> Pending · due 30 Jul</span>
+            <span style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace;">INV-2026-0047</span>
+          </div>
+          <div class="inv-card">
+            <div class="inv-header-bar">
+              <div><div class="biz-name">Ama Kojo Provision store</div><div class="biz-tel">+233545256379</div></div>
+              <div class="inv-type">INVOICE</div>
+            </div>
+            <div class="inv-meta-row">
+              <div class="inv-meta-cell"><div class="imc-label">Invoice</div><div class="imc-val">INV-0047</div></div>
+              <div class="inv-meta-cell"><div class="imc-label">Issued</div><div class="imc-val">23 Jul 26</div></div>
+              <div class="inv-meta-cell"><div class="imc-label">Due</div><div class="imc-val due">30 Jul 26</div></div>
+            </div>
+            <div class="bill-section"><div class="bill-label">Bill to</div><div class="bill-name">Kofi Mensah Wholesale</div><div class="bill-detail">0244 123 456</div></div>
+            <div class="inv-items-head"><span>Item</span><span>Qty</span><span>Unit</span><span>Total</span></div>
+            <div class="inv-item-row"><div class="ir-name">Guinness Malt</div><div class="ir-qty">3</div><div class="ir-unit">15.00</div><div class="ir-total">45.00</div></div>
+            <div class="inv-item-row"><div class="ir-name">Lele Rice 50kg</div><div class="ir-qty">2</div><div class="ir-unit">50.00</div><div class="ir-total">100.00</div></div>
+            <div class="inv-totals">
+              <div style="border-top:0.5px solid #f1f5f9;padding-top:5px;">
+                <div class="inv-total-row"><span class="tl">Subtotal</span><span class="tr">GHS 145.00</span></div>
+                <div class="inv-total-row"><span class="tl">Tax (MTS+NHIL+GETFund)</span><span class="tr">GHS 11.61</span></div>
+                <div class="inv-total-row grand"><span class="tl">Total due</span><span class="tr">GHS 156.61</span></div>
+              </div>
+            </div>
+            <div class="inv-payment-section">
+              <div class="inv-pmt-label">Pay to</div>
+              <div class="inv-pmt-row"><div class="inv-pmt-icon" style="background:#ffe0a0;"><i class="ti ti-device-mobile" style="color:#8a5000;" aria-hidden="true"></i></div><div class="inv-pmt-name">MTN MoMo</div><div class="inv-pmt-detail">0545 256 379</div></div>
+              <div class="inv-pmt-row"><div class="inv-pmt-icon" style="background:#e8f0fe;"><i class="ti ti-building-bank" style="color:#1e3a8a;" aria-hidden="true"></i></div><div class="inv-pmt-name">GCB Bank</div><div class="inv-pmt-detail">1234567890</div></div>
+            </div>
+          </div>
+          <div class="act-btn green"><i class="ti ti-circle-check" aria-hidden="true"></i> Mark as Paid</div>
+          <div class="act-btn outline"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Send to Customer</div>
+          <div class="act-btn ghost"><i class="ti ti-bell" aria-hidden="true"></i> Send Reminder</div>
+          <div class="act-btn danger"><i class="ti ti-x" aria-hidden="true"></i> Cancel Invoice</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Mark as paid -->
+    <div class="pw">
+      <div class="stg">Mark as paid: bottom sheet</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:57 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Invoice</span><span class="ac">•••</span></div>
+        <div class="bs-wrap" style="height:450px;">
+          <div class="bs-overlay"></div>
+          <div class="bs-behind">
+            <div style="padding:4px 0;font-size:10px;color:#607191;text-align:center;">INV-2026-0047</div>
+            <div class="inv-card" style="margin:4px 0 0;opacity:.4;">
+              <div class="inv-header-bar" style="padding:6px 10px;"><div><div class="biz-name">Ama Kojo Provision store</div></div><div class="inv-type">INVOICE</div></div>
+            </div>
+          </div>
+          <div class="bs">
+            <div class="bs-handle"></div>
+            <div class="bs-title" style="display:flex;align-items:center;gap:6px;"><i class="ti ti-circle-check" style="color:#1aaa6b;font-size:16px;" aria-hidden="true"></i>Mark as paid</div>
+            <div style="background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:8px 10px;margin-bottom:10px;">
+              <div style="font-size:10px;color:#607191;margin-bottom:2px;">Amount due</div>
+              <div style="font-size:18px;font-weight:600;color:#085041;">GHS 156.61</div>
+              <div style="font-size:9px;color:#607191;margin-top:1px;">Kofi Mensah Wholesale · INV-2026-0047</div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:500;color:#607191;margin-bottom:4px;">How did they pay?</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+                <div style="border:1.5px solid #1e3a8a;border-radius:8px;padding:8px;text-align:center;background:#e8f0fe;font-size:11px;font-weight:500;color:#1e3a8a;">📱 MoMo</div>
+                <div style="border:1px solid #e2e8f0;border-radius:8px;padding:8px;text-align:center;background:#f4f6f9;font-size:11px;color:#607191;">🏦 Bank</div>
+                <div style="border:1px solid #e2e8f0;border-radius:8px;padding:8px;text-align:center;background:#f4f6f9;font-size:11px;color:#607191;">💵 Cash</div>
+                <div style="border:1px solid #e2e8f0;border-radius:8px;padding:8px;text-align:center;background:#f4f6f9;font-size:11px;color:#607191;">📋 Other</div>
+              </div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="font-size:10px;font-weight:500;color:#607191;margin-bottom:4px;">Payment date</div>
+              <div class="form-input auto" style="margin-bottom:0;">23 Jul 2026 — Today</div>
+            </div>
+            <div class="act-btn green">Confirm payment received</div>
+            <div style="text-align:center;font-size:11px;color:#94a3b8;margin-top:8px;cursor:pointer;">Cancel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Paid state -->
+    <div class="pw">
+      <div class="stg">Invoice: paid ✓</div>
+      <div class="phone">
+        <div class="sb"><span class="t">11:57 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">54%</span></div></div>
+        <div class="sy"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Invoice</span></div>
+        <div class="bd">
+          <div style="background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;margin:8px 8px 0;padding:9px 12px;display:flex;align-items:center;gap:8px;">
+            <i class="ti ti-circle-check" style="font-size:16px;color:#085041;" aria-hidden="true"></i>
+            <div><div style="font-size:11px;font-weight:500;color:#085041;">Payment received — GHS 156.61</div><div style="font-size:9px;color:#0f6e56;margin-top:1px;">Kofi Mensah Wholesale · 23 Jul 2026</div></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 8px 0;">
+            <span class="status-badge paid"><i class="ti ti-circle-check" style="font-size:9px;" aria-hidden="true"></i> Paid · 23 Jul</span>
+            <span style="font-size:9px;color:#94a3b8;font-family:'DM Mono',monospace;">INV-2026-0047</span>
+          </div>
+          <div class="inv-card">
+            <div class="inv-header-bar"><div><div class="biz-name">Ama Kojo Provision store</div><div class="biz-tel">+233545256379</div></div><div class="inv-type">INVOICE</div></div>
+            <div class="inv-meta-row">
+              <div class="inv-meta-cell"><div class="imc-label">Invoice</div><div class="imc-val">INV-0047</div></div>
+              <div class="inv-meta-cell"><div class="imc-label">Paid on</div><div class="imc-val" style="color:#1aaa6b;">23 Jul 26</div></div>
+              <div class="inv-meta-cell"><div class="imc-label">Via</div><div class="imc-val">MoMo</div></div>
+            </div>
+            <div class="bill-section"><div class="bill-label">Bill to</div><div class="bill-name">Kofi Mensah Wholesale</div></div>
+            <div class="inv-totals" style="padding:8px 12px;">
+              <div class="inv-total-row grand"><span class="tl">Total paid</span><span class="tr" style="color:#1aaa6b;">GHS 156.61 ✓</span></div>
+            </div>
+          </div>
+          <div class="act-btn outline"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Send Paid Receipt</div>
+          <div class="act-btn ghost"><i class="ti ti-printer" aria-hidden="true"></i> Print</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ IMPL NOTES ═══ -->
+<div style="padding-top:22px;border-top:1px solid #e2e8f0;">
+  <div style="font-size:14px;font-weight:500;color:#0d1b3e;margin-bottom:14px;">Implementation notes for Vietnam team — Phase 2 specification</div>
+  <div class="notes-grid">
+    <div class="nc">
+      <h4>🗄️ Data model — invoices table</h4>
+      <p>New <code>invoices</code> table: <code>id</code>, <code>invoice_number</code> (auto-generated INV-YYYY-NNNN per MSME), <code>msme_id</code>, <code>customer_name</code>, <code>customer_phone</code>, <code>issue_date</code>, <code>due_date</code>, <code>status</code> (draft/sent/paid/cancelled/overdue), <code>subtotal</code>, <code>tax_mts</code>, <code>tax_nhil</code>, <code>tax_getfund</code>, <code>total_due</code>, <code>paid_at</code>, <code>paid_via</code>, <code>notes</code>. Plus a <code>invoice_items</code> child table with <code>invoice_id</code>, <code>product_id</code>, <code>name</code>, <code>qty</code>, <code>unit_price</code>, <code>line_total</code>.</p>
+    </div>
+    <div class="nc">
+      <h4>🔢 Invoice numbering</h4>
+      <p>Format: <code>INV-{YYYY}-{NNNN}</code> where NNNN is a zero-padded sequence per MSME per year (not global). Store <code>invoice_sequences</code> table: <code>msme_id</code>, <code>year</code>, <code>last_seq</code>. Use atomic <code>UPDATE … RETURNING</code> (same pattern as the programme reference number). Reset to 0001 on 1 Jan each year. Example: INV-2026-0047.</p>
+    </div>
+    <div class="nc">
+      <h4>📤 Sharing — WhatsApp + link</h4>
+      <p>Generate a public-facing invoice URL: <code>sikaflow.app/inv/{invoice_id}</code>. The page renders the invoice as HTML/CSS — no PDF library needed on the app. Sharing via WhatsApp opens the system share sheet with the URL pre-populated. The recipient sees a clean invoice in their browser without needing the app. Mark status as <code>sent</code> the first time the share button is tapped.</p>
+    </div>
+    <div class="nc">
+      <h4>⏰ Overdue detection</h4>
+      <p>Run a daily Celery beat task at 6 AM: query all invoices where <code>status = 'sent'</code> and <code>due_date &lt; today</code>, update status to <code>overdue</code>. Send an SMS to the trader for each newly overdue invoice. The invoice list shows overdue invoices at the top with a red left border. Do not auto-send reminders to customers — trader controls this via the "Send Reminder" button.</p>
+    </div>
+    <div class="nc">
+      <h4>💳 Payment details per MSME</h4>
+      <p>Add a <code>payment_details</code> JSON field to the MSME profile — stores MoMo number, bank name, account number. Pre-populate from the registration data where available. These are shown on every invoice. The trader can edit them from Settings → Payment Details. Never expose these to the Vietnam team's codebase — they come from the MSME profile API endpoint.</p>
+    </div>
+    <div class="nc">
+      <h4>🔗 Entry points</h4>
+      <p>Two places to create an invoice: (1) Receipt screen → "Generate Invoice" button — pre-fills items from the just-completed sale. (2) Menu → Invoices → + button — blank form. The invoice form is a 3-step Flutter flow with a shared <code>InvoiceProvider</code> for state. Step 1: customer + dates. Step 2: items (re-uses existing product search widget). Step 3: payment details. Draft auto-saved on each step forward.</p>
+    </div>
+  </div>
+</div>
+<!-- Mantse Akai (c) -->
+<!-- Field reference -->
+<div style="margin-top:24px;background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+  <div style="font-size:12px;font-weight:500;color:#0d1b3e;margin-bottom:10px;">Invoice field reference</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-size:11px;">
+    <div><span class="field-tag required">Required</span> Invoice number</div>
+    <div><span class="field-tag auto">Auto</span> Invoice number</div>
+    <div><span class="field-tag required">Required</span> Customer name</div>
+    <div><span class="field-tag optional">Optional</span> Customer phone</div>
+    <div><span class="field-tag auto">Auto</span> Issue date (today)</div>
+    <div><span class="field-tag required">Required</span> Due date</div>
+    <div><span class="field-tag required">Required</span> At least 1 item</div>
+    <div><span class="field-tag auto">Auto</span> MTS / tax lines</div>
+    <div><span class="field-tag required">Required</span> Total due</div>
+    <div><span class="field-tag optional">Optional</span> MoMo number</div>
+    <div><span class="field-tag optional">Optional</span> Bank account</div>
+    <div><span class="field-tag optional">Optional</span> Notes / terms</div>
+  </div>
+</div>
+
+<div style="margin-top:20px;font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;border-top:1px solid #e2e8f0;padding-top:14px;">
+  Sikaflow Programme · Invoice Generation · Phase 2 Specification · Trident Alisk · July 2026 · Internal
+</div>
+
+</div>
+</body>
+</html>
