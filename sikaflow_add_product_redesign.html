@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow — Add Product Redesign</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;padding:32px 16px 60px;color:#111827;}
+.page{max-width:1050px;margin:0 auto;}
+
+.page-header{margin-bottom:32px;}
+.page-header h1{font-size:22px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.page-header p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+.hint{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:32px;display:flex;gap:8px;align-items:center;}
+
+/* ─ layout ─ */
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;}
+.col-label{font-size:11px;font-weight:500;color:#94a3b8;letter-spacing:.5px;text-transform:uppercase;text-align:center;margin-bottom:10px;}
+.divider-col{display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:60px;color:#94a3b8;font-size:11px;gap:8px;}
+.divider-col .dc-line{width:1px;height:80px;background:#e2e8f0;}
+.divider-col .dc-text{background:#f0f4f8;padding:4px 8px;border-radius:4px;font-size:10px;}
+
+/* ─ phone frame ─ */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.phone{width:280px;border-radius:28px;overflow:hidden;border:2.5px solid #1e3a8a;background:#f4f6f9;box-shadow:0 0 0 4px #eef0f4,0 0 0 6px #b8c4d4;}
+.sbar{background:#1e3a8a;padding:6px 14px 5px;display:flex;justify-content:space-between;align-items:center;}
+.sbar .t{color:#fff;font-size:11px;font-weight:500;}
+.sbar .ic{display:flex;gap:4px;align-items:center;} .sbar .ic i{color:#fff;font-size:12px;}
+.sbar .ic .bat{font-size:10px;color:#fff;}
+.sync-bar{background:#e6fce8;padding:3px 12px;display:flex;align-items:center;justify-content:flex-end;gap:4px;}
+.sync-bar .dot{width:6px;height:6px;border-radius:50%;background:#1aaa6b;}
+.sync-bar span{font-size:9px;font-weight:500;color:#1aaa6b;}
+.ptop{background:#1e3a8a;padding:10px 14px 12px;display:flex;align-items:center;gap:10px;}
+.ptop .back{color:rgba(255,255,255,.7);font-size:18px;}
+.ptop .title{font-size:15px;font-weight:500;color:#fff;flex:1;text-align:center;}
+.ptop .save{font-size:12px;font-weight:500;color:#4DDD1A;}
+.pbody{overflow-y:auto;max-height:580px;background:#f4f6f9;}
+.pbody::-webkit-scrollbar{display:none;}
+
+/* ─ old form styles ─ */
+.old-section-title{font-size:13px;font-weight:600;color:#1e3a8a;padding:12px 14px 6px;}
+.old-field{padding:0 14px 10px;}
+.old-field label{font-size:11px;color:#374151;font-weight:500;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+.old-field label .req{color:#e24b4a;}
+.old-input{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:10px 12px;font-size:13px;color:#374151;display:flex;align-items:center;gap:6px;}
+.old-input.prefix{color:#1e3a8a;font-weight:500;}
+.old-input.placeholder{color:#9ca3af;}
+.old-img-box{width:90px;height:90px;border-radius:8px;border:1.5px dashed #d1d5db;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+.old-img-box i{font-size:20px;color:#9ca3af;}
+.old-toggle-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1.5px solid #d1d5db;border-radius:8px;overflow:hidden;background:#fff;}
+.old-toggle-opt{padding:8px 6px;text-align:center;font-size:11px;font-weight:500;color:#374151;border-right:1px solid #d1d5db;}
+.old-toggle-opt:last-child{border-right:none;}
+.old-toggle-opt.active{background:#dbeafe;color:#1e3a8a;}
+.old-toggle-opt.active i{color:#1e3a8a;}
+.old-switch{display:flex;align-items:center;justify-content:space-between;padding:0 14px 10px;}
+.old-switch label{font-size:12px;color:#374151;}
+.switch-track{width:40px;height:22px;border-radius:11px;position:relative;}
+.switch-track.on{background:#1e3a8a;}
+.switch-track.off{background:#d1d5db;}
+.switch-thumb{width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:2px;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.switch-track.on .switch-thumb{right:2px;}
+.switch-track.off .switch-thumb{left:2px;}
+.old-select{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:8px;padding:10px 12px;font-size:13px;color:#9ca3af;display:flex;align-items:center;justify-content:space-between;}
+.old-footer{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 14px;background:#fff;border-top:.5px solid #e2e8f0;}
+.old-btn-cancel{border:1.5px solid #1e3a8a;border-radius:8px;padding:10px;font-size:13px;font-weight:500;color:#1e3a8a;text-align:center;background:#fff;}
+.old-btn-continue{border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:500;color:#fff;text-align:center;background:#1e3a8a;}
+.old-dashed{border:1px dashed #d1d5db;margin:6px 14px;}
+
+/* ─ NEW form styles ─ */
+/* Photo block */
+.photo-block{margin:12px 12px 0;border-radius:14px;overflow:hidden;background:#e8f0fe;border:2px dashed #b5d4f4;display:flex;flex-direction:column;align-items:center;justify-content:center;height:130px;gap:8px;cursor:pointer;}
+.photo-block i{font-size:32px;color:#1e3a8a;}
+.photo-block .pb-label{font-size:13px;font-weight:500;color:#1e3a8a;}
+.photo-block .pb-sub{font-size:10px;color:#607191;}
+.photo-block.captured{background:#fff;border:2px solid #e2e8f0;position:relative;}
+.photo-block.captured .captured-label{position:absolute;bottom:8px;right:8px;background:#1e3a8a;color:#fff;font-size:9px;font-weight:500;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:4px;}
+
+/* Main fields */
+.new-fields{padding:12px 12px 0;display:flex;flex-direction:column;gap:10px;}
+.nf-group{display:flex;flex-direction:column;gap:4px;}
+.nf-label{font-size:11px;font-weight:500;color:#374151;display:flex;align-items:center;gap:4px;}
+.nf-label .req{color:#e24b4a;font-size:13px;}
+.nf-label .badge{font-size:9px;background:#e6f7f0;color:#085041;border:.5px solid #9ed8bf;padding:1px 6px;border-radius:20px;font-weight:500;}
+.nf-hint{font-size:10px;color:#94a3b8;margin-top:1px;}
+.nf-input{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:10px;padding:10px 12px;font-size:14px;color:#0d1b3e;font-family:'Sora',sans-serif;display:flex;align-items:center;gap:8px;}
+.nf-input.large{font-size:16px;font-weight:500;}
+.nf-input.price-row{padding:0;overflow:hidden;}
+.currency-tag{background:#1e3a8a;color:#fff;font-size:12px;font-weight:500;padding:11px 12px;}
+.price-val{flex:1;padding:11px 12px;font-size:16px;font-weight:500;color:#0d1b3e;}
+.nf-input.placeholder-color .pv{color:#9ca3af;font-size:14px;font-weight:400;}
+.stock-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;}
+.qty-control{display:flex;align-items:center;gap:0;background:#fff;border:1.5px solid #d1d5db;border-radius:10px;overflow:hidden;}
+.qty-btn{width:38px;height:42px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#1e3a8a;cursor:pointer;}
+.qty-btn:first-child{border-right:1px solid #e2e8f0;}
+.qty-btn:last-child{border-left:1px solid #e2e8f0;}
+.qty-val{width:48px;height:42px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:500;color:#0d1b3e;}
+
+/* Stock hint pill */
+.low-stock-row{display:flex;align-items:center;gap:6px;margin-top:2px;}
+.low-stock-hint{font-size:10px;color:#94a3b8;}
+.low-stock-val{font-size:10px;font-weight:500;color:#c47f00;background:#fef9e7;border:.5px solid #e8c96a;padding:1px 7px;border-radius:20px;}
+
+/* Advanced section */
+.advanced-toggle{margin:10px 12px 0;border:.5px solid #e2e8f0;border-radius:10px;background:#fff;overflow:hidden;}
+.at-header{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;cursor:pointer;}
+.at-header .ath-left{display:flex;align-items:center;gap:8px;}
+.at-header .ath-icon{width:26px;height:26px;border-radius:7px;background:#f4f6f9;display:flex;align-items:center;justify-content:center;}
+.at-header .ath-icon i{font-size:13px;color:#607191;}
+.at-header .ath-label{font-size:12px;font-weight:500;color:#374151;}
+.at-header .ath-sub{font-size:10px;color:#94a3b8;}
+.at-header .ath-arrow{font-size:16px;color:#94a3b8;transition:transform .2s;}
+.at-header .ath-arrow.open{transform:rotate(180deg);}
+.at-body{display:none;padding:0 13px 12px;border-top:.5px solid #f1f5f9;}
+.at-body.open{display:block;}
+.at-field{margin-top:10px;}
+.at-field-label{font-size:10px;font-weight:500;color:#607191;margin-bottom:3px;}
+.at-input{width:100%;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:9px 11px;font-size:12px;color:#374151;}
+.at-input.placeholder{color:#9ca3af;}
+.at-tax-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:4px;}
+.at-tax-opt{border:1.5px solid #e2e8f0;border-radius:7px;padding:7px 4px;text-align:center;font-size:11px;color:#607191;background:#f8fafc;cursor:pointer;}
+.at-tax-opt.active{border-color:#1e3a8a;background:#e8f0fe;color:#1e3a8a;font-weight:500;}
+.at-switch-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+.at-switch-label{font-size:11px;color:#374151;}
+.at-scan-btn{display:flex;align-items:center;gap:5px;background:#f4f6f9;border:1px solid #e2e8f0;border-radius:7px;padding:7px 10px;cursor:pointer;}
+.at-scan-btn i{font-size:14px;color:#607191;}
+.at-scan-btn span{font-size:11px;color:#607191;}
+.at-uom-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px;}
+.at-uom-opt{border:1px solid #e2e8f0;border-radius:7px;padding:7px;text-align:center;font-size:11px;color:#607191;background:#f8fafc;}
+.at-uom-opt.active{border-color:#1e3a8a;background:#e8f0fe;color:#1e3a8a;}
+
+/* Footer */
+.new-footer{padding:10px 12px 12px;display:grid;grid-template-columns:1fr 2fr;gap:8px;background:#f4f6f9;}
+.nf-cancel{border:1.5px solid #d1d5db;border-radius:10px;padding:11px;text-align:center;font-size:13px;font-weight:500;color:#607191;background:#fff;}
+.nf-save{background:#1e3a8a;border:none;border-radius:10px;padding:11px;text-align:center;font-size:13px;font-weight:500;color:#fff;}
+
+/* COMPARISON annotation */
+.annotation{font-size:11px;color:#607191;text-align:center;max-width:280px;line-height:1.6;margin-top:4px;}
+.pro-tag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;margin:2px 3px;}
+.pro-tag.green{background:#e6f7f0;color:#085041;border:.5px solid #9ed8bf;}
+.pro-tag.red{background:#fee2e2;color:#991b1b;border:.5px solid #fca5a5;}
+
+/* VS divider */
+.vs-col{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding-top:80px;}
+.vs-badge{background:#fff;border:1.5px solid #e2e8f0;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#607191;}
+.vs-line{width:1px;height:60px;background:#e2e8f0;}
+
+/* scroll indicator */
+.scroll-ind{display:flex;flex-direction:column;align-items:center;gap:3px;color:#94a3b8;font-size:9px;margin-top:6px;}
+.scroll-ind i{font-size:14px;}
+
+/* DETAIL views */
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:40px;align-items:start;}
+.detail-card{background:#fff;border:.5px solid #e2e8f0;border-radius:12px;overflow:hidden;}
+.detail-head{padding:12px 14px;border-bottom:.5px solid #e2e8f0;background:#fafcff;}
+.detail-head h3{font-size:13px;font-weight:500;color:#0d1b3e;margin-bottom:2px;}
+.detail-head p{font-size:11px;color:#94a3b8;}
+.detail-body{padding:12px 14px;}
+
+@media(max-width:700px){
+  .columns{grid-template-columns:1fr;}
+  .vs-col{display:none;}
+  .three-col{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="page-header">
+  <h1>Add Product (Redesign Mockup)</h1>
+  <p>Current (left) vs redesigned Phase 2 form (right) — built for informal traders, not accountants</p>
+  <div class="meta"><span>Trident Aliska</span><span>July 2026</span><span>Vietnam Dev Team</span></div>
+</div>
+
+<div class="hint">💡 Open in any browser. Use File → Print → Save as PDF to share. Scroll down for state variations and implementation notes.</div>
+
+<!-- ═══ MAIN COMPARISON ═══ -->
+<div class="columns" style="grid-template-columns:1fr 48px 1fr;">
+
+  <!-- ─── CURRENT (LEFT) ─── -->
+  <div class="phone-wrap">
+    <div class="col-label">Current form  <span class="pro-tag red">Too long &amp; technical</span></div>
+    <div class="phone">
+      <div class="sbar"><span class="t">11:24 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-signal-3g" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+      <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+      <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">Add new product</span></div>
+      <div class="pbody">
+        <div class="old-section-title" style="color:#1e3a8a;">1. Quick Setup</div>
+        <div class="old-field">
+          <label>Product Name <span class="req">*</span></label>
+          <div class="old-input">General Item 6292</div>
+        </div>
+        <div class="old-field">
+          <label>Selling Price <span class="req">*</span></label>
+          <div class="old-input"><span style="color:#1e3a8a;font-weight:500;">GHS</span>&nbsp;1</div>
+        </div>
+        <div class="old-field">
+          <label>Current Stock <span class="req">*</span></label>
+          <div class="old-input">0</div>
+        </div>
+        <div class="old-dashed"></div>
+        <div class="old-section-title" style="color:#1e3a8a;">2. More Details</div>
+        <div class="old-field">
+          <label>Product Image</label>
+          <div class="old-img-box"><i class="ti ti-photo-plus" aria-hidden="true"></i></div>
+        </div>
+        <div class="old-field">
+          <label>Category</label>
+          <div class="old-select"><span>Other</span><i class="ti ti-chevron-down" aria-hidden="true"></i></div>
+        </div>
+        <div class="old-field">
+          <label>Low-stock Threshold <span class="req" style="color:#e24b4a;">*</span></label>
+          <div class="old-input">0</div>
+        </div>
+        <div class="old-field">
+          <label>Tax type <span class="req" style="color:#e24b4a;">*</span></label>
+          <div class="old-toggle-row">
+            <div class="old-toggle-opt active"><i class="ti ti-check" aria-hidden="true"></i> Taxable</div>
+            <div class="old-toggle-opt">Zero-rated</div>
+            <div class="old-toggle-opt">Exempt</div>
+          </div>
+        </div>
+        <div class="old-field">
+          <label>SKU</label>
+          <div class="old-input placeholder">Enter SKU</div>
+        </div>
+        <div class="old-field">
+          <label>Barcode</label>
+          <div class="old-input placeholder">Enter barcode</div>
+        </div>
+        <div class="old-switch">
+          <label>Requires expiry date</label>
+          <div class="switch-track on"><div class="switch-thumb"></div></div>
+        </div>
+        <div class="old-field">
+          <label>Expiry Date</label>
+          <div class="old-input placeholder">Select expiry date <i class="ti ti-calendar" style="margin-left:auto" aria-hidden="true"></i></div>
+        </div>
+        <div class="old-footer">
+          <div class="old-btn-cancel">Cancel</div>
+          <div class="old-btn-continue">Continue</div>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">
+      <span class="pro-tag red">9 visible fields</span> before scrolling · SKU, Barcode, Tax type exposed by default · "Low-stock Threshold" — traders don't know what this means · No photo prompt at top · No cost price field
+    </div>
+    <div class="scroll-ind"><i class="ti ti-arrows-move-vertical" aria-hidden="true"></i>Requires heavy scrolling</div>
+  </div>
+
+  <!-- VS -->
+  <div class="vs-col">
+    <div class="vs-line"></div>
+    <div class="vs-badge">vs</div>
+    <div class="vs-line"></div>
+  </div>
+
+  <!-- ─── REDESIGNED (RIGHT) ─── -->
+  <div class="phone-wrap">
+    <div class="col-label">Redesigned form  <span class="pro-tag green">Simple &amp; trader-friendly</span></div>
+    <div class="phone">
+      <div class="sbar"><span class="t">11:25 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-signal-3g" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+      <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+      <div class="ptop">
+        <i class="ti ti-arrow-left back" aria-label="Back"></i>
+        <span class="title">Add product</span>
+        <span class="save">Save</span>
+      </div>
+      <div class="pbody">
+
+        <!-- 📷 Photo capture — FIRST -->
+        <div class="photo-block">
+          <i class="ti ti-camera" aria-hidden="true"></i>
+          <div class="pb-label">Take a photo</div>
+          <div class="pb-sub">or tap to choose from gallery</div>
+        </div>
+
+        <!-- Core fields -->
+        <div class="new-fields">
+
+          <!-- Product name -->
+          <div class="nf-group">
+            <div class="nf-label">Product name <span class="req">*</span></div>
+            <div class="nf-input large">Bottled Water</div>
+          </div>
+
+          <!-- Selling price -->
+          <div class="nf-group">
+            <div class="nf-label">Selling price <span class="req">*</span> <span class="badge">What you charge customer</span></div>
+            <div class="nf-input price-row">
+              <div class="currency-tag">GHS</div>
+              <div class="price-val">7.00</div>
+            </div>
+          </div>
+
+          <!-- Cost price -->
+          <div class="nf-group">
+            <div class="nf-label">Cost price <span class="req">*</span></div>
+            <div class="nf-hint">💡 What did you pay for this?</div>
+            <div class="nf-input price-row">
+              <div class="currency-tag" style="background:#e2e8f0;color:#607191;">GHS</div>
+              <div class="price-val" style="color:#9ca3af;font-weight:400;font-size:13px;">Enter amount…</div>
+            </div>
+          </div>
+
+          <!-- Quantity in stock -->
+          <div class="nf-group">
+            <div class="nf-label">How many do you have? <span class="req">*</span></div>
+            <div class="qty-control">
+              <div class="qty-btn">−</div>
+              <div class="qty-val">24</div>
+              <div class="qty-btn">+</div>
+            </div>
+            <div class="low-stock-row">
+              <div class="low-stock-hint">Alert me when stock falls below</div>
+              <div class="low-stock-val">5</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Advanced collapsible -->
+        <div class="advanced-toggle" style="margin-bottom:10px;">
+          <div class="at-header" onclick="toggleAdv(this)">
+            <div class="ath-left">
+              <div class="ath-icon"><i class="ti ti-settings-2" aria-hidden="true"></i></div>
+              <div>
+                <div class="ath-label">Advanced options</div>
+                <div class="ath-sub">SKU · Barcode · Tax · Unit of measure</div>
+              </div>
+            </div>
+            <i class="ti ti-chevron-down ath-arrow" id="adv-arrow" aria-hidden="true"></i>
+          </div>
+          <div class="at-body" id="adv-body">
+            <!-- Tax type -->
+            <div class="at-field">
+              <div class="at-field-label">Tax type</div>
+              <div class="at-tax-row">
+                <div class="at-tax-opt active">Taxable</div>
+                <div class="at-tax-opt">Zero-rated</div>
+                <div class="at-tax-opt">Exempt</div>
+              </div>
+            </div>
+            <!-- SKU -->
+            <div class="at-field">
+              <div class="at-field-label">SKU (optional)</div>
+              <div class="at-input placeholder">Enter SKU…</div>
+            </div>
+            <!-- Barcode -->
+            <div class="at-field">
+              <div class="at-field-label">Barcode (optional)</div>
+              <div style="display:flex;gap:6px;">
+                <div class="at-input placeholder" style="flex:1;">Enter barcode…</div>
+                <div class="at-scan-btn"><i class="ti ti-scan" aria-hidden="true"></i><span>Scan</span></div>
+              </div>
+            </div>
+            <!-- Unit of measure -->
+            <div class="at-field">
+              <div class="at-field-label">Unit of measure (optional)</div>
+              <div class="at-uom-row">
+                <div class="at-uom-opt active">Each / piece</div>
+                <div class="at-uom-opt">Kg / weight</div>
+                <div class="at-uom-opt">Litre</div>
+                <div class="at-uom-opt">Dozen</div>
+              </div>
+            </div>
+            <!-- Expiry date -->
+            <div class="at-switch-row">
+              <div class="at-switch-label">Track expiry date</div>
+              <div class="switch-track off"><div class="switch-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="new-footer">
+          <div class="nf-cancel">Cancel</div>
+          <div class="nf-save">Save product</div>
+        </div>
+      </div>
+    </div>
+    <div class="annotation">
+      <span class="pro-tag green">5 visible fields</span> · Photo first · Plain English labels · Cost price with "What did you pay?" · Technical fields hidden in Advanced · Fits on one screen without scrolling
+    </div>
+    <div class="scroll-ind" style="color:#1aaa6b;"><i class="ti ti-check" aria-hidden="true"></i>No scrolling needed</div>
+  </div>
+
+</div>
+
+<!-- ═══ STATE VARIATIONS ═══ -->
+<div style="margin-top:48px;padding-top:28px;border-top:1px solid #e2e8f0;">
+  <div style="font-size:15px;font-weight:500;color:#0d1b3e;margin-bottom:4px;">State variations</div>
+  <div style="font-size:12px;color:#607191;margin-bottom:24px;">Key states the Vietnam team needs to build</div>
+
+  <div class="three-col">
+
+    <!-- State 1: Photo captured -->
+    <div>
+      <div class="col-label" style="margin-bottom:10px;">After photo captured</div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="sbar"><span class="t">11:26 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+          <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">Add product</span><span class="save">Save</span></div>
+          <div class="pbody">
+            <!-- Photo captured state -->
+            <div class="photo-block captured" style="background:#1a2744;">
+              <!-- Simulated product image -->
+              <div style="width:100%;height:100%;background:linear-gradient(135deg,#1e3a8a,#0d1b3e);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
+                <i class="ti ti-bottle" style="font-size:40px;color:rgba(255,255,255,0.3)" aria-hidden="true"></i>
+                <span style="font-size:10px;color:rgba(255,255,255,0.5);">Product image</span>
+              </div>
+              <div class="captured-label"><i class="ti ti-check" style="font-size:10px;" aria-hidden="true"></i> Retake</div>
+            </div>
+            <div class="new-fields">
+              <div class="nf-group">
+                <div class="nf-label">Product name <span class="req">*</span></div>
+                <div class="nf-input large">Bottled Water</div>
+              </div>
+              <div class="nf-group">
+                <div class="nf-label">Selling price <span class="req">*</span> <span class="badge">What you charge customer</span></div>
+                <div class="nf-input price-row"><div class="currency-tag">GHS</div><div class="price-val">7.00</div></div>
+              </div>
+              <div class="nf-group">
+                <div class="nf-label">Cost price <span class="req">*</span></div>
+                <div class="nf-hint">💡 What did you pay for this?</div>
+                <div class="nf-input price-row"><div class="currency-tag">GHS</div><div class="price-val">5.00</div></div>
+              </div>
+              <div class="nf-group">
+                <div class="nf-label">How many do you have? <span class="req">*</span></div>
+                <div class="qty-control"><div class="qty-btn">−</div><div class="qty-val">24</div><div class="qty-btn">+</div></div>
+              </div>
+            </div>
+            <div class="new-footer" style="margin-top:10px;">
+              <div class="nf-cancel">Cancel</div>
+              <div class="nf-save">Save product</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 2: Advanced open -->
+    <div>
+      <div class="col-label" style="margin-bottom:10px;">Advanced section open</div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="sbar"><span class="t">11:27 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+          <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">Add product</span><span class="save">Save</span></div>
+          <div class="pbody">
+            <div class="new-fields" style="padding-top:10px;">
+              <div class="nf-group">
+                <div class="nf-label">Product name <span class="req">*</span></div>
+                <div class="nf-input large">Bottled Water</div>
+              </div>
+              <div class="nf-group">
+                <div class="nf-label">Selling price <span class="req">*</span></div>
+                <div class="nf-input price-row"><div class="currency-tag">GHS</div><div class="price-val">7.00</div></div>
+              </div>
+              <div class="nf-group">
+                <div class="nf-label">Cost price <span class="req">*</span></div>
+                <div class="nf-hint">💡 What did you pay for this?</div>
+                <div class="nf-input price-row"><div class="currency-tag">GHS</div><div class="price-val">5.00</div></div>
+              </div>
+              <div class="nf-group">
+                <div class="nf-label">How many do you have? <span class="req">*</span></div>
+                <div class="qty-control"><div class="qty-btn">−</div><div class="qty-val">24</div><div class="qty-btn">+</div></div>
+              </div>
+            </div>
+            <!-- Advanced OPEN -->
+            <div class="advanced-toggle" style="margin-bottom:10px;">
+              <div class="at-header">
+                <div class="ath-left">
+                  <div class="ath-icon"><i class="ti ti-settings-2" aria-hidden="true"></i></div>
+                  <div><div class="ath-label">Advanced options</div><div class="ath-sub">SKU · Barcode · Tax · Unit</div></div>
+                </div>
+                <i class="ti ti-chevron-up" style="font-size:16px;color:#1e3a8a;" aria-hidden="true"></i>
+              </div>
+              <div class="at-body open">
+                <div class="at-field">
+                  <div class="at-field-label">Tax type</div>
+                  <div class="at-tax-row">
+                    <div class="at-tax-opt active">Taxable</div>
+                    <div class="at-tax-opt">Zero-rated</div>
+                    <div class="at-tax-opt">Exempt</div>
+                  </div>
+                </div>
+                <div class="at-field">
+                  <div class="at-field-label">SKU (optional)</div>
+                  <div class="at-input">SKU-WATER-500ML</div>
+                </div>
+                <div class="at-field">
+                  <div class="at-field-label">Barcode (optional)</div>
+                  <div style="display:flex;gap:6px;">
+                    <div class="at-input" style="flex:1;">6001057102397</div>
+                    <div class="at-scan-btn"><i class="ti ti-scan" aria-hidden="true"></i><span>Scan</span></div>
+                  </div>
+                </div>
+                <div class="at-field">
+                  <div class="at-field-label">Unit of measure</div>
+                  <div class="at-uom-row">
+                    <div class="at-uom-opt active">Each / piece</div>
+                    <div class="at-uom-opt">Kg / weight</div>
+                  </div>
+                </div>
+                <div class="at-switch-row">
+                  <div class="at-switch-label">Track expiry date</div>
+                  <div class="switch-track off"><div class="switch-thumb"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="new-footer">
+              <div class="nf-cancel">Cancel</div>
+              <div class="nf-save">Save product</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- State 3: Validation error -->
+    <div>
+      <div class="col-label" style="margin-bottom:10px;">Validation — missing fields</div>
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="sbar"><span class="t">11:28 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">58%</span></div></div>
+          <div class="sync-bar"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+          <div class="ptop"><i class="ti ti-arrow-left back" aria-label="Back"></i><span class="title">Add product</span><span class="save" style="opacity:.4;">Save</span></div>
+          <div class="pbody">
+            <div class="photo-block" style="border-color:#f7c1c1;background:#fcebeb;">
+              <i class="ti ti-camera" style="color:#a32d2d;" aria-hidden="true"></i>
+              <div class="pb-label" style="color:#a32d2d;">Take a photo</div>
+            </div>
+            <div style="background:#fcebeb;border:.5px solid #f7c1c1;border-radius:8px;margin:8px 12px 0;padding:8px 11px;display:flex;align-items:center;gap:7px;">
+              <i class="ti ti-alert-circle" style="font-size:15px;color:#a32d2d;" aria-hidden="true"></i>
+              <div><div style="font-size:11px;font-weight:500;color:#a32d2d;">Please fill in the required fields</div><div style="font-size:10px;color:#c0392b;margin-top:1px;">Product name and price are required</div></div>
+            </div>
+            <div class="new-fields">
+              <!-- Name error -->
+              <div class="nf-group">
+                <div class="nf-label" style="color:#a32d2d;">Product name <span class="req">*</span></div>
+                <div class="nf-input large" style="border-color:#f7c1c1;background:#fff8f8;color:#9ca3af;font-size:14px;font-weight:400;">What is this product called?</div>
+                <div style="font-size:10px;color:#a32d2d;margin-top:2px;">⚠️ Product name is required</div>
+              </div>
+              <!-- Price error -->
+              <div class="nf-group">
+                <div class="nf-label" style="color:#a32d2d;">Selling price <span class="req">*</span></div>
+                <div class="nf-input price-row" style="border-color:#f7c1c1;background:#fff8f8;">
+                  <div class="currency-tag" style="background:#f7c1c1;color:#a32d2d;">GHS</div>
+                  <div class="price-val" style="color:#9ca3af;font-weight:400;font-size:13px;">Enter price…</div>
+                </div>
+                <div style="font-size:10px;color:#a32d2d;margin-top:2px;">⚠️ Selling price is required</div>
+              </div>
+              <!-- Cost price — ok -->
+              <div class="nf-group">
+                <div class="nf-label">Cost price</div>
+                <div class="nf-hint">💡 What did you pay for this?</div>
+                <div class="nf-input price-row"><div class="currency-tag" style="background:#e2e8f0;color:#607191;">GHS</div><div class="price-val" style="color:#9ca3af;font-weight:400;font-size:13px;">Optional</div></div>
+              </div>
+              <!-- Stock — ok -->
+              <div class="nf-group">
+                <div class="nf-label">How many do you have? <span class="req">*</span></div>
+                <div class="qty-control"><div class="qty-btn">−</div><div class="qty-val">0</div><div class="qty-btn">+</div></div>
+              </div>
+            </div>
+            <div class="new-footer" style="margin-top:8px;">
+              <div class="nf-cancel">Cancel</div>
+              <div class="nf-save" style="background:#b4b2a9;">Save product</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ IMPLEMENTATION NOTES ═══ -->
+<div style="margin-top:48px;padding-top:28px;border-top:1px solid #e2e8f0;">
+  <div style="font-size:15px;font-weight:500;color:#0d1b3e;margin-bottom:14px;">Implementation notes for Vietnam team</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:8px;">📷 Photo capture</div>
+      <div style="font-size:11px;color:#607191;line-height:1.7;">Use Flutter's <code style="font-family:'DM Mono',monospace;background:#f4f6f9;padding:1px 5px;border-radius:3px;">image_picker</code> package. Offer both camera capture and gallery pick. Compress to max 800×800 before upload. Store locally on device first; sync to backend when online. Show "Retake" button overlay on captured photo.</div>
+    </div>
+
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:8px;">🔢 Quantity stepper</div>
+      <div style="font-size:11px;color:#607191;line-height:1.7;">Replace the plain text input with a − / + stepper for quantity. Traders understand this instantly. Allow direct tap on the number to open a numeric keyboard for large quantities. Min value = 0, no max. Low-stock alert threshold defaults to 5, shown inline below the stepper.</div>
+    </div>
+
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:8px;">📦 Advanced collapsible</div>
+      <div style="font-size:11px;color:#607191;line-height:1.7;">Use Flutter <code style="font-family:'DM Mono',monospace;background:#f4f6f9;padding:1px 5px;border-radius:3px;">ExpansionTile</code> widget. Default state: collapsed. Tax type defaults to Taxable (write this server-side as the default, not from the UI). SKU and barcode are optional, do not mark with red asterisk. Barcode field has a "Scan" button that opens the camera scanner.</div>
+    </div>
+
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:8px;">💰 Cost price &amp; margin</div>
+      <div style="font-size:11px;color:#607191;line-height:1.7;">Cost price is a new field, add <code style="font-family:'DM Mono',monospace;background:#f4f6f9;padding:1px 5px;border-radius:3px;">cost_price DECIMAL</code> to the products table. It is optional at this stage but required later for the Reports gross margin calculation. Label it "What did you pay for this?" not "Cost price" in the UI. Store it, do not display the margin calculation to the trader on this screen (Phase 3).</div>
+    </div>
+
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:8px;">✅ Required fields</div>
+      <div style="font-size:11px;color:#607191;line-height:1.7;">Only 3 required fields: Product name, Selling price, Quantity. Cost price and photo are strongly encouraged but not blocked. Validate on tapping Save, highlight the specific field in red, not a generic toast. The Save button stays active but shows errors inline on submit attempt.</div>
+    </div>
+
+    <div style="background:#fff;border:.5px solid #e2e8f0;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:12px;font-weight:500;color:#1e3a8a;margin-bottom:8px;">🏷️ Label changes</div>
+      <div style="font-size:11px;color:#607191;line-height:1.7;">
+        <div style="display:flex;gap:6px;margin-bottom:4px;"><span style="color:#e24b4a;min-width:110px;font-size:10px;">Current Stock</span><span style="color:#94a3b8;">→</span><span style="color:#085041;font-size:10px;">How many do you have?</span></div>
+        <div style="display:flex;gap:6px;margin-bottom:4px;"><span style="color:#e24b4a;min-width:110px;font-size:10px;">Low-stock Threshold</span><span style="color:#94a3b8;">→</span><span style="color:#085041;font-size:10px;">Alert me when below [N]</span></div>
+        <div style="display:flex;gap:6px;margin-bottom:4px;"><span style="color:#e24b4a;min-width:110px;font-size:10px;">Selling Price</span><span style="color:#94a3b8;">→</span><span style="color:#085041;font-size:10px;">Selling price (What you charge)</span></div>
+        <div style="display:flex;gap:6px;"><span style="color:#e24b4a;min-width:110px;font-size:10px;">[new field]</span><span style="color:#94a3b8;">→</span><span style="color:#085041;font-size:10px;">What did you pay for this?</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="margin-top:20px;font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;border-top:1px solid #e2e8f0;padding-top:16px;">
+  Sikaflow Programme · Add Product Redesign · Trident Aliska  · July 2026 · Internal
+  <!-- Mantse Akai (c) -->
+</div>
+
+</div>
+
+<script>
+function toggleAdv(header) {
+  const body = document.getElementById('adv-body');
+  const arrow = document.getElementById('adv-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+</script>
+</body>
+</html>
