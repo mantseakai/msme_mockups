@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sikaflow Help & Support Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:#f0f4f8;padding:28px 16px 60px;color:#111827;}
+.page{max-width:1200px;margin:0 auto;}
+
+.ph{margin-bottom:26px;}
+.ph h1{font-size:21px;font-weight:500;color:#0d1b3e;margin-bottom:4px;}
+.ph p{font-size:13px;color:#607191;}
+.meta{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.meta span{font-size:11px;font-family:'DM Mono',monospace;background:#fff;border:0.5px solid #d4dce8;padding:3px 9px;border-radius:4px;color:#607191;}
+.hint{background:#e6f7f0;border:0.5px solid #9ed8bf;border-radius:8px;padding:10px 14px;font-size:12px;color:#1a5c3a;margin-bottom:26px;display:flex;gap:8px;align-items:center;}
+.priority-banner{background:#f0fdf4;border:0.5px solid #86efac;border-radius:8px;padding:10px 14px;font-size:12px;color:#166534;margin-bottom:26px;display:flex;gap:8px;align-items:flex-start;}
+
+/* section */
+.section{margin-bottom:48px;}
+.sh{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #e2e8f0;}
+.sn{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;margin-top:1px;}
+.sh h2{font-size:15px;font-weight:500;color:#0d1b3e;margin-bottom:3px;}
+.sh p{font-size:12px;color:#607191;line-height:1.65;max-width:720px;}
+.fl{font-size:10px;font-weight:500;color:#94a3b8;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;}
+.sr{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;align-items:flex-start;}
+.arr{flex-shrink:0;font-size:20px;color:#d4dce8;align-self:center;margin-top:16px;}
+
+/* PHONE */
+.pw{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.stg{font-size:10px;font-family:'DM Mono',monospace;color:#607191;background:#fff;border:0.5px solid #d4dce8;padding:2px 8px;border-radius:4px;text-align:center;}
+.phone{width:224px;border-radius:26px;overflow:hidden;border:2.5px solid #1e3a8a;background:#f4f6f9;box-shadow:0 0 0 3px #eef0f4,0 0 0 5px #b8c4d4;}
+.sbar{background:#1e3a8a;padding:5px 13px 4px;display:flex;justify-content:space-between;align-items:center;}
+.sbar .t{color:#fff;font-size:10px;font-weight:500;}
+.sbar .ic{display:flex;gap:3px;align-items:center;} .sbar .ic i{color:#fff;font-size:11px;} .bat{color:#fff;font-size:9px;}
+.sync{background:#e6fce8;padding:2px 10px;display:flex;align-items:center;justify-content:flex-end;gap:3px;}
+.sync .dot{width:5px;height:5px;border-radius:50%;background:#1aaa6b;}
+.sync span{font-size:8px;font-weight:500;color:#1aaa6b;}
+.ptop{background:#1e3a8a;padding:9px 12px 11px;display:flex;align-items:center;gap:8px;}
+.ptop .bk{color:rgba(255,255,255,.65);font-size:16px;}
+.ptop .ti{font-size:13px;font-weight:500;color:#fff;flex:1;text-align:center;}
+.bd{background:#f4f6f9;overflow-y:auto;max-height:560px;}
+.bd::-webkit-scrollbar{display:none;}
+
+/* MENU screen elements */
+.profile-card{background:#fff;border-radius:10px;margin:8px 8px 0;border:0.5px solid #e2e8f0;padding:11px 12px;display:flex;align-items:center;gap:10px;}
+.profile-avatar{width:40px;height:40px;border-radius:50%;background:#1e3a8a;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.profile-avatar i{font-size:20px;color:#fff;}
+.profile-name{font-size:13px;font-weight:500;color:#0d1b3e;}
+.profile-id{font-size:10px;color:#94a3b8;margin-top:1px;font-family:'DM Mono',monospace;}
+.menu-section-label{font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:#94a3b8;padding:10px 8px 4px;}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding:0 8px;}
+.menu-tile{background:#fff;border-radius:10px;border:0.5px solid #e2e8f0;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;}
+.menu-tile.active{border-color:#1e3a8a;}
+.menu-tile.disabled{opacity:.45;}
+.menu-tile.highlighted{border:2px solid #25D366;background:#f0fdf4;}
+.menu-tile i{font-size:22px;color:#1e3a8a;}
+.menu-tile.highlighted i{color:#25D366;}
+.menu-tile .mt-label{font-size:10px;color:#374151;font-weight:500;text-align:center;line-height:1.3;}
+.menu-tile.highlighted .mt-label{color:#166534;font-weight:600;}
+.ver{text-align:center;font-size:10px;color:#94a3b8;padding:12px 0 6px;}
+
+/* bottom nav */
+.bnav{display:flex;border-top:0.5px solid #e2e8f0;background:#fff;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:7px 0;gap:2px;}
+.ni i{font-size:17px;}
+.ni span{font-size:8px;font-weight:500;}
+.ni.active i,.ni.active span{color:#1e3a8a;}
+.ni i,.ni span{color:#94a3b8;}
+
+/* HELP screen elements */
+/* WhatsApp hero */
+.wa-hero{background:linear-gradient(135deg,#128C7E,#25D366);margin:8px 8px 0;border-radius:12px;padding:14px 14px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;}
+.wa-hero .wa-icon{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;}
+.wa-hero .wa-icon i{font-size:26px;color:#fff;}
+.wa-hero .wa-title{font-size:14px;font-weight:600;color:#fff;}
+.wa-hero .wa-sub{font-size:10px;color:rgba(255,255,255,.8);line-height:1.5;}
+.wa-btn{background:#fff;border-radius:9px;padding:10px 14px;font-size:13px;font-weight:600;color:#075E54;width:100%;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:2px;}
+.wa-btn i{font-size:15px;color:#25D366;}
+.wa-hours{font-size:9px;color:rgba(255,255,255,.65);}
+
+/* quick actions */
+.quick-section{padding:0 8px;}
+.qs-label{font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:#94a3b8;padding:10px 0 5px;}
+.quick-row{background:#fff;border-radius:10px;border:0.5px solid #e2e8f0;overflow:hidden;margin-bottom:8px;}
+.qr-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:0.5px solid #f1f5f9;cursor:pointer;}
+.qr-item:last-child{border-bottom:none;}
+.qr-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.qr-icon i{font-size:16px;}
+.qr-info{flex:1;}
+.qr-title{font-size:11px;font-weight:500;color:#0d1b3e;}
+.qr-sub{font-size:9px;color:#94a3b8;margin-top:1px;}
+.qr-arrow{font-size:14px;color:#d4dce8;}
+
+/* FAQ screen */
+.faq-search{background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;margin:8px 8px 0;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.faq-search i{font-size:14px;color:#94a3b8;}
+.faq-search span{font-size:11px;color:#9ca3af;}
+.faq-list{padding:0 8px;}
+.faq-category{font-size:9px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:#94a3b8;padding:8px 0 4px;}
+.faq-item{background:#fff;border-radius:10px;border:0.5px solid #e2e8f0;margin-bottom:6px;overflow:hidden;}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;cursor:pointer;}
+.faq-q .fq-text{font-size:11px;font-weight:500;color:#0d1b3e;flex:1;line-height:1.4;padding-right:8px;}
+.faq-q i{font-size:14px;color:#94a3b8;flex-shrink:0;}
+.faq-a{padding:0 12px 10px;font-size:10px;color:#607191;line-height:1.7;border-top:0.5px solid #f1f5f9;padding-top:8px;}
+.faq-a.open{display:block;}
+.faq-a.closed{display:none;}
+
+/* report problem */
+.report-form{padding:0 8px;}
+.rf-label{font-size:10px;font-weight:500;color:#607191;margin-bottom:4px;}
+.rf-input{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:9px;padding:9px 12px;font-size:12px;color:#374151;margin-bottom:8px;}
+.rf-select{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:9px;padding:9px 12px;font-size:12px;color:#374151;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.rf-select i{font-size:14px;color:#94a3b8;}
+.rf-textarea{width:100%;background:#fff;border:1.5px solid #d1d5db;border-radius:9px;padding:9px 12px;font-size:12px;color:#9ca3af;margin-bottom:8px;height:68px;resize:none;display:block;}
+.attach-row{display:flex;gap:6px;margin-bottom:10px;}
+.attach-tag{background:#f4f6f9;border:0.5px solid #e2e8f0;border-radius:7px;padding:6px 10px;display:flex;align-items:center;gap:5px;font-size:10px;color:#607191;}
+.attach-tag i{font-size:12px;}
+.attach-tag.active{background:#e8f0fe;border-color:#b5d4f4;color:#1e3a8a;}
+.send-btn{width:100%;background:#1e3a8a;border:none;border-radius:10px;padding:11px;font-size:12px;font-weight:500;color:#fff;text-align:center;display:flex;align-items:center;justify-content:center;gap:6px;}
+.cancel-link{text-align:center;font-size:11px;color:#94a3b8;margin-top:7px;}
+
+/* bs */
+.bs-wrap{position:relative;overflow:hidden;background:#f4f6f9;}
+.bs-ov{position:absolute;inset:0;background:rgba(0,0,0,0.3);z-index:1;}
+.bs{position:absolute;bottom:0;left:0;right:0;z-index:2;background:#fff;border-radius:16px 16px 0 0;padding:12px 12px 14px;box-shadow:0 -4px 20px rgba(0,0,0,0.12);}
+.bs-handle{width:30px;height:3px;border-radius:2px;background:#d4dce8;margin:0 auto 10px;}
+.bs-title{font-size:13px;font-weight:500;color:#0d1b3e;margin-bottom:10px;}
+
+/* sent confirmation */
+.sent-wrap{padding:20px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
+.sent-icon{width:52px;height:52px;border-radius:50%;background:#e6f7f0;border:2px solid #1aaa6b;display:flex;align-items:center;justify-content:center;}
+.sent-icon i{font-size:24px;color:#1aaa6b;}
+
+/* info box */
+.info-box{background:#e8f0fe;border:0.5px solid #b5d4f4;border-radius:8px;padding:9px 12px;font-size:10px;color:#0c447c;line-height:1.6;display:flex;gap:7px;margin:8px 8px 0;}
+.info-box i{font-size:13px;flex-shrink:0;margin-top:1px;}
+
+/* notes */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:28px;}
+.nc{background:#fff;border:0.5px solid #e2e8f0;border-radius:10px;padding:12px 14px;}
+.nc h4{font-size:11px;font-weight:500;color:#1e3a8a;margin-bottom:6px;}
+.nc p{font-size:11px;color:#607191;line-height:1.7;}
+code{font-family:'DM Mono',monospace;background:#f4f6f9;padding:1px 4px;border-radius:3px;font-size:10px;}
+
+@media(max-width:700px){.notes-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="ph">
+  <h1>Help &amp; Support (Mockup)</h1>
+  <p>WhatsApp-first support, FAQ, and problem reporting; accessed from the Menu screen</p>
+  <div class="meta"><span>Trident Aliska</span><span>July 2026</span><span>Vietnam Dev Team</span></div>
+</div>
+
+<div class="priority-banner">
+  <i class="ti ti-brand-whatsapp" style="font-size:18px;flex-shrink:0;color:#25D366;" aria-hidden="true"></i>
+  <div><strong>WhatsApp is the highest priority.</strong> Traders will tap it immediately and ignore everything else. The WhatsApp button must be the first, largest, most prominent element on the Help screen — not buried in a list. FAQ and Report a Problem are secondary.</div>
+</div>
+
+<div class="hint">💡 Open in browser · File → Print → Save as PDF · Three sections: Menu entry point, Help home screen, FAQ and Report flows</div>
+
+
+<!-- ══════════════════════════
+     SECTION 1: MENU ENTRY POINT
+══════════════════════════ -->
+<div class="section">
+  <div class="sh">
+    <div class="sn" style="background:#f0fdf4;color:#166534;">1</div>
+    <div>
+      <h2>Menu screen: Support tile activated</h2>
+      <p>The "Support" tile in the menu grid is currently greyed out (disabled). This change activates it, gives it a WhatsApp green colour treatment so traders recognise it instantly, and routes to the new Help & Support screen.</p>
+    </div>
+  </div>
+  <div class="fl">Current menu vs updated menu with active Support tile</div>
+  <div class="sr">
+
+    <!-- Current menu -->
+    <div class="pw">
+      <div class="stg">Current — Support greyed out</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:41 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">56%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="bd">
+          <div class="profile-card">
+            <div class="profile-avatar"><i class="ti ti-building-store" aria-hidden="true"></i></div>
+            <div style="flex:1;"><div class="profile-name">Ama Kojo Provision store</div><div class="profile-id">SKF-ACC-1144</div></div>
+            <i class="ti ti-chevron-right" style="color:#94a3b8;font-size:16px;" aria-hidden="true"></i>
+          </div>
+          <div class="menu-section-label">More Functions</div>
+          <div class="menu-grid">
+            <div class="menu-tile"><i class="ti ti-cash" aria-hidden="true"></i><div class="mt-label">Expenses</div></div>
+            <div class="menu-tile"><i class="ti ti-building-warehouse" aria-hidden="true"></i><div class="mt-label">Warehouses</div></div>
+            <div class="menu-tile"><i class="ti ti-credit-card" aria-hidden="true"></i><div class="mt-label">Store Credit</div></div>
+            <div class="menu-tile"><i class="ti ti-report-analytics" aria-hidden="true"></i><div class="mt-label">End of Day</div></div>
+            <div class="menu-tile disabled"><i class="ti ti-pig-money" aria-hidden="true"></i><div class="mt-label">Loans</div></div>
+            <div class="menu-tile disabled"><i class="ti ti-users-group" aria-hidden="true"></i><div class="mt-label">Susu</div></div>
+          </div>
+          <div class="menu-section-label">Settings</div>
+          <div class="menu-grid">
+            <div class="menu-tile"><i class="ti ti-lock" aria-hidden="true"></i><div class="mt-label">PIN</div></div>
+            <div class="menu-tile"><i class="ti ti-printer" aria-hidden="true"></i><div class="mt-label">Printer</div></div>
+            <div class="menu-tile"><i class="ti ti-world" aria-hidden="true"></i><div class="mt-label">Language</div></div>
+            <div class="menu-tile disabled"><i class="ti ti-headset" aria-hidden="true"></i><div class="mt-label">Support</div></div>
+            <div class="menu-tile"><i class="ti ti-history" aria-hidden="true"></i><div class="mt-label">Activity Log</div></div>
+            <div class="menu-tile"><i class="ti ti-sun" aria-hidden="true"></i><div class="mt-label">Appearance</div></div>
+          </div>
+          <div class="ver">v1.5.1</div>
+        </div>
+        <div class="bnav">
+          <div class="ni"><i class="ti ti-home" aria-label="Home"></i><span>Home</span></div>
+          <div class="ni"><i class="ti ti-device-desktop" aria-label="POS"></i><span>POS</span></div>
+          <div class="ni"><i class="ti ti-chart-bar" aria-label="Reports"></i><span>Reports</span></div>
+          <div class="ni"><i class="ti ti-archive" aria-label="Inventory"></i><span>Inventory</span></div>
+          <div class="ni active"><i class="ti ti-menu-2" aria-label="Menu"></i><span>Menu</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Updated menu — Support active + green -->
+    <div class="pw">
+      <div class="stg">Updated — Support active (WhatsApp green)</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:41 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">56%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="bd">
+          <div class="profile-card">
+            <div class="profile-avatar"><i class="ti ti-building-store" aria-hidden="true"></i></div>
+            <div style="flex:1;"><div class="profile-name">Ama Kojo Provision store</div><div class="profile-id">SKF-ACC-1144</div></div>
+            <i class="ti ti-chevron-right" style="color:#94a3b8;font-size:16px;" aria-hidden="true"></i>
+          </div>
+          <div class="menu-section-label">More Functions</div>
+          <div class="menu-grid">
+            <div class="menu-tile"><i class="ti ti-cash" aria-hidden="true"></i><div class="mt-label">Expenses</div></div>
+            <div class="menu-tile"><i class="ti ti-building-warehouse" aria-hidden="true"></i><div class="mt-label">Warehouses</div></div>
+            <div class="menu-tile"><i class="ti ti-credit-card" aria-hidden="true"></i><div class="mt-label">Store Credit</div></div>
+            <div class="menu-tile"><i class="ti ti-report-analytics" aria-hidden="true"></i><div class="mt-label">End of Day</div></div>
+            <div class="menu-tile disabled"><i class="ti ti-pig-money" aria-hidden="true"></i><div class="mt-label">Loans</div></div>
+            <div class="menu-tile disabled"><i class="ti ti-users-group" aria-hidden="true"></i><div class="mt-label">Susu</div></div>
+          </div>
+          <div class="menu-section-label">Settings</div>
+          <div class="menu-grid">
+            <div class="menu-tile"><i class="ti ti-lock" aria-hidden="true"></i><div class="mt-label">PIN</div></div>
+            <div class="menu-tile"><i class="ti ti-printer" aria-hidden="true"></i><div class="mt-label">Printer</div></div>
+            <div class="menu-tile"><i class="ti ti-world" aria-hidden="true"></i><div class="mt-label">Language</div></div>
+            <!-- SUPPORT — now active and green -->
+            <div class="menu-tile highlighted">
+              <i class="ti ti-brand-whatsapp" aria-hidden="true"></i>
+              <div class="mt-label">Help &amp; Support</div>
+            </div>
+            <div class="menu-tile"><i class="ti ti-history" aria-hidden="true"></i><div class="mt-label">Activity Log</div></div>
+            <div class="menu-tile"><i class="ti ti-sun" aria-hidden="true"></i><div class="mt-label">Appearance</div></div>
+          </div>
+          <div class="ver">v1.5.1</div>
+        </div>
+        <div class="bnav">
+          <div class="ni"><i class="ti ti-home" aria-label="Home"></i><span>Home</span></div>
+          <div class="ni"><i class="ti ti-device-desktop" aria-label="POS"></i><span>POS</span></div>
+          <div class="ni"><i class="ti ti-chart-bar" aria-label="Reports"></i><span>Reports</span></div>
+          <div class="ni"><i class="ti ti-archive" aria-label="Inventory"></i><span>Inventory</span></div>
+          <div class="ni active"><i class="ti ti-menu-2" aria-label="Menu"></i><span>Menu</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 2: HELP HOME SCREEN
+══════════════════════════ -->
+<div class="section">
+  <div class="sh">
+    <div class="sn" style="background:#e8f0fe;color:#0c447c;">2</div>
+    <div>
+      <h2>Help &amp; Support home screen</h2>
+      <p>WhatsApp CTA is a full-width green hero block, the first thing the trader sees, impossible to miss. Below it: FAQ (most common questions), Training Videos, and Report a Problem. Order reflects what traders will actually use: WhatsApp first, FAQ second, report last.</p>
+    </div>
+  </div>
+  <div class="fl">Help home screen — full layout</div>
+  <div class="sr">
+
+    <div class="pw">
+      <div class="stg">Help &amp; Support — home</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:42 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">56%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Help &amp; Support</span></div>
+        <div class="bd">
+
+          <!-- WhatsApp HERO — unmissable -->
+          <div class="wa-hero">
+            <div class="wa-icon"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i></div>
+            <div class="wa-title">Chat with Sikaflow Support</div>
+            <div class="wa-sub">Get help in English, Twi, or Ewe.<br>We usually reply within a few minutes.</div>
+            <div class="wa-btn" role="button"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Open WhatsApp now</div>
+            <div class="wa-hours">Available Mon–Sat · 7 AM – 8 PM</div>
+          </div>
+
+          <!-- Quick links -->
+          <div class="quick-section">
+            <div class="qs-label">Quick help</div>
+            <div class="quick-row">
+              <div class="qr-item">
+                <div class="qr-icon" style="background:#fef9e7;"><i class="ti ti-help-circle" style="color:#7a5000;" aria-hidden="true"></i></div>
+                <div class="qr-info"><div class="qr-title">Common questions (FAQ)</div><div class="qr-sub">How to add products, take payment, reset PIN…</div></div>
+                <i class="ti ti-chevron-right qr-arrow" aria-hidden="true"></i>
+              </div>
+              <div class="qr-item">
+                <div class="qr-icon" style="background:#faeeda;"><i class="ti ti-player-play" style="color:#7a4e00;" aria-hidden="true"></i></div>
+                <div class="qr-info"><div class="qr-title">Training Videos</div><div class="qr-sub">Step-by-step video guides · stored offline</div></div>
+                <i class="ti ti-chevron-right qr-arrow" aria-hidden="true"></i>
+              </div>
+              <div class="qr-item" style="border-bottom:none;">
+                <div class="qr-icon" style="background:#fee2e2;"><i class="ti ti-alert-circle" style="color:#991b1b;" aria-hidden="true"></i></div>
+                <div class="qr-info"><div class="qr-title">Report a problem</div><div class="qr-sub">Something not working? Send us a report.</div></div>
+                <i class="ti ti-chevron-right qr-arrow" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Device info strip -->
+          <div style="background:#fff;border-radius:8px;border:0.5px solid #e2e8f0;margin:0 8px 8px;padding:8px 12px;">
+            <div style="font-size:9px;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;">Your device info</div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;"><span style="color:#607191;">Business ID</span><span style="font-family:'DM Mono',monospace;color:#374151;">SKF-ACC-1144</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;"><span style="color:#607191;">App version</span><span style="font-family:'DM Mono',monospace;color:#374151;">v1.5.1</span></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;"><span style="color:#607191;">Device</span><span style="font-family:'DM Mono',monospace;color:#374151;">Sunmi T2</span></div>
+            <div style="font-size:9px;color:#94a3b8;margin-top:4px;">Share this with support if asked.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- annotation -->
+    <div style="align-self:center;padding-top:20px;max-width:180px;display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:11px;color:#374151;line-height:1.6;background:#f0fdf4;border:0.5px solid #86efac;border-radius:8px;padding:9px 12px;">
+        <strong style="color:#166534;">✅ WhatsApp hero</strong><br>Full-width, unmissable. Green gradient — traders associate this colour with WhatsApp instantly.
+      </div>
+      <div style="font-size:11px;color:#374151;line-height:1.6;background:#fff;border:0.5px solid #e2e8f0;border-radius:8px;padding:9px 12px;">
+        <strong style="color:#0d1b3e;">FAQ + Videos</strong><br>Secondary actions. Ordered by what traders actually reach for — FAQ before videos, both before reporting.
+      </div>
+      <div style="font-size:11px;color:#374151;line-height:1.6;background:#fff;border:0.5px solid #e2e8f0;border-radius:8px;padding:9px 12px;">
+        <strong style="color:#0d1b3e;">Device info strip</strong><br>Pre-filled Business ID + app version. Support agents ask for this on every call — showing it here saves time.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 3: FAQ SCREEN
+══════════════════════════ -->
+<div class="section">
+  <div class="sh">
+    <div class="sn" style="background:#fef9e7;color:#7a5000;">3</div>
+    <div>
+      <h2>FAQ screen — most common questions</h2>
+      <p>Three categories: Getting started, Sales, Account. Questions are written in plain language matching how traders actually ask them — not system terminology. Each question expands inline to show the answer. WhatsApp button stays reachable at the top.</p>
+    </div>
+  </div>
+  <div class="fl">FAQ — expanded and collapsed states</div>
+  <div class="sr">
+
+    <!-- FAQ screen — some open, some closed -->
+    <div class="pw">
+      <div class="stg">FAQ — Getting started</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:43 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">56%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Common Questions</span></div>
+        <div class="bd">
+          <!-- WhatsApp shortcut banner -->
+          <div style="background:#f0fdf4;border:0.5px solid #86efac;border-radius:8px;margin:8px 8px 0;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:10px;color:#166534;">Still stuck? Chat with us on</div>
+            <div style="background:#25D366;border-radius:7px;padding:5px 10px;font-size:10px;font-weight:500;color:#fff;display:flex;align-items:center;gap:4px;"><i class="ti ti-brand-whatsapp" style="font-size:12px;" aria-hidden="true"></i> WhatsApp</div>
+          </div>
+          <div class="faq-search">
+            <i class="ti ti-search" aria-hidden="true"></i>
+            <span>Search questions…</span>
+          </div>
+          <div class="faq-list">
+            <div class="faq-category">Getting started</div>
+            <!-- Q1: open -->
+            <div class="faq-item">
+              <div class="faq-q">
+                <div class="fq-text">How do I add a new product?</div>
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
+              </div>
+              <div class="faq-a open">Go to <strong>Inventory → Add new product</strong>. Enter the product name and selling price — that's all you need. Tap Save. The product will appear on your POS screen ready to sell.</div>
+            </div>
+            <!-- Q2: closed -->
+            <div class="faq-item">
+              <div class="faq-q">
+                <div class="fq-text">How do I record a credit sale?</div>
+                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+              </div>
+            </div>
+            <!-- Q3: closed -->
+            <div class="faq-item">
+              <div class="faq-q">
+                <div class="fq-text">How do I reset my PIN?</div>
+                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div class="faq-category">Sales &amp; payments</div>
+            <!-- Q4: open -->
+            <div class="faq-item">
+              <div class="faq-q">
+                <div class="fq-text">Why is the amount different after MTS tax?</div>
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
+              </div>
+              <div class="faq-a open">Sikaflow automatically collects 8% tax (MTS 3% + NHIL 2.5% + GETFund 2.5%) on each sale. This is paid to GRA on your behalf. You keep the selling price minus this tax. This is part of the GRA programme you signed up to.</div>
+            </div>
+            <!-- Q5 closed -->
+            <div class="faq-item">
+              <div class="faq-q">
+                <div class="fq-text">My MoMo payment is not showing — what do I do?</div>
+                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div class="faq-category">My account</div>
+            <div class="faq-item">
+              <div class="faq-q">
+                <div class="fq-text">How do I see my total sales for the week?</div>
+                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+              </div>
+            </div>
+            <div class="faq-item">
+              <div class="faq-q">
+                <div class="fq-text">How do I change the app language?</div>
+                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="align-self:center;padding-top:20px;font-size:11px;color:#607191;max-width:140px;line-height:1.6;">
+      Tapping a question expands the answer inline. WhatsApp shortcut stays pinned at the top so the trader is never more than one tap away.
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════
+     SECTION 4: REPORT A PROBLEM
+══════════════════════════ -->
+<div class="section">
+  <div class="sh">
+    <div class="sn" style="background:#fee2e2;color:#991b1b;">4</div>
+    <div>
+      <h2>Report a problem</h2>
+      <p>A short form that attaches the device log and a screenshot automatically — the trader just selects the problem type and writes a brief description. The support team receives everything they need without asking follow-up questions.</p>
+    </div>
+  </div>
+  <div class="fl">Report flow — form, submission, and confirmation</div>
+  <div class="sr">
+
+    <!-- Report form -->
+    <div class="pw">
+      <div class="stg">Report form</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:44 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">56%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Report a Problem</span></div>
+        <div class="bd">
+          <div class="info-box">
+            <i class="ti ti-info-circle" aria-hidden="true"></i>
+            We automatically attach your device log and app info so support can investigate faster.
+          </div>
+          <div class="report-form" style="margin-top:8px;">
+            <div class="rf-label">What is the problem? <span style="color:#e24b4a;">*</span></div>
+            <div class="rf-select">
+              <span style="font-size:12px;color:#0d1b3e;">Payment not going through</span>
+              <i class="ti ti-chevron-down" aria-hidden="true"></i>
+            </div>
+            <div class="rf-label">Describe what happened <span style="color:#94a3b8;font-size:9px;">(optional)</span></div>
+            <textarea class="rf-textarea" placeholder="e.g. I tried to take a MoMo payment and it showed an error message…"></textarea>
+            <div class="rf-label">Attachments — added automatically</div>
+            <div class="attach-row">
+              <div class="attach-tag active"><i class="ti ti-file-text" aria-hidden="true"></i> Device log</div>
+              <div class="attach-tag active"><i class="ti ti-device-mobile" aria-hidden="true"></i> App version</div>
+              <div class="attach-tag"><i class="ti ti-screenshot" aria-hidden="true"></i> Screenshot</div>
+            </div>
+            <!-- auto-filled device info -->
+            <div style="background:#f4f6f9;border-radius:8px;padding:8px 10px;margin-bottom:10px;border:0.5px solid #e2e8f0;">
+              <div style="font-size:9px;font-weight:500;color:#94a3b8;margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;">Auto-attached info</div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;"><span style="color:#607191;">Business ID</span><span style="font-family:'DM Mono',monospace;color:#374151;">SKF-ACC-1144</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;"><span style="color:#607191;">App version</span><span style="font-family:'DM Mono',monospace;color:#374151;">v1.5.1</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;"><span style="color:#607191;">Device</span><span style="font-family:'DM Mono',monospace;color:#374151;">Sunmi T2 · Android 11</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;padding:2px 0;"><span style="color:#607191;">Network</span><span style="font-family:'DM Mono',monospace;color:#374151;">Online · MTN 4G</span></div>
+            </div>
+            <div class="send-btn" role="button"><i class="ti ti-send" aria-hidden="true"></i> Send report</div>
+            <div class="cancel-link">or <span style="color:#25D366;font-weight:500;">chat on WhatsApp instead</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Sending state — bottom sheet -->
+    <div class="pw">
+      <div class="stg">Sending…</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:44 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">56%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Report a Problem</span></div>
+        <div class="bs-wrap" style="height:490px;">
+          <div class="bs-ov"></div>
+          <div style="padding:8px;opacity:.3;pointer-events:none;">
+            <div class="rf-select" style="background:#fff;border:1.5px solid #d1d5db;border-radius:9px;padding:9px 12px;margin:8px 0;">
+              <span style="font-size:12px;color:#0d1b3e;">Payment not going through</span>
+            </div>
+          </div>
+          <div class="bs" style="text-align:center;padding:20px 16px 20px;">
+            <div class="bs-handle"></div>
+            <div style="width:44px;height:44px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;">
+              <i class="ti ti-loader-2" style="font-size:22px;color:#1e3a8a;animation:spin 1s linear infinite;" aria-hidden="true"></i>
+            </div>
+            <div style="font-size:13px;font-weight:500;color:#0d1b3e;margin-bottom:5px;">Sending your report…</div>
+            <div style="font-size:10px;color:#94a3b8;line-height:1.6;">Attaching device log and app info.<br>This usually takes a few seconds.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arr">→</div>
+
+    <!-- Sent confirmation -->
+    <div class="pw">
+      <div class="stg">Report sent ✓</div>
+      <div class="phone">
+        <div class="sbar"><span class="t">11:44 AM</span><div class="ic"><i class="ti ti-wifi" aria-hidden="true"></i><span class="bat">56%</span></div></div>
+        <div class="sync"><div class="dot"></div><span>ONLINE &amp; SYNCED</span></div>
+        <div class="ptop"><i class="ti ti-arrow-left bk" aria-label="Back"></i><span class="ti">Report a Problem</span></div>
+        <div class="bd">
+          <div class="sent-wrap" style="padding-top:28px;">
+            <div class="sent-icon"><i class="ti ti-check" aria-hidden="true"></i></div>
+            <div style="font-size:15px;font-weight:500;color:#0d1b3e;">Report sent!</div>
+            <div style="font-size:11px;color:#607191;line-height:1.6;max-width:180px;">Our support team has received your report and will investigate. Reference number:</div>
+            <div style="background:#f4f6f9;border-radius:8px;padding:8px 16px;font-size:14px;font-weight:500;font-family:'DM Mono',monospace;color:#1e3a8a;border:0.5px solid #e2e8f0;">RPT-20260723-0048</div>
+            <div style="font-size:11px;color:#607191;text-align:center;line-height:1.6;">We usually respond within a few hours.<br>For urgent issues, message us on WhatsApp.</div>
+            <!-- WhatsApp followup -->
+            <div style="background:linear-gradient(135deg,#128C7E,#25D366);border-radius:10px;padding:12px 14px;width:100%;display:flex;align-items:center;gap:10px;cursor:pointer;">
+              <i class="ti ti-brand-whatsapp" style="font-size:22px;color:#fff;" aria-hidden="true"></i>
+              <div><div style="font-size:11px;font-weight:500;color:#fff;">Follow up on WhatsApp</div><div style="font-size:9px;color:rgba(255,255,255,.75);">Quote your reference number</div></div>
+            </div>
+            <div style="border:1.5px solid #1e3a8a;border-radius:10px;padding:11px;width:100%;text-align:center;font-size:12px;font-weight:500;color:#1e3a8a;">Back to Help</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══ IMPL NOTES ═══ -->
+<div style="padding-top:22px;border-top:1px solid #e2e8f0;">
+  <div style="font-size:14px;font-weight:500;color:#0d1b3e;margin-bottom:14px;">Implementation notes for Vietnam team</div>
+  <div class="notes-grid">
+    <div class="nc">
+      <h4>📱 WhatsApp link</h4>
+      <p>Use the WhatsApp deep link format: <code>https://wa.me/233XXXXXXXXX?text=Hi%20Sikaflow%20Support%2C%20I%20need%20help.%20My%20Business%20ID%20is%20SKF-ACC-1144</code>. Pre-fill the message with the MSME's Business ID so support knows who is contacting them immediately. Trident Aliska to confirm the support WhatsApp number before go-live. This is a standard <code>url_launcher</code> call in Flutter no API needed.</p>
+    </div>
+    <div class="nc">
+      <h4>❓ FAQ - local content</h4>
+      <p>FAQ content is hardcoded in the app (not fetched from a server). Store as a JSON asset file: <code>assets/faq.json</code> with fields: <code>category</code>, <code>question</code>, <code>answer</code>. Use an <code>ExpansionTile</code> widget for accordion behaviour. Include a basic text search that filters questions client-side. Trident Aliska to supply the final question list before the sprint. The initial set from this mockup covers the most common support contacts from Field Agent feedback.</p>
+    </div>
+    <div class="nc">
+      <h4>🐛 Report a problem</h4>
+      <p>Collect: problem type (dropdown — 8 options), free text description (optional), device info (auto-collected from device). Use the <code>device_info_plus</code> package for model/OS. Submit to <code>POST /api/v1/support/reports</code> with all fields as JSON. Auto-attach last 500 lines of app log using a rotating log file (use <code>logger</code> package). Return a reference number (<code>RPT-YYYYMMDD-NNNN</code>) shown on the confirmation screen. Store reports in the backend <code>support_reports</code> table,  admin portal shows them in a list.</p>
+    </div>
+    <div class="nc">
+      <h4>🏷️ Menu tile change</h4>
+      <p>Remove the <code>disabled</code> state from the Support tile. Replace the generic headset icon with the WhatsApp icon (<code>ti-brand-whatsapp</code>). Apply the green colour treatment: <code>border: 2px solid #25D366</code>, <code>background: #f0fdf4</code>, icon and label colour <code>#166534</code>. The label changes from "Support" to "Help &amp; Support". Route the tap to <code>HelpSupportScreen</code>.</p>
+    </div>
+    <div class="nc">
+      <h4>📋 Device info auto-fill</h4>
+      <p>The device info strip on both the Help home and the Report form is populated at screen load — no user input needed. Fields: <code>msme.programme_ref</code> from auth state, app version from <code>package_info_plus</code>, device model + Android version from <code>device_info_plus</code>, network status from connectivity check. This information is also shown on the Help home screen so traders can read it out to support agents over the phone.</p>
+    </div>
+    <div class="nc">
+      <h4>🌐 Language support</h4>
+      <p>The WhatsApp pre-filled message, FAQ content, and problem type dropdown labels should all be translated to Twi and Ewe — the same as the rest of the app. The WhatsApp message template should be in the trader's selected language: e.g. Twi: "Mede wo ho brɛ Sikaflow support. Me Business ID ne SKF-ACC-1144." Trident Aliska to provide translations with the final FAQ content. Add a note to the WhatsApp message indicating the trader's language preference.</p>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;font-size:11px;color:#94a3b8;font-family:'DM Mono',monospace;border-top:1px solid #e2e8f0;padding-top:14px;">
+  Sikaflow Programme · Help &amp; Support · Trident Aliska · July 2026 · Internal
+</div>
+
+<style>
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+
+</div>
+</body>
+</html>
